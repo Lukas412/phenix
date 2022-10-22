@@ -11,7 +11,7 @@ pub(crate) struct Qualifier<'a> {
 }
 
 impl<'a> Namespace<'a> {
-    pub(crate) fn new(parts: Vec<Name>) -> Self {
+    pub(crate) fn new(parts: Vec<Name<'a>>) -> Self {
         Self { parts }
     }
 }
