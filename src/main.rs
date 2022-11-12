@@ -1,22 +1,41 @@
 #![allow(unused, dead_code)]
-mod constructs;
-mod env;
-mod process;
 
-use rust_lisp::interpreter::eval;
-use rust_lisp::model::Value;
-use rust_lisp::{default_env, lisp};
+use std::str::FromStr;
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
-use crate::constructs::{Pack, ValueType};
-use crate::env::new_base_env;
+use rust_lisp::interpreter::eval;
+use rust_lisp::model::{Env, Value};
+use rust_lisp::parser::parse;
+use rust_lisp::{default_env, lisp};
+
+use crate::process::load_packs;
+pub(crate) use crate::{
+    bundle::Bundle,
+    creation::{Argument, Creation},
+    namespace::{Name, Namespace, Qualifier},
+    pack::Pack,
+    values::ValueType,
+};
+
+mod bundle;
+mod creation;
+mod env;
+mod namespace;
+mod pack;
+mod pack_builder;
+mod process;
+mod values;
 
 fn main() {
-    let env = Rc::new(RefCell::new(new_base_env()));
+    let bundle = load_packs().unwrap();
+    let env = Rc::new(RefCell::new(Env::new()));
+    let creation = Creation::new(
+        "test::pack".into(),
+        vec![
+            Argument::new("variable".into(), Value::Int(5)),
+        ],
+    );
 
-    let first_expression = lisp!((string_from_int 4));
-
-    let evaluation_result = eval(env.clone(), &first_expression).unwrap();
-
-    println!("{}", evaluation_result);
+    let value = bundle.eval(env.clone(), creation);
+    dbg!(value);
 }
