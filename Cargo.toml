@@ -1,11 +1,7 @@
-[package]
-name = "phenix"
-version = "0.1.0"
-edition = "2021"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-error-stack = "0.2.3"
-rust_lisp = "0.16.0"
-walkdir = "2.3.2"
+members = [
+	"phenix_core",
+	"phenix_std",
+	"phenix_test",
+]
