@@ -1,4 +1,6 @@
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf, rc::Rc};
+
+use crate::Creation;
 
 use super::ValueExt;
 
@@ -8,8 +10,11 @@ pub enum PathValue {
 }
 
 impl ValueExt for PathValue {
-  fn is_concrete(&self) -> bool {
-    matches!(self, Self::Value(_))
+  fn eval<'a>(
+    &self,
+    arguments: Rc<HashMap<&'a str, Creation<'a>>>,
+  ) -> Result<crate::Value, String> {
+    todo!()
   }
 }
 
@@ -34,13 +39,5 @@ mod tests {
     }
   }
 
-  mod value_ext {
-    use super::*;
-
-    #[test]
-    fn is_concrete() {
-      let value: PathValue = PathBuf::new().into();
-      assert!(value.is_concrete());
-    }
-  }
+  mod value_ext {}
 }

@@ -1,14 +1,64 @@
+use std::{collections::HashMap, path::PathBuf, rc::Rc};
+
+use crate::{Creation, Value};
+
 use super::ValueExt;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StringValue {
   Value(String),
-  List(Vec<String>),
+  Join {
+    values: Vec<Self>,
+    separator: Option<Box<Self>>,
+  },
 }
 
 impl ValueExt for StringValue {
-  fn is_concrete(&self) -> bool {
-    matches!(self, Self::Value(_) | Self::List(_))
+  fn eval<'a>(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<Value, String> {
+    match self {
+      Self::Join(values) => Ok(
+        values
+          .iter()
+          .map(|value| {
+            value
+              .eval(arguments.clone())?
+              .to_string()
+              .ok_or_else(|| "value could not be converted to a string".to_owned())
+          })
+          .collect::<Result<String, String>>()?
+          .into(),
+      ),
+      value => Ok(value.clone().into()),
+    }
+  }
+
+  fn to_bool(self) -> Option<bool> {
+    self.to_string().map(|s| !s.is_empty())
+  }
+
+  fn to_float(self) -> Option<f32> {
+    self.to_string()?.parse().ok()
+  }
+
+  fn to_int(self) -> Option<i32> {
+    self.to_string()?.parse().ok()
+  }
+
+  fn to_path(self) -> Option<PathBuf> {
+    self.to_string().map(PathBuf::from)
+  }
+
+  fn to_string(self) -> Option<String> {
+    match self {
+      StringValue::Value(value) => Some(value),
+      StringValue::Join { values, separator } => {
+        let separator = separator
+          .and_then(|value| value.to_string())
+          .unwrap_or_default();
+        let values: Vec<String> = values.into_iter().filter_map(Self::to_string).collect();
+        Some(values.join(&separator))
+      }
+    }
   }
 }
 
@@ -59,13 +109,5 @@ mod tests {
     }
   }
 
-  mod value_ext {
-    use super::*;
-
-    #[test]
-    fn is_concrete() {
-      let value: StringValue = "test".into();
-      assert!(value.is_concrete());
-    }
-  }
+  mod value_ext {}
 }

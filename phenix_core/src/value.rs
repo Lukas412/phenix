@@ -1,6 +1,6 @@
-use std::path::PathBuf;
+use std::{collections::HashMap, ops::Not, path::PathBuf, rc::Rc};
 
-use crate::Pack;
+use crate::Creation;
 
 pub use self::{
   action::ActionValue, boolean::BooleanValue, ext::ValueExt, number::NumberValue, path::PathValue,
@@ -23,20 +23,14 @@ pub enum Value {
   Action(ActionValue),
 }
 
-impl Value {
-  pub fn package(self) -> Pack {
-    Pack::new(self)
-  }
-}
-
 impl ValueExt for Value {
-  fn is_concrete(&self) -> bool {
+  fn eval<'a>(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<Value, String> {
     match self {
-      Value::Boolean(value) => value.is_concrete(),
-      Value::Number(value) => value.is_concrete(),
-      Value::Path(value) => value.is_concrete(),
-      Value::String(value) => value.is_concrete(),
-      Value::Action(value) => value.is_concrete(),
+      Value::Boolean(value) => value.eval(arguments),
+      Value::Number(value) => value.eval(arguments),
+      Value::Path(value) => value.eval(arguments),
+      Value::String(value) => value.eval(arguments),
+      Value::Action(value) => value.eval(arguments),
     }
   }
 }
@@ -77,93 +71,113 @@ impl From<Vec<String>> for Value {
   }
 }
 
+impl From<BooleanValue> for Value {
+  fn from(value: BooleanValue) -> Self {
+    Self::Boolean(value)
+  }
+}
+
+impl From<NumberValue> for Value {
+  fn from(value: NumberValue) -> Self {
+    Self::Number(value)
+  }
+}
+
+impl From<PathValue> for Value {
+  fn from(value: PathValue) -> Self {
+    Self::Path(value)
+  }
+}
+
+impl From<StringValue> for Value {
+  fn from(value: StringValue) -> Self {
+    Self::String(value)
+  }
+}
+
+impl From<ActionValue> for Value {
+  fn from(value: ActionValue) -> Self {
+    Self::Action(value)
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
-
-  #[test]
-  fn can_package() {
-    let expected = Pack::new("test".into());
-    let actual = Value::from("test").package();
-    assert_eq!(expected, actual);
-  }
 
   mod from {
     use super::*;
 
     #[test]
     fn from_true() {
-      let expected = Value::Boolean(BooleanValue::True);
+      let expected = Value::Boolean(true.into());
       let actual = true.into();
       assert_eq!(expected, actual);
     }
 
     #[test]
     fn from_false() {
-      let expected = Value::Boolean(BooleanValue::False);
+      let expected = Value::Boolean(false.into());
       let actual = false.into();
       assert_eq!(expected, actual);
     }
 
     #[test]
     fn from_i32() {
-      let expected = Value::Number(NumberValue::Int(1));
+      let expected = Value::Number(1.into());
       let actual = 1.into();
       assert_eq!(expected, actual);
     }
 
     #[test]
     fn from_path() {
-      let expected = Value::Path(PathValue::Value(PathBuf::new()));
+      let expected = Value::Path(PathBuf::new().into());
       let actual = PathBuf::new().into();
       assert_eq!(expected, actual);
     }
 
     #[test]
     fn from_string() {
-      let expected = Value::String(StringValue::Value("test".to_owned()));
+      let expected = Value::String("test".to_owned().into());
       let actual = "test".to_owned().into();
       assert_eq!(expected, actual);
     }
 
     #[test]
     fn from_strings() {
-      let expected = Value::String(StringValue::List(vec![
-        "test1".to_owned(),
-        "test2".to_owned(),
-      ]));
+      let expected = Value::String(vec!["test1".to_owned(), "test2".to_owned()].into());
       let actual = vec!["test1".to_owned(), "test2".to_owned()].into();
+      assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn from_boolean_value() {
+      let expected: Value = true.into();
+      let actual = BooleanValue::from(true).into();
+      assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn from_number_value() {
+      let expected: Value = 1.into();
+      let actual = NumberValue::from(1).into();
+      assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn from_path_value() {
+      let expected: Value = PathBuf::new().into();
+      let actual = PathValue::from(PathBuf::new()).into();
+      assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn from_string_value() {
+      let expected: Value = "test".to_owned().into();
+      let actual = StringValue::from("test".to_owned()).into();
       assert_eq!(expected, actual);
     }
   }
 
-  mod value_ext {
-    use super::*;
-
-    use std::path::PathBuf;
-
-    #[test]
-    fn boolean_is_concrete() {
-      let value: Value = true.into();
-      assert!(value.is_concrete());
-    }
-
-    #[test]
-    fn number_is_concrete() {
-      let value: Value = 1.into();
-      assert!(value.is_concrete());
-    }
-
-    #[test]
-    fn path_is_concrete() {
-      let value: Value = PathBuf::new().into();
-      assert!(value.is_concrete());
-    }
-
-    #[test]
-    fn string_is_concrete() {
-      let value: Value = "test".to_owned().into();
-      assert!(value.is_concrete());
-    }
-  }
+  mod value_ext {}
 }

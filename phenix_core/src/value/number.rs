@@ -1,3 +1,7 @@
+use std::{collections::HashMap, rc::Rc};
+
+use crate::Creation;
+
 use super::ValueExt;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -7,8 +11,11 @@ pub enum NumberValue {
 }
 
 impl ValueExt for NumberValue {
-  fn is_concrete(&self) -> bool {
-    matches!(self, Self::Int(_))
+  fn eval<'a>(
+    &self,
+    arguments: Rc<HashMap<&'a str, Creation<'a>>>,
+  ) -> Result<crate::Value, String> {
+    todo!()
   }
 }
 
@@ -33,13 +40,5 @@ mod tests {
     }
   }
 
-  mod value_ext {
-    use super::*;
-
-    #[test]
-    fn is_concrete() {
-      let value: NumberValue = 1.into();
-      assert!(value.is_concrete());
-    }
-  }
+  mod value_ext {}
 }
