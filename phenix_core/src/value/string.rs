@@ -16,7 +16,7 @@ pub enum StringValue {
 impl ValueExt for StringValue {
   fn eval<'a>(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<Value, String> {
     match self {
-      Self::Join(values) => Ok(
+      Self::Join { values, separator } => Ok(
         values
           .iter()
           .map(|value| {
@@ -25,7 +25,7 @@ impl ValueExt for StringValue {
               .to_string()
               .ok_or_else(|| "value could not be converted to a string".to_owned())
           })
-          .collect::<Result<String, String>>()?
+          .collect::<Result<String, _>>()?
           .into(),
       ),
       value => Ok(value.clone().into()),

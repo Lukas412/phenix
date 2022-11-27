@@ -1,4 +1,8 @@
-use std::{collections::HashMap, rc::Rc};
+use std::{
+  collections::HashMap,
+  ops::{BitAnd, BitOr},
+  rc::Rc,
+};
 
 use crate::{Creation, Value};
 
@@ -39,24 +43,28 @@ impl ValueExt for BooleanValue {
     match self {
       Self::True => Some(true),
       Self::False => Some(false),
-      Self::Or(values) => values.into_iter(),
+      Self::Or(values) => values_to_bool(values, false, BitOr::bitor),
+      Self::And(values) => values_to_bool(values, true, BitAnd::bitand),
     }
   }
 
   fn to_int(self) -> Option<i32> {
-    todo!()
+    self.to_bool().map(Into::into)
   }
 
   fn to_float(self) -> Option<f32> {
-    todo!()
+    None
   }
 
   fn to_path(self) -> Option<std::path::PathBuf> {
-    todo!()
+    None
   }
 
   fn to_string(self) -> Option<String> {
-    todo!()
+    self.to_bool().map(|value| match value {
+      true => "true".to_owned(),
+      false => "false".to_owned(),
+    })
   }
 }
 
@@ -67,6 +75,19 @@ impl From<bool> for BooleanValue {
       false => Self::False,
     }
   }
+}
+
+fn values_to_bool(
+  values: Vec<BooleanValue>,
+  default: bool,
+  combine_func: impl Fn(bool, bool) -> bool,
+) -> Option<bool> {
+  values
+    .into_iter()
+    .map(BooleanValue::to_bool)
+    .fold(Some(default), |result, value| {
+      result.zip(value).map(|v| combine_func(v.0, v.1))
+    })
 }
 
 #[cfg(test)]
