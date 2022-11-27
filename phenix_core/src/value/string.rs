@@ -1,5 +1,7 @@
 use std::{collections::HashMap, path::PathBuf, rc::Rc};
 
+use rust_decimal::Decimal;
+
 use crate::{Creation, Value};
 
 use super::ValueExt;
@@ -36,7 +38,7 @@ impl ValueExt for StringValue {
     self.to_string().map(|s| !s.is_empty())
   }
 
-  fn to_float(self) -> Option<f32> {
+  fn to_decimal(self) -> Option<Decimal> {
     self.to_string()?.parse().ok()
   }
 
@@ -76,7 +78,10 @@ impl From<String> for StringValue {
 
 impl From<Vec<String>> for StringValue {
   fn from(strings: Vec<String>) -> Self {
-    Self::List(strings)
+    Self::Join {
+      values: strings.into_iter().map(Into::into).collect(),
+      separator: None,
+    }
   }
 }
 
@@ -103,7 +108,10 @@ mod tests {
 
     #[test]
     fn from_strings() {
-      let expected = StringValue::List(vec!["test1".to_owned(), "test2".to_owned()]);
+      let expected = StringValue::Join {
+        values: vec!["test1".into(), "test2".into()],
+        separator: None,
+      };
       let actual = vec!["test1".to_owned(), "test2".to_owned()].into();
       assert_eq!(expected, actual);
     }

@@ -1,5 +1,7 @@
 use std::{collections::HashMap, ops::Not, path::PathBuf, rc::Rc};
 
+use rust_decimal::Decimal;
+
 use crate::Creation;
 
 pub use self::{
@@ -26,11 +28,61 @@ pub enum Value {
 impl ValueExt for Value {
   fn eval<'a>(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<Value, String> {
     match self {
-      Value::Boolean(value) => value.eval(arguments),
-      Value::Number(value) => value.eval(arguments),
-      Value::Path(value) => value.eval(arguments),
-      Value::String(value) => value.eval(arguments),
-      Value::Action(value) => value.eval(arguments),
+      Self::Boolean(value) => value.eval(arguments),
+      Self::Number(value) => value.eval(arguments),
+      Self::Path(value) => value.eval(arguments),
+      Self::String(value) => value.eval(arguments),
+      Self::Action(value) => value.eval(arguments),
+    }
+  }
+
+  fn to_bool(self) -> Option<bool> {
+    match self {
+      Self::Boolean(value) => value.to_bool(),
+      Self::Number(value) => value.to_bool(),
+      Self::Path(value) => value.to_bool(),
+      Self::String(value) => value.to_bool(),
+      Self::Action(value) => value.to_bool(),
+    }
+  }
+
+  fn to_int(self) -> Option<i32> {
+    match self {
+      Self::Boolean(value) => value.to_int(),
+      Self::Number(value) => value.to_int(),
+      Self::Path(value) => value.to_int(),
+      Self::String(value) => value.to_int(),
+      Self::Action(value) => value.to_int(),
+    }
+  }
+
+  fn to_decimal(self) -> Option<Decimal> {
+    match self {
+      Self::Boolean(value) => value.to_decimal(),
+      Self::Number(value) => value.to_decimal(),
+      Self::Path(value) => value.to_decimal(),
+      Self::String(value) => value.to_decimal(),
+      Self::Action(value) => value.to_decimal(),
+    }
+  }
+
+  fn to_path(self) -> Option<PathBuf> {
+    match self {
+      Self::Boolean(value) => value.to_path(),
+      Self::Number(value) => value.to_path(),
+      Self::Path(value) => value.to_path(),
+      Self::String(value) => value.to_path(),
+      Self::Action(value) => value.to_path(),
+    }
+  }
+
+  fn to_string(self) -> Option<String> {
+    match self {
+      Self::Boolean(value) => value.to_string(),
+      Self::Number(value) => value.to_string(),
+      Self::Path(value) => value.to_string(),
+      Self::String(value) => value.to_string(),
+      Self::Action(value) => value.to_string(),
     }
   }
 }

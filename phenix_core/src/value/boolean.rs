@@ -4,6 +4,8 @@ use std::{
   rc::Rc,
 };
 
+use rust_decimal::Decimal;
+
 use crate::{Creation, Value};
 
 use super::ValueExt;
@@ -52,7 +54,7 @@ impl ValueExt for BooleanValue {
     self.to_bool().map(Into::into)
   }
 
-  fn to_float(self) -> Option<f32> {
+  fn to_decimal(self) -> Option<Decimal> {
     None
   }
 

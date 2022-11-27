@@ -16,6 +16,28 @@ impl ValueExt for PathValue {
   ) -> Result<crate::Value, String> {
     todo!()
   }
+
+  fn to_bool(self) -> Option<bool> {
+    None
+  }
+
+  fn to_int(self) -> Option<i32> {
+    None
+  }
+
+  fn to_decimal(self) -> Option<rust_decimal::Decimal> {
+    None
+  }
+
+  fn to_path(self) -> Option<PathBuf> {
+    match self {
+      Self::Value(value) => Some(value),
+    }
+  }
+
+  fn to_string(self) -> Option<String> {
+    None
+  }
 }
 
 impl From<PathBuf> for PathValue {
