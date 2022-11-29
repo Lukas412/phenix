@@ -1,27 +1,25 @@
-use std::{collections::HashMap, ops::Not, path::PathBuf, rc::Rc};
+use std::{collections::HashMap, path::PathBuf, rc::Rc};
 
+use crate::{Creation, Identifier};
 use rust_decimal::{
   prelude::{FromPrimitive, ToPrimitive},
   Decimal,
 };
-use rust_decimal_macros::dec;
-
-use crate::Creation;
 
 use super::ValueExt;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum NumberValue {
+pub enum NumberValue<'a> {
   Int(i32),
   Decimal(Decimal),
+  GetArgument(Identifier<'a>),
 }
 
-impl ValueExt for NumberValue {
-  fn eval<'a>(
-    &self,
-    arguments: Rc<HashMap<&'a str, Creation<'a>>>,
-  ) -> Result<crate::Value, String> {
-    todo!()
+impl<'a> ValueExt<'a> for NumberValue<'a> {
+  fn eval(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<crate::Value, String> {
+    match self {
+      _ => Ok(self.clone().into()),
+    }
   }
 
   fn to_bool(self) -> Option<bool> {
@@ -32,6 +30,7 @@ impl ValueExt for NumberValue {
     match self {
       Self::Int(value) => Some(value),
       Self::Decimal(value) => value.to_i32(),
+      Self::GetArgument(_) => None,
     }
   }
 
@@ -39,6 +38,7 @@ impl ValueExt for NumberValue {
     match self {
       Self::Int(value) => FromPrimitive::from_i32(value),
       Self::Decimal(value) => Some(value),
+      Self::GetArgument(_) => None,
     }
   }
 

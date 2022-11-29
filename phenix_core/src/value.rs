@@ -1,4 +1,4 @@
-use std::{collections::HashMap, ops::Not, path::PathBuf, rc::Rc};
+use std::{borrow::Cow, collections::HashMap, path::PathBuf, rc::Rc};
 
 use rust_decimal::Decimal;
 
@@ -17,16 +17,16 @@ mod path;
 mod string;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Value {
-  Boolean(BooleanValue),
-  Number(NumberValue),
-  Path(PathValue),
-  String(StringValue),
+pub enum Value<'a> {
+  Boolean(BooleanValue<'a>),
+  Number(NumberValue<'a>),
+  Path(PathValue<'a>),
+  String(StringValue<'a>),
   Action(ActionValue),
 }
 
-impl ValueExt for Value {
-  fn eval<'a>(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<Value, String> {
+impl<'a> ValueExt<'a> for Value<'a> {
+  fn eval(&self, arguments: Rc<HashMap<Cow<'a, str>, Creation<'a>>>) -> Result<Value, String> {
     match self {
       Self::Boolean(value) => value.eval(arguments),
       Self::Number(value) => value.eval(arguments),

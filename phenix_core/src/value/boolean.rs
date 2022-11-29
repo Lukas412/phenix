@@ -6,20 +6,21 @@ use std::{
 
 use rust_decimal::Decimal;
 
-use crate::{Creation, Value};
+use crate::{Creation, Identifier, Value};
 
 use super::ValueExt;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum BooleanValue {
+pub enum BooleanValue<'a> {
   True,
   False,
   Or(Vec<Self>),
   And(Vec<Self>),
+  GetArgument(Identifier<'a>),
 }
 
-impl ValueExt for BooleanValue {
-  fn eval<'a>(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<Value, String> {
+impl<'a> ValueExt<'a> for BooleanValue<'a> {
+  fn eval(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<Value, String> {
     match self {
       BooleanValue::Or(values) => {
         values
@@ -47,6 +48,7 @@ impl ValueExt for BooleanValue {
       Self::False => Some(false),
       Self::Or(values) => values_to_bool(values, false, BitOr::bitor),
       Self::And(values) => values_to_bool(values, true, BitAnd::bitand),
+      Self::GetArgument(_) => todo!(),
     }
   }
 
@@ -70,7 +72,7 @@ impl ValueExt for BooleanValue {
   }
 }
 
-impl From<bool> for BooleanValue {
+impl<'a> From<bool> for BooleanValue<'a> {
   fn from(boolean: bool) -> Self {
     match boolean {
       true => Self::True,
@@ -79,8 +81,8 @@ impl From<bool> for BooleanValue {
   }
 }
 
-fn values_to_bool(
-  values: Vec<BooleanValue>,
+fn values_to_bool<'a>(
+  values: Vec<BooleanValue<'a>>,
   default: bool,
   combine_func: impl Fn(bool, bool) -> bool,
 ) -> Option<bool> {

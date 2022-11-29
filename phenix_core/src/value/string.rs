@@ -1,22 +1,23 @@
-use std::{collections::HashMap, path::PathBuf, rc::Rc};
+use std::{borrow::Cow, collections::HashMap, path::PathBuf, rc::Rc};
 
 use rust_decimal::Decimal;
 
-use crate::{Creation, Value};
+use crate::{Creation, Identifier, Value};
 
 use super::ValueExt;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum StringValue {
-  Value(String),
+pub enum StringValue<'a> {
+  Value(Cow<'a, str>),
   Join {
     values: Vec<Self>,
     separator: Option<Box<Self>>,
   },
+  GetArgument(Identifier<'a>),
 }
 
-impl ValueExt for StringValue {
-  fn eval<'a>(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<Value, String> {
+impl<'a> ValueExt<'a> for StringValue<'a> {
+  fn eval(&self, arguments: Rc<HashMap<Cow<'a, str>, Creation<'a>>>) -> Result<Value, String> {
     match self {
       Self::Join { values, separator } => Ok(
         values
@@ -60,23 +61,24 @@ impl ValueExt for StringValue {
         let values: Vec<String> = values.into_iter().filter_map(Self::to_string).collect();
         Some(values.join(&separator))
       }
+      Self::GetArgument(_) => None,
     }
   }
 }
 
-impl From<&str> for StringValue {
+impl<'a> From<&str> for StringValue<'a> {
   fn from(string: &str) -> Self {
-    Self::Value(string.to_owned())
+    Self::Value(string.into())
   }
 }
 
-impl From<String> for StringValue {
+impl<'a> From<String> for StringValue<'a> {
   fn from(string: String) -> Self {
-    Self::Value(string)
+    Self::Value(string.into())
   }
 }
 
-impl From<Vec<String>> for StringValue {
+impl<'a> From<Vec<String>> for StringValue<'a> {
   fn from(strings: Vec<String>) -> Self {
     Self::Join {
       values: strings.into_iter().map(Into::into).collect(),

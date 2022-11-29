@@ -1,18 +1,19 @@
-use std::{collections::HashMap, path::PathBuf, rc::Rc};
+use std::{borrow::Cow, collections::HashMap, path::PathBuf, rc::Rc};
 
-use crate::Creation;
+use crate::{Creation, Identifier};
 
 use super::ValueExt;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum PathValue {
+pub enum PathValue<'a> {
   Value(PathBuf),
+  GetArgument(Identifier<'a>),
 }
 
-impl ValueExt for PathValue {
-  fn eval<'a>(
+impl<'a> ValueExt<'a> for PathValue<'a> {
+  fn eval(
     &self,
-    arguments: Rc<HashMap<&'a str, Creation<'a>>>,
+    arguments: Rc<HashMap<Cow<'a, str>, Creation<'a>>>,
   ) -> Result<crate::Value, String> {
     todo!()
   }
@@ -32,6 +33,7 @@ impl ValueExt for PathValue {
   fn to_path(self) -> Option<PathBuf> {
     match self {
       Self::Value(value) => Some(value),
+      Self::GetArgument(_) => None,
     }
   }
 
@@ -40,7 +42,7 @@ impl ValueExt for PathValue {
   }
 }
 
-impl From<PathBuf> for PathValue {
+impl<'a> From<PathBuf> for PathValue<'a> {
   fn from(path: PathBuf) -> Self {
     Self::Value(path)
   }
