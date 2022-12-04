@@ -1,5 +1,5 @@
 pub use crate::{
-  creation::{ComplexCreationBuilder, Creation},
+  creation::{ComplexCreationBuilder, Creation, CreationArguments},
   names::{Identifier, Namespace},
   runtime::{Runtime, RuntimeBuilder},
   value::{Value, ValueExt},

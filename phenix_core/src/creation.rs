@@ -1,18 +1,20 @@
 use std::{collections::HashMap, rc::Rc};
 
-use crate::{Namespace, Value};
+use crate::{Identifier, Namespace, Value};
+
+pub type CreationArguments<'a> = Rc<HashMap<Identifier<'a>, Creation<'a>>>;
 
 #[derive(Debug)]
 pub enum Creation<'a> {
-  Value(Value),
+  Value(Value<'a>),
   Complex {
     namespace: Namespace<'a>,
-    values: Rc<HashMap<&'a str, Creation<'a>>>,
+    values: CreationArguments<'a>,
   },
 }
 
-impl<'a> From<Value> for Creation<'a> {
-  fn from(value: Value) -> Self {
+impl<'a> From<Value<'a>> for Creation<'a> {
+  fn from(value: Value<'a>) -> Self {
     Self::Value(value)
   }
 }
@@ -29,7 +31,7 @@ impl<'a> From<ComplexCreationBuilder<'a>> for Creation<'a> {
 #[derive(Debug)]
 pub struct ComplexCreationBuilder<'a> {
   namespace: Namespace<'a>,
-  values: HashMap<&'a str, Creation<'a>>,
+  values: HashMap<Identifier<'a>, Creation<'a>>,
 }
 
 impl<'a> ComplexCreationBuilder<'a> {
@@ -44,18 +46,27 @@ impl<'a> ComplexCreationBuilder<'a> {
     self.into()
   }
 
-  pub fn with_creation(mut self, name: &'a str, creation: Creation<'a>) -> Self {
-    self.values.insert(name, creation);
+  pub fn with_creation<T>(mut self, name: T, creation: Creation<'a>) -> Self
+  where
+    T: Into<Identifier<'a>>,
+  {
+    self.values.insert(name.into(), creation);
     self
   }
 
-  pub fn with_value(mut self, name: &'a str, value: Value) -> Self {
-    self.values.insert(name, value.into());
+  pub fn with_value<T>(mut self, name: T, value: Value<'a>) -> Self
+  where
+    T: Into<Identifier<'a>>,
+  {
+    self.values.insert(name.into(), value.into());
     self
   }
 
-  pub fn with_complex(mut self, name: &'a str, complex: Self) -> Self {
-    self.values.insert(name, complex.into());
+  pub fn with_complex<T>(mut self, name: T, complex: Self) -> Self
+  where
+    T: Into<Identifier<'a>>,
+  {
+    self.values.insert(name.into(), complex.into());
     self
   }
 }

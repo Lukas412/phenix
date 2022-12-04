@@ -1,6 +1,6 @@
-use std::{collections::HashMap, path::PathBuf, rc::Rc};
+use std::path::PathBuf;
 
-use crate::{Creation, Identifier};
+use crate::{CreationArguments, Identifier, Runtime, Value};
 use rust_decimal::{
   prelude::{FromPrimitive, ToPrimitive},
   Decimal,
@@ -16,9 +16,14 @@ pub enum NumberValue<'a> {
 }
 
 impl<'a> ValueExt<'a> for NumberValue<'a> {
-  fn eval(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<crate::Value, String> {
+  fn eval(
+    &'a self,
+    runtime: &'a Runtime,
+    arguments: CreationArguments<'a>,
+  ) -> Result<Value<'static>, String> {
     match self {
-      _ => Ok(self.clone().into()),
+      Self::GetArgument(_) => todo!(),
+      _ => Ok(self.to_owned().into()),
     }
   }
 
@@ -50,30 +55,13 @@ impl<'a> ValueExt<'a> for NumberValue<'a> {
     match self {
       Self::Int(value) => Some(value.to_string()),
       Self::Decimal(value) => Some(value.to_string()),
+      Self::GetArgument(_) => None,
     }
   }
 }
 
-impl From<i32> for NumberValue {
+impl<'a> From<i32> for NumberValue<'a> {
   fn from(number: i32) -> Self {
     Self::Int(number)
   }
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  mod from {
-    use super::*;
-
-    #[test]
-    fn from_i32() {
-      let expected = NumberValue::Int(1);
-      let actual = 1.into();
-      assert_eq!(expected, actual);
-    }
-  }
-
-  mod value_ext {}
 }

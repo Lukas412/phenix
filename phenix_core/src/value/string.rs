@@ -1,8 +1,8 @@
-use std::{borrow::Cow, collections::HashMap, path::PathBuf, rc::Rc};
+use std::{borrow::Cow, path::PathBuf};
 
 use rust_decimal::Decimal;
 
-use crate::{Creation, Identifier, Value};
+use crate::{CreationArguments, Identifier, Runtime, Value};
 
 use super::ValueExt;
 
@@ -17,14 +17,18 @@ pub enum StringValue<'a> {
 }
 
 impl<'a> ValueExt<'a> for StringValue<'a> {
-  fn eval(&self, arguments: Rc<HashMap<Cow<'a, str>, Creation<'a>>>) -> Result<Value, String> {
+  fn eval(
+    &'a self,
+    runtime: &'a Runtime,
+    arguments: CreationArguments<'a>,
+  ) -> Result<Value<'static>, String> {
     match self {
       Self::Join { values, separator } => Ok(
         values
           .iter()
           .map(|value| {
             value
-              .eval(arguments.clone())?
+              .eval(runtime, arguments.clone())?
               .to_string()
               .ok_or_else(|| "value could not be converted to a string".to_owned())
           })
@@ -53,7 +57,7 @@ impl<'a> ValueExt<'a> for StringValue<'a> {
 
   fn to_string(self) -> Option<String> {
     match self {
-      StringValue::Value(value) => Some(value),
+      StringValue::Value(value) => Some(value.into()),
       StringValue::Join { values, separator } => {
         let separator = separator
           .and_then(|value| value.to_string())
@@ -66,8 +70,8 @@ impl<'a> ValueExt<'a> for StringValue<'a> {
   }
 }
 
-impl<'a> From<&str> for StringValue<'a> {
-  fn from(string: &str) -> Self {
+impl<'a> From<&'a str> for StringValue<'a> {
+  fn from(string: &'a str) -> Self {
     Self::Value(string.into())
   }
 }
@@ -85,39 +89,4 @@ impl<'a> From<Vec<String>> for StringValue<'a> {
       separator: None,
     }
   }
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  mod from {
-    use super::*;
-
-    #[test]
-    fn from_str() {
-      let expected = StringValue::Value("test".to_owned());
-      let actual = "test".into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_string() {
-      let expected = StringValue::Value("test".to_owned());
-      let actual = "test".to_owned().into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_strings() {
-      let expected = StringValue::Join {
-        values: vec!["test1".into(), "test2".into()],
-        separator: None,
-      };
-      let actual = vec!["test1".to_owned(), "test2".to_owned()].into();
-      assert_eq!(expected, actual);
-    }
-  }
-
-  mod value_ext {}
 }

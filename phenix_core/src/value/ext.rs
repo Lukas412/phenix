@@ -1,11 +1,15 @@
-use std::{borrow::Cow, collections::HashMap, path::PathBuf, rc::Rc};
+use std::path::PathBuf;
 
 use rust_decimal::Decimal;
 
-use crate::{Creation, Value};
+use crate::{CreationArguments, Runtime, Value};
 
-pub trait ValueExt<'a>: Into<Value> + Clone {
-  fn eval(&self, arguments: Rc<HashMap<Cow<'a, str>, Creation<'a>>>) -> Result<Value, String>;
+pub trait ValueExt<'a>: Into<Value<'a>> + Clone {
+  fn eval(
+    &'a self,
+    runtime: &'a Runtime,
+    arguments: CreationArguments<'a>,
+  ) -> Result<Value<'static>, String>;
 
   fn to_bool(self) -> Option<bool>;
   fn to_int(self) -> Option<i32>;

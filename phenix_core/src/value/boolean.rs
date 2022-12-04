@@ -1,12 +1,8 @@
-use std::{
-  collections::HashMap,
-  ops::{BitAnd, BitOr},
-  rc::Rc,
-};
+use std::ops::{BitAnd, BitOr};
 
 use rust_decimal::Decimal;
 
-use crate::{Creation, Identifier, Value};
+use crate::{CreationArguments, Identifier, Runtime, Value};
 
 use super::ValueExt;
 
@@ -20,13 +16,17 @@ pub enum BooleanValue<'a> {
 }
 
 impl<'a> ValueExt<'a> for BooleanValue<'a> {
-  fn eval(&self, arguments: Rc<HashMap<&'a str, Creation<'a>>>) -> Result<Value, String> {
+  fn eval(
+    &'a self,
+    runtime: &'a Runtime,
+    arguments: CreationArguments<'a>,
+  ) -> Result<Value<'static>, String> {
     match self {
       BooleanValue::Or(values) => {
         values
           .iter()
           .fold(Ok(false.into()), |result, value| match result {
-            Ok(Value::Boolean(Self::False)) => value.eval(arguments.clone()),
+            Ok(Value::Boolean(Self::False)) => value.eval(runtime, arguments.clone()),
             result => result,
           })
       }
@@ -34,7 +34,7 @@ impl<'a> ValueExt<'a> for BooleanValue<'a> {
         values
           .iter()
           .fold(Ok(true.into()), |result, value| match result {
-            Ok(Value::Boolean(Self::True)) => value.eval(arguments.clone()),
+            Ok(Value::Boolean(Self::True)) => value.eval(runtime, arguments.clone()),
             result => result,
           })
       }
@@ -92,27 +92,4 @@ fn values_to_bool<'a>(
     .fold(Some(default), |result, value| {
       result.zip(value).map(|v| combine_func(v.0, v.1))
     })
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  mod from {
-    use super::*;
-
-    #[test]
-    fn from_true() {
-      let expected = BooleanValue::True;
-      let actual = true.into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_false() {
-      let expected = BooleanValue::False;
-      let actual = false.into();
-      assert_eq!(expected, actual);
-    }
-  }
 }

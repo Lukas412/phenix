@@ -1,8 +1,8 @@
-use std::{borrow::Cow, collections::HashMap, path::PathBuf, rc::Rc};
+use std::path::PathBuf;
 
 use rust_decimal::Decimal;
 
-use crate::Creation;
+use crate::{CreationArguments, Runtime};
 
 pub use self::{
   action::ActionValue, boolean::BooleanValue, ext::ValueExt, number::NumberValue, path::PathValue,
@@ -26,13 +26,17 @@ pub enum Value<'a> {
 }
 
 impl<'a> ValueExt<'a> for Value<'a> {
-  fn eval(&self, arguments: Rc<HashMap<Cow<'a, str>, Creation<'a>>>) -> Result<Value, String> {
+  fn eval(
+    &'a self,
+    runtime: &'a Runtime,
+    arguments: CreationArguments<'a>,
+  ) -> Result<Value<'static>, String> {
     match self {
-      Self::Boolean(value) => value.eval(arguments),
-      Self::Number(value) => value.eval(arguments),
-      Self::Path(value) => value.eval(arguments),
-      Self::String(value) => value.eval(arguments),
-      Self::Action(value) => value.eval(arguments),
+      Self::Boolean(value) => value.eval(runtime, arguments),
+      Self::Number(value) => value.eval(runtime, arguments),
+      Self::Path(value) => value.eval(runtime, arguments),
+      Self::String(value) => value.eval(runtime, arguments),
+      Self::Action(value) => value.eval(runtime, arguments),
     }
   }
 
@@ -87,149 +91,68 @@ impl<'a> ValueExt<'a> for Value<'a> {
   }
 }
 
-impl From<bool> for Value {
+impl<'a> From<bool> for Value<'a> {
   fn from(boolean: bool) -> Self {
     Self::Boolean(boolean.into())
   }
 }
 
-impl From<i32> for Value {
+impl<'a> From<i32> for Value<'a> {
   fn from(number: i32) -> Self {
     Self::Number(number.into())
   }
 }
 
-impl From<PathBuf> for Value {
+impl<'a> From<PathBuf> for Value<'a> {
   fn from(path: PathBuf) -> Self {
     Self::Path(path.into())
   }
 }
 
-impl From<&str> for Value {
-  fn from(string: &str) -> Self {
+impl<'a> From<&'a str> for Value<'a> {
+  fn from(string: &'a str) -> Self {
     Self::String(string.into())
   }
 }
 
-impl From<String> for Value {
+impl<'a> From<String> for Value<'a> {
   fn from(string: String) -> Self {
     Self::String(string.into())
   }
 }
 
-impl From<Vec<String>> for Value {
+impl<'a> From<Vec<String>> for Value<'a> {
   fn from(strings: Vec<String>) -> Self {
     Self::String(strings.into())
   }
 }
 
-impl From<BooleanValue> for Value {
-  fn from(value: BooleanValue) -> Self {
+impl<'a> From<BooleanValue<'a>> for Value<'a> {
+  fn from(value: BooleanValue<'a>) -> Self {
     Self::Boolean(value)
   }
 }
 
-impl From<NumberValue> for Value {
-  fn from(value: NumberValue) -> Self {
+impl<'a> From<NumberValue<'a>> for Value<'a> {
+  fn from(value: NumberValue<'a>) -> Self {
     Self::Number(value)
   }
 }
 
-impl From<PathValue> for Value {
-  fn from(value: PathValue) -> Self {
+impl<'a> From<PathValue<'a>> for Value<'a> {
+  fn from(value: PathValue<'a>) -> Self {
     Self::Path(value)
   }
 }
 
-impl From<StringValue> for Value {
-  fn from(value: StringValue) -> Self {
+impl<'a> From<StringValue<'a>> for Value<'a> {
+  fn from(value: StringValue<'a>) -> Self {
     Self::String(value)
   }
 }
 
-impl From<ActionValue> for Value {
+impl<'a> From<ActionValue> for Value<'a> {
   fn from(value: ActionValue) -> Self {
     Self::Action(value)
   }
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  mod from {
-    use super::*;
-
-    #[test]
-    fn from_true() {
-      let expected = Value::Boolean(true.into());
-      let actual = true.into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_false() {
-      let expected = Value::Boolean(false.into());
-      let actual = false.into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_i32() {
-      let expected = Value::Number(1.into());
-      let actual = 1.into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_path() {
-      let expected = Value::Path(PathBuf::new().into());
-      let actual = PathBuf::new().into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_string() {
-      let expected = Value::String("test".to_owned().into());
-      let actual = "test".to_owned().into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_strings() {
-      let expected = Value::String(vec!["test1".to_owned(), "test2".to_owned()].into());
-      let actual = vec!["test1".to_owned(), "test2".to_owned()].into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_boolean_value() {
-      let expected: Value = true.into();
-      let actual = BooleanValue::from(true).into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_number_value() {
-      let expected: Value = 1.into();
-      let actual = NumberValue::from(1).into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_path_value() {
-      let expected: Value = PathBuf::new().into();
-      let actual = PathValue::from(PathBuf::new()).into();
-      assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn from_string_value() {
-      let expected: Value = "test".to_owned().into();
-      let actual = StringValue::from("test".to_owned()).into();
-      assert_eq!(expected, actual);
-    }
-  }
-
-  mod value_ext {}
 }

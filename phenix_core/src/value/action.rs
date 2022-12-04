@@ -1,6 +1,4 @@
-use std::{borrow::Cow, collections::HashMap, rc::Rc};
-
-use crate::Creation;
+use crate::{CreationArguments, Runtime, Value};
 
 use super::ValueExt;
 
@@ -9,9 +7,10 @@ pub enum ActionValue {}
 
 impl<'a> ValueExt<'a> for ActionValue {
   fn eval(
-    &self,
-    arguments: Rc<HashMap<Cow<'a, str>, Creation<'a>>>,
-  ) -> Result<crate::Value, String> {
+    &'a self,
+    _runtime: &'a Runtime,
+    _arguments: CreationArguments<'a>,
+  ) -> Result<Value<'static>, String> {
     todo!()
   }
 
@@ -35,6 +34,3 @@ impl<'a> ValueExt<'a> for ActionValue {
     None
   }
 }
-
-#[cfg(test)]
-mod tests {}
