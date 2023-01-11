@@ -12,7 +12,7 @@ fn main() {
 
   let creation = ComplexCreationBuilder::new("test::pack::number".into()).build();
 
-  let result = runtime.eval(creation);
+  let result = runtime.eval(&creation);
 
   println!("{:?}", result);
 }

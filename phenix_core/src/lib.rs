@@ -1,14 +1,14 @@
+#![allow(unused, dead_code)]
+
 pub use crate::{
   creation::{ComplexCreationBuilder, Creation, CreationArguments},
-  names::{Identifier, Namespace},
+  names::{BorrowedIdentifier, BorrowedName, BorrowedNamespace},
   runtime::{Runtime, RuntimeBuilder},
-  value::{Value, ValueExt},
+  value::{BorrowedValue, ValueExt},
 };
 
 mod creation;
 mod names;
+mod operations;
 mod runtime;
 mod value;
-
-#[cfg(test)]
-mod tests {}

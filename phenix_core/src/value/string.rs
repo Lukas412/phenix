@@ -1,27 +1,27 @@
-use std::{borrow::Cow, path::PathBuf};
+use std::borrow::Cow;
 
-use rust_decimal::Decimal;
+use duplicate::duplicate_item;
 
-use crate::{CreationArguments, Identifier, Runtime, Value};
+use crate::{BorrowedIdentifier, BorrowedValue, CreationArguments, Runtime};
 
-use super::ValueExt;
+use super::{ConcreteValue, ValueExt};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum StringValue<'a> {
+pub enum BorrowedStringValue<'a> {
   Value(Cow<'a, str>),
   Join {
     values: Vec<Self>,
     separator: Option<Box<Self>>,
   },
-  GetArgument(Identifier<'a>),
+  GetArgument(BorrowedIdentifier<'a>),
 }
 
-impl<'a> ValueExt<'a> for StringValue<'a> {
-  fn eval(
-    &'a self,
-    runtime: &'a Runtime,
-    arguments: CreationArguments<'a>,
-  ) -> Result<Value<'static>, String> {
+impl<'a> ValueExt for BorrowedStringValue<'a> {
+  fn eval<'b>(
+    &'b self,
+    runtime: &'b Runtime,
+    arguments: CreationArguments<'b>,
+  ) -> Result<BorrowedValue<'static>, String> {
     match self {
       Self::Join { values, separator } => Ok(
         values
@@ -29,8 +29,12 @@ impl<'a> ValueExt<'a> for StringValue<'a> {
           .map(|value| {
             value
               .eval(runtime, arguments.clone())?
-              .to_string()
-              .ok_or_else(|| "value could not be converted to a string".to_owned())
+              .get_concrete()
+              .ok_or_else(|| "value can not be determened".to_owned())
+          })
+          .map(|value| match value? {
+            ConcreteValue::String(value) => Ok(value.to_owned()),
+            _ => Err("value could not be converted to a string".to_owned()),
           })
           .collect::<Result<String, _>>()?
           .into(),
@@ -39,50 +43,27 @@ impl<'a> ValueExt<'a> for StringValue<'a> {
     }
   }
 
-  fn to_bool(self) -> Option<bool> {
-    self.to_string().map(|s| !s.is_empty())
-  }
-
-  fn to_decimal(self) -> Option<Decimal> {
-    self.to_string()?.parse().ok()
-  }
-
-  fn to_int(self) -> Option<i32> {
-    self.to_string()?.parse().ok()
-  }
-
-  fn to_path(self) -> Option<PathBuf> {
-    self.to_string().map(PathBuf::from)
-  }
-
-  fn to_string(self) -> Option<String> {
+  fn get_concrete(&self) -> Option<ConcreteValue> {
     match self {
-      StringValue::Value(value) => Some(value.into()),
-      StringValue::Join { values, separator } => {
-        let separator = separator
-          .and_then(|value| value.to_string())
-          .unwrap_or_default();
-        let values: Vec<String> = values.into_iter().filter_map(Self::to_string).collect();
-        Some(values.join(&separator))
-      }
-      Self::GetArgument(_) => None,
+      Self::Value(value) => Some(value.clone().into_owned().into()),
+      _ => None,
     }
   }
 }
 
-impl<'a> From<&'a str> for StringValue<'a> {
-  fn from(string: &'a str) -> Self {
+#[duplicate_item(
+  value_type;
+  [&'a str];
+  [String];
+  [Cow<'a, str>];
+)]
+impl<'a> From<value_type> for BorrowedStringValue<'a> {
+  fn from(string: value_type) -> Self {
     Self::Value(string.into())
   }
 }
 
-impl<'a> From<String> for StringValue<'a> {
-  fn from(string: String) -> Self {
-    Self::Value(string.into())
-  }
-}
-
-impl<'a> From<Vec<String>> for StringValue<'a> {
+impl<'a> From<Vec<String>> for BorrowedStringValue<'a> {
   fn from(strings: Vec<String>) -> Self {
     Self::Join {
       values: strings.into_iter().map(Into::into).collect(),

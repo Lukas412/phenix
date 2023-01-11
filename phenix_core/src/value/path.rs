@@ -1,23 +1,28 @@
-use std::path::PathBuf;
+use std::{
+  borrow::Cow,
+  path::{Path, PathBuf},
+};
 
-use crate::{CreationArguments, Identifier, Runtime, Value};
+use duplicate::duplicate_item;
 
-use super::ValueExt;
+use crate::{BorrowedIdentifier, BorrowedValue, CreationArguments, Runtime};
+
+use super::{ConcreteValue, ValueExt};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum PathValue<'a> {
-  Value(PathBuf),
-  GetArgument(Identifier<'a>),
+pub enum BorrowedPathValue<'a> {
+  Value(Cow<'a, Path>),
+  GetArgument(BorrowedIdentifier<'a>),
 }
 
-impl<'a> ValueExt<'a> for PathValue<'a> {
-  fn eval(
-    &'a self,
-    runtime: &'a Runtime,
-    arguments: CreationArguments<'a>,
-  ) -> Result<Value<'static>, String> {
+impl<'a> ValueExt for BorrowedPathValue<'a> {
+  fn eval<'b>(
+    &'b self,
+    runtime: &'b Runtime,
+    arguments: CreationArguments<'b>,
+  ) -> Result<BorrowedValue<'static>, String> {
     match self {
-      Self::Value(value) => Ok(value.clone().into()),
+      Self::Value(value) => Ok(value.to_owned().into()),
       Self::GetArgument(identifier) => {
         let creation = arguments
           .get(identifier)
@@ -27,32 +32,22 @@ impl<'a> ValueExt<'a> for PathValue<'a> {
     }
   }
 
-  fn to_bool(self) -> Option<bool> {
-    None
-  }
-
-  fn to_int(self) -> Option<i32> {
-    None
-  }
-
-  fn to_decimal(self) -> Option<rust_decimal::Decimal> {
-    None
-  }
-
-  fn to_path(self) -> Option<PathBuf> {
+  fn get_concrete(&self) -> Option<ConcreteValue> {
     match self {
-      Self::Value(value) => Some(value),
-      Self::GetArgument(_) => None,
+      Self::Value(value) => Some(value.clone().into_owned().into()),
+      _ => None,
     }
-  }
-
-  fn to_string(self) -> Option<String> {
-    None
   }
 }
 
-impl<'a> From<PathBuf> for PathValue<'a> {
-  fn from(path: PathBuf) -> Self {
-    Self::Value(path)
+#[duplicate_item(
+  value_type;
+  [&'a Path];
+  [PathBuf];
+  [Cow<'a, Path>];
+)]
+impl<'a> From<value_type> for BorrowedPathValue<'a> {
+  fn from(value: value_type) -> Self {
+    Self::Value(value.into())
   }
 }

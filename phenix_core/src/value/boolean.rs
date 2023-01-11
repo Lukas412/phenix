@@ -2,94 +2,51 @@ use std::ops::{BitAnd, BitOr};
 
 use rust_decimal::Decimal;
 
-use crate::{CreationArguments, Identifier, Runtime, Value};
+use crate::{BorrowedIdentifier, BorrowedValue, CreationArguments, Runtime};
 
-use super::ValueExt;
+use super::{ConcreteValue, ValueExt};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum BooleanValue<'a> {
-  True,
-  False,
+pub enum BorrowedBooleanValue<'a> {
+  Value(bool),
   Or(Vec<Self>),
   And(Vec<Self>),
-  GetArgument(Identifier<'a>),
+  GetArgument(BorrowedIdentifier<'a>),
 }
 
-impl<'a> ValueExt<'a> for BooleanValue<'a> {
-  fn eval(
-    &'a self,
-    runtime: &'a Runtime,
-    arguments: CreationArguments<'a>,
-  ) -> Result<Value<'static>, String> {
+impl<'a> ValueExt for BorrowedBooleanValue<'a> {
+  fn eval<'b>(
+    &'b self,
+    runtime: &'b Runtime,
+    arguments: CreationArguments<'b>,
+  ) -> Result<BorrowedValue<'static>, String> {
     match self {
-      BooleanValue::Or(values) => {
-        values
-          .iter()
-          .fold(Ok(false.into()), |result, value| match result {
-            Ok(Value::Boolean(Self::False)) => value.eval(runtime, arguments.clone()),
-            result => result,
-          })
-      }
-      BooleanValue::And(values) => {
-        values
-          .iter()
-          .fold(Ok(true.into()), |result, value| match result {
-            Ok(Value::Boolean(Self::True)) => value.eval(runtime, arguments.clone()),
-            result => result,
-          })
-      }
+      Self::Or(values) => values
+        .iter()
+        .fold(Ok(false.into()), |result, value| match result {
+          Ok(BorrowedValue::Boolean(Self::Value(false))) => value.eval(runtime, arguments.clone()),
+          result => result,
+        }),
+      Self::And(values) => values
+        .iter()
+        .fold(Ok(true.into()), |result, value| match result {
+          Ok(BorrowedValue::Boolean(Self::Value(true))) => value.eval(runtime, arguments.clone()),
+          result => result,
+        }),
       _ => Ok(self.clone().into()),
     }
   }
 
-  fn to_bool(self) -> Option<bool> {
+  fn get_concrete(&self) -> Option<ConcreteValue> {
     match self {
-      Self::True => Some(true),
-      Self::False => Some(false),
-      Self::Or(values) => values_to_bool(values, false, BitOr::bitor),
-      Self::And(values) => values_to_bool(values, true, BitAnd::bitand),
-      Self::GetArgument(_) => todo!(),
+      Self::Value(value) => Some(value.clone().into()),
+      _ => None,
     }
-  }
-
-  fn to_int(self) -> Option<i32> {
-    self.to_bool().map(Into::into)
-  }
-
-  fn to_decimal(self) -> Option<Decimal> {
-    None
-  }
-
-  fn to_path(self) -> Option<std::path::PathBuf> {
-    None
-  }
-
-  fn to_string(self) -> Option<String> {
-    self.to_bool().map(|value| match value {
-      true => "true".to_owned(),
-      false => "false".to_owned(),
-    })
   }
 }
 
-impl<'a> From<bool> for BooleanValue<'a> {
+impl<'a> From<bool> for BorrowedBooleanValue<'a> {
   fn from(boolean: bool) -> Self {
-    match boolean {
-      true => Self::True,
-      false => Self::False,
-    }
+    Self::Value(boolean)
   }
-}
-
-fn values_to_bool<'a>(
-  values: Vec<BooleanValue<'a>>,
-  default: bool,
-  combine_func: impl Fn(bool, bool) -> bool,
-) -> Option<bool> {
-  values
-    .into_iter()
-    .map(BooleanValue::to_bool)
-    .fold(Some(default), |result, value| {
-      result.zip(value).map(|v| combine_func(v.0, v.1))
-    })
 }

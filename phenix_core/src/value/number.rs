@@ -1,67 +1,63 @@
-use std::path::PathBuf;
+use crate::{BorrowedIdentifier, BorrowedValue, CreationArguments, Runtime};
+use duplicate::duplicate_item;
+use rust_decimal::Decimal;
 
-use crate::{CreationArguments, Identifier, Runtime, Value};
-use rust_decimal::{
-  prelude::{FromPrimitive, ToPrimitive},
-  Decimal,
-};
-
-use super::ValueExt;
+use super::{ConcreteValue, ValueExt};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum NumberValue<'a> {
-  Int(i32),
+pub enum Number {
+  Integer(i32),
+  Unsigned(u32),
   Decimal(Decimal),
-  GetArgument(Identifier<'a>),
 }
 
-impl<'a> ValueExt<'a> for NumberValue<'a> {
-  fn eval(
-    &'a self,
-    runtime: &'a Runtime,
-    arguments: CreationArguments<'a>,
-  ) -> Result<Value<'static>, String> {
+#[duplicate_item(
+  value_type_name value_type;
+  [Self::Integer] [i32];
+  [Self::Unsigned] [u32];
+  [Self::Decimal] [Decimal];
+)]
+impl From<value_type> for Number {
+  fn from(value: value_type) -> Self {
+    value_type_name(value)
+  }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum BorrowedNumberValue<'a> {
+  Value(Number),
+  GetArgument(BorrowedIdentifier<'a>),
+}
+
+impl<'a> ValueExt for BorrowedNumberValue<'a> {
+  fn eval<'b>(
+    &'b self,
+    runtime: &'b Runtime,
+    arguments: CreationArguments<'b>,
+  ) -> Result<BorrowedValue<'static>, String> {
     match self {
+      Self::Value(value) => Ok(value.to_owned().into()),
       Self::GetArgument(_) => todo!(),
-      _ => Ok(self.to_owned().into()),
     }
   }
 
-  fn to_bool(self) -> Option<bool> {
-    self.to_int().map(|value| value != 0)
-  }
-
-  fn to_int(self) -> Option<i32> {
+  fn get_concrete(&self) -> Option<ConcreteValue> {
     match self {
-      Self::Int(value) => Some(value),
-      Self::Decimal(value) => value.to_i32(),
-      Self::GetArgument(_) => None,
-    }
-  }
-
-  fn to_decimal(self) -> Option<Decimal> {
-    match self {
-      Self::Int(value) => FromPrimitive::from_i32(value),
-      Self::Decimal(value) => Some(value),
-      Self::GetArgument(_) => None,
-    }
-  }
-
-  fn to_path(self) -> Option<PathBuf> {
-    None
-  }
-
-  fn to_string(self) -> Option<String> {
-    match self {
-      Self::Int(value) => Some(value.to_string()),
-      Self::Decimal(value) => Some(value.to_string()),
-      Self::GetArgument(_) => None,
+      Self::Value(value) => Some(value.clone().into()),
+      _ => None,
     }
   }
 }
 
-impl<'a> From<i32> for NumberValue<'a> {
-  fn from(number: i32) -> Self {
-    Self::Int(number)
+#[duplicate_item(
+  value_type;
+  [i32];
+  [u32];
+  [Decimal];
+  [Number];
+)]
+impl<'a> From<value_type> for BorrowedNumberValue<'a> {
+  fn from(number: value_type) -> Self {
+    Self::Value(number.into())
   }
 }
