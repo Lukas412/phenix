@@ -1,51 +1,101 @@
 use std::collections::HashMap;
 
-use crate::{BorrowedNamespace, BorrowedValue, Creation, ValueExt};
+use crate::creation::ComplexCreation;
+use crate::evaluate::EvaluateResult;
+use crate::{
+  ActionExpression, AnyExpression, AnyValue, BooleanExpression, ComplexCreationArguments, Creation,
+  Evaluate, EvaluateErr, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression,
+  StringExpression,
+};
 
 #[derive(Debug, Default)]
-pub struct Runtime<'a> {
-  values: HashMap<BorrowedNamespace<'a>, BorrowedValue<'a>>,
+pub struct Runtime {
+  values: HashMap<Namespace, AnyExpression>,
 }
 
-impl<'a> Runtime<'a> {
-  pub fn eval<'b>(&'b self, creation: &'b Creation<'b>) -> Result<BorrowedValue<'static>, String> {
+impl Runtime {
+  pub fn evaluate<'b>(&'b self, creation: &'b Creation) -> EvaluateResult<AnyValue> {
     match creation {
-      Creation::Value(value) => Ok(value.clone().into()),
-      Creation::Complex { namespace, values } => {
-        let value = self
-          .get_value(&namespace)
-          .ok_or_else(|| "value not found".to_owned())?;
-
-        value.eval(self, values.clone())
+      Creation::Expression(expression) => {
+        expression.evaluate(self, ComplexCreationArguments::default())
       }
+      Creation::Complex(complex) => self
+        .get_expression(complex.namespace())?
+        .evaluate(self, complex.values().to_owned()),
     }
   }
 
-  fn get_value<'b>(&'a self, namespace: &'b BorrowedNamespace<'a>) -> Option<&'a BorrowedValue> {
-    self.values.get(namespace)
+  fn get_expression(
+    &self,
+    namespace: &Namespace,
+  ) -> Result<&AnyExpression, ExpressionNotFoundError> {
+    self
+      .values
+      .get(namespace)
+      .ok_or_else(|| ExpressionNotFoundError::new(namespace.to_owned()))
   }
-}
 
-impl<'a> From<RuntimeBuilder<'a>> for Runtime<'a> {
-  fn from(builder: RuntimeBuilder<'a>) -> Self {
-    Self {
-      values: builder.values,
-    }
+  fn new(values: HashMap<Namespace, AnyExpression>) -> Self {
+    Self { values }
   }
 }
 
 #[derive(Default)]
-pub struct RuntimeBuilder<'a> {
-  values: HashMap<BorrowedNamespace<'a>, BorrowedValue<'a>>,
+pub struct RuntimeBuilder {
+  values: HashMap<Namespace, AnyExpression>,
 }
 
-impl<'a> RuntimeBuilder<'a> {
-  pub fn build(self) -> Runtime<'a> {
-    self.into()
+impl RuntimeBuilder {
+  pub fn build(self) -> Runtime {
+    Runtime::new(self.values)
   }
 
-  pub fn with_value(mut self, namespace: BorrowedNamespace<'a>, value: BorrowedValue<'a>) -> Self {
-    self.values.insert(namespace, value);
+  pub fn with_action<N, E>(mut self, namespace: N, action: E) -> Self
+  where
+    N: Into<Namespace>,
+    E: Into<ActionExpression>,
+  {
+    self.with_expression(namespace, action.into())
+  }
+
+  pub fn with_boolean<N, E>(mut self, namespace: N, boolean: E) -> Self
+  where
+    N: Into<Namespace>,
+    E: Into<BooleanExpression>,
+  {
+    self.with_expression(namespace, boolean.into())
+  }
+
+  pub fn with_number<N, E>(mut self, namespace: N, number: E) -> Self
+  where
+    N: Into<Namespace>,
+    E: Into<NumberExpression>,
+  {
+    self.with_expression(namespace, number.into())
+  }
+
+  pub fn with_path<N, E>(mut self, namespace: N, path: E) -> Self
+  where
+    N: Into<Namespace>,
+    E: Into<PathExpression>,
+  {
+    self.with_expression(namespace, path.into())
+  }
+
+  pub fn with_string<N, E>(mut self, namespace: N, string: E) -> Self
+  where
+    N: Into<Namespace>,
+    E: Into<StringExpression>,
+  {
+    self.with_expression(namespace, string.into())
+  }
+
+  pub fn with_expression<N, E>(mut self, namespace: N, value: E) -> Self
+  where
+    N: Into<Namespace>,
+    E: Into<AnyExpression>,
+  {
+    self.values.insert(namespace.into(), value.into());
     self
   }
 }

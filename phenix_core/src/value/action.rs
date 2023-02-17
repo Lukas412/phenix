@@ -1,49 +1,47 @@
-use duplicate::duplicate_item;
+use derive_more::{Display, From};
 
-use crate::{BorrowedIdentifier, BorrowedValue, CreationArguments, Runtime};
+use crate::evaluate::EvaluateResult;
+use crate::operations::GetArgumentOperation;
+use crate::value::array::ArrayValue;
+use crate::value::expression::Expression;
+use crate::value::path::PathValue;
+use crate::{
+  AnyValue, ComplexCreationArguments, Evaluate, EvaluateErr, PathExpression, Runtime,
+  StringExpression, StringValue,
+};
 
-use super::{ConcreteValue, ValueExt};
+pub type ActionExpression = Expression<ActionValue, ActionOperation>;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Action {}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum BorrowedActionValue<'a> {
-  Value(Action),
-  GetArgument(BorrowedIdentifier<'a>),
+#[derive(Clone, Debug, From)]
+pub enum ActionValue {
+  ChangeLocation {
+    location: PathExpression,
+    actions: ArrayValue<ActionExpression>,
+  },
+  ExecuteCommand {
+    name: StringExpression,
+    arguments: ArrayValue<StringExpression>,
+  },
+  WriteContent {
+    file: PathExpression,
+    content: StringExpression,
+  },
+  EnsureDirectory {
+    file: PathExpression,
+  },
 }
 
-impl<'a> ValueExt for BorrowedActionValue<'a> {
-  fn eval<'b>(
-    &'b self,
-    runtime: &'b Runtime,
-    arguments: CreationArguments<'b>,
-  ) -> Result<BorrowedValue<'static>, String> {
-    match self {
-      Self::Value(value) => Ok(value.clone().into()),
-      Self::GetArgument(identifier) => {
-        let creation = arguments
-          .get(identifier)
-          .ok_or_else(|| "could not get argument".to_owned())?;
-        runtime.eval(creation)
-      }
-    }
-  }
-
-  fn get_concrete(&self) -> Option<ConcreteValue> {
-    match self {
-      Self::Value(value) => Some(value.to_owned()),
-      Self::GetArgument(_) => None,
-    }
-  }
+#[derive(Clone, Debug)]
+pub enum ActionOperation {
+  GetArgument(GetArgumentOperation<ActionExpression>),
 }
 
-#[duplicate_item(
-  value_type;
-  [Action];
-)]
-impl<'a> From<value_type> for BorrowedActionValue<'a> {
-  fn from(value: value_type) -> Self {
-    Self::Value(value.into())
+impl Evaluate<ActionValue> for ActionOperation {
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<ActionValue> {
+    todo!()
   }
 }

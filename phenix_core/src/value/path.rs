@@ -1,53 +1,36 @@
-use std::{
-  borrow::Cow,
-  path::{Path, PathBuf},
-};
+use derive_more::{Display, From};
 
-use duplicate::duplicate_item;
+use crate::evaluate::EvaluateResult;
+use crate::operations::GetArgumentOperation;
+use crate::value::expression::Expression;
+use crate::{ComplexCreationArguments, Evaluate, Runtime};
+use std::borrow::Cow;
+use std::fmt::Display;
+use std::path::{Path, PathBuf};
 
-use crate::{BorrowedIdentifier, BorrowedValue, CreationArguments, Runtime};
+pub type PathExpression = Expression<PathValue, PathOperation>;
 
-use super::{ConcreteValue, ValueExt};
+#[derive(Clone, Debug, PartialEq, Eq, From)]
+#[from(forward)]
+pub struct PathValue(PathBuf);
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum BorrowedPathValue<'a> {
-  Value(Cow<'a, Path>),
-  GetArgument(BorrowedIdentifier<'a>),
-}
-
-impl<'a> ValueExt for BorrowedPathValue<'a> {
-  fn eval<'b>(
-    &'b self,
-    runtime: &'b Runtime,
-    arguments: CreationArguments<'b>,
-  ) -> Result<BorrowedValue<'static>, String> {
-    match self {
-      Self::Value(value) => Ok(value.to_owned().into()),
-      Self::GetArgument(identifier) => {
-        let creation = arguments
-          .get(identifier)
-          .ok_or_else(|| "could not get arument".to_owned())?;
-        runtime.eval(creation)
-      }
-    }
-  }
-
-  fn get_concrete(&self) -> Option<ConcreteValue> {
-    match self {
-      Self::Value(value) => Some(value.clone().into_owned().into()),
-      _ => None,
-    }
+impl Display for PathValue {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{}", self.0.to_string_lossy())
   }
 }
 
-#[duplicate_item(
-  value_type;
-  [&'a Path];
-  [PathBuf];
-  [Cow<'a, Path>];
-)]
-impl<'a> From<value_type> for BorrowedPathValue<'a> {
-  fn from(value: value_type) -> Self {
-    Self::Value(value.into())
+#[derive(Clone, Debug)]
+pub enum PathOperation {
+  GetArgument(GetArgumentOperation<PathExpression>),
+}
+
+impl Evaluate<PathValue> for PathOperation {
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<PathValue> {
+    todo!()
   }
 }

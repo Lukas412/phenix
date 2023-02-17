@@ -1,1 +1,3 @@
-pub type BorrowedName<'a> = &'a str;
+use std::borrow::Cow;
+
+pub type Name = String;

@@ -1,21 +1,35 @@
-use crate::{BorrowedName, BorrowedNamespace};
+use derive_more::Display;
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
-pub struct BorrowedIdentifier<'a> {
-  namespace: BorrowedNamespace<'a>,
-  name: BorrowedName<'a>,
+use super::{Name, Namespace};
+
+#[derive(Clone, Debug, Default, Display, PartialEq, Eq, Hash)]
+#[display(fmt = "{namespace}${name}")]
+pub struct Identifier {
+  namespace: Namespace,
+  name: Name,
 }
 
-impl<'a> BorrowedIdentifier<'a> {
-  fn new(namespace: BorrowedNamespace<'a>, name: BorrowedName<'a>) -> Self {
+impl Identifier {
+  const SEPARATOR: &str = "$";
+
+  fn new(namespace: Namespace, name: Name) -> Self {
     Self { namespace, name }
   }
 }
 
-impl<'a, T, U> From<(T, U)> for BorrowedIdentifier<'a>
+impl From<&str> for Identifier {
+  fn from(value: &str) -> Self {
+    value
+      .find(Self::SEPARATOR)
+      .map(|index| value.split_at(index).into())
+      .unwrap_or_default()
+  }
+}
+
+impl<T, U> From<(T, U)> for Identifier
 where
-  T: Into<BorrowedNamespace<'a>>,
-  U: Into<BorrowedName<'a>>,
+  T: Into<Namespace>,
+  U: Into<Name>,
 {
   fn from(values: (T, U)) -> Self {
     Self::new(values.0.into(), values.1.into())

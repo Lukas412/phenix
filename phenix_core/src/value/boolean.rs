@@ -1,52 +1,48 @@
-use std::ops::{BitAnd, BitOr};
+use derive_more::{Display, From};
 
-use rust_decimal::Decimal;
+use super::Expression;
+use crate::{
+  evaluate::EvaluateResult,
+  operations::{
+    AndOperation, EvaluateAdd, EvaluateAnd, EvaluateOr, GetArgumentOperation, OrOperation,
+  },
+  ComplexCreationArguments, Evaluate, Runtime,
+};
 
-use crate::{BorrowedIdentifier, BorrowedValue, CreationArguments, Runtime};
+pub type BooleanExpression = Expression<BooleanValue, BooleanOperation>;
 
-use super::{ConcreteValue, ValueExt};
+impl EvaluateAnd for BooleanExpression {
+  type Output = BooleanValue;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum BorrowedBooleanValue<'a> {
-  Value(bool),
-  Or(Vec<Self>),
-  And(Vec<Self>),
-  GetArgument(BorrowedIdentifier<'a>),
-}
-
-impl<'a> ValueExt for BorrowedBooleanValue<'a> {
-  fn eval<'b>(
-    &'b self,
-    runtime: &'b Runtime,
-    arguments: CreationArguments<'b>,
-  ) -> Result<BorrowedValue<'static>, String> {
-    match self {
-      Self::Or(values) => values
-        .iter()
-        .fold(Ok(false.into()), |result, value| match result {
-          Ok(BorrowedValue::Boolean(Self::Value(false))) => value.eval(runtime, arguments.clone()),
-          result => result,
-        }),
-      Self::And(values) => values
-        .iter()
-        .fold(Ok(true.into()), |result, value| match result {
-          Ok(BorrowedValue::Boolean(Self::Value(true))) => value.eval(runtime, arguments.clone()),
-          result => result,
-        }),
-      _ => Ok(self.clone().into()),
-    }
-  }
-
-  fn get_concrete(&self) -> Option<ConcreteValue> {
-    match self {
-      Self::Value(value) => Some(value.clone().into()),
-      _ => None,
-    }
+  fn evaluate_and(self, rhs: Self) -> Self::Output {
+    todo!()
   }
 }
 
-impl<'a> From<bool> for BorrowedBooleanValue<'a> {
-  fn from(boolean: bool) -> Self {
-    Self::Value(boolean)
+impl EvaluateOr for BooleanExpression {
+  type Output = BooleanValue;
+
+  fn evaluate_or(self, rhs: Self) -> Self::Output {
+    todo!()
+  }
+}
+
+#[derive(Clone, Debug, Display, From)]
+pub struct BooleanValue(bool);
+
+#[derive(Clone, Debug)]
+pub enum BooleanOperation {
+  And(AndOperation<BooleanExpression>),
+  Or(OrOperation<BooleanExpression>),
+  GetArgument(GetArgumentOperation<BooleanExpression>),
+}
+
+impl Evaluate<BooleanValue> for BooleanOperation {
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<BooleanValue> {
+    todo!()
   }
 }

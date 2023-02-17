@@ -1,18 +1,27 @@
-use std::path::PathBuf;
-
-use phenix_core::{ComplexCreationBuilder, RuntimeBuilder};
+use phenix_core::{AddOperation, ComplexCreationBuilder, GetArgumentOperation, RuntimeBuilder};
+use phenix_std::RuntimeBuilderStdExt;
 
 fn main() {
   let runtime = RuntimeBuilder::default()
-    .with_value("test::pack::bool".into(), true.into())
-    .with_value("test::pack::number".into(), 42.into())
-    .with_value("test::pack::path".into(), PathBuf::from("test/path").into())
-    .with_value("test::pack::string".into(), "test-string".into())
+    .with_std()
+    .with_number(
+      "test:number",
+      AddOperation::new(
+        GetArgumentOperation::new("test:number$a"),
+        GetArgumentOperation::new("test:number$b"),
+      ),
+    )
     .build();
 
-  let creation = ComplexCreationBuilder::new("test::pack::number".into()).build();
+  let creation = ComplexCreationBuilder::new("test:number")
+    .with("test:number$a", 1)
+    .with("test:number$b", 2)
+    .into();
 
-  let result = runtime.eval(&creation);
+  let result = runtime.evaluate(&creation);
 
-  println!("{:?}", result);
+  match result {
+    Ok(value) => println!("{:?}", value),
+    Err(error) => println!("{}", error),
+  }
 }

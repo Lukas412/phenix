@@ -1,22 +1,34 @@
-use crate::BorrowedName;
+use std::fmt::{Display, Formatter};
+
+use super::Name;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
-pub struct BorrowedNamespace<'a> {
-  parts: Vec<BorrowedName<'a>>,
+pub struct Namespace {
+  parts: Vec<Name>,
 }
 
-impl<'a> From<BorrowedName<'a>> for BorrowedNamespace<'a> {
-  fn from(string: BorrowedName<'a>) -> Self {
+impl Namespace {
+  const SEPARATOR: &str = ":";
+}
+
+impl Display for Namespace {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{}", self.parts.join(Self::SEPARATOR))
+  }
+}
+
+impl From<&str> for Namespace {
+  fn from(string: &str) -> Self {
     string
-      .split("::")
-      .map(BorrowedName::from)
+      .split(Self::SEPARATOR)
+      .map(Name::from)
       .collect::<Vec<_>>()
       .into()
   }
 }
 
-impl<'a> From<Vec<BorrowedName<'a>>> for BorrowedNamespace<'a> {
-  fn from(parts: Vec<BorrowedName<'a>>) -> Self {
+impl From<Vec<Name>> for Namespace {
+  fn from(parts: Vec<Name>) -> Self {
     Self { parts }
   }
 }

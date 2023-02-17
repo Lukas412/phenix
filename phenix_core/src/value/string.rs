@@ -1,73 +1,47 @@
-use std::borrow::Cow;
-
+use derive_more::{Display, From};
 use duplicate::duplicate_item;
 
-use crate::{BorrowedIdentifier, BorrowedValue, CreationArguments, Runtime};
+use crate::evaluate::EvaluateResult;
+use crate::operations::GetArgumentOperation;
+use crate::value::expression::Expression;
+use crate::{ComplexCreationArguments, Evaluate, Runtime};
+use std::borrow::Cow;
 
-use super::{ConcreteValue, ValueExt};
+pub type StringExpression = Expression<StringValue, StringOperation>;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum BorrowedStringValue<'a> {
-  Value(Cow<'a, str>),
-  Join {
-    values: Vec<Self>,
-    separator: Option<Box<Self>>,
-  },
-  GetArgument(BorrowedIdentifier<'a>),
+#[duplicate_item(FromType; [&str]; [String];)]
+impl From<FromType> for StringExpression {
+  fn from(value: FromType) -> Self {
+    Self::Value(value.into())
+  }
 }
 
-impl<'a> ValueExt for BorrowedStringValue<'a> {
-  fn eval<'b>(
-    &'b self,
-    runtime: &'b Runtime,
-    arguments: CreationArguments<'b>,
-  ) -> Result<BorrowedValue<'static>, String> {
-    match self {
-      Self::Join { values, separator } => Ok(
-        values
-          .iter()
-          .map(|value| {
-            value
-              .eval(runtime, arguments.clone())?
-              .get_concrete()
-              .ok_or_else(|| "value can not be determened".to_owned())
-          })
-          .map(|value| match value? {
-            ConcreteValue::String(value) => Ok(value.to_owned()),
-            _ => Err("value could not be converted to a string".to_owned()),
-          })
-          .collect::<Result<String, _>>()?
-          .into(),
-      ),
-      value => Ok(value.clone().into()),
-    }
-  }
+#[derive(Clone, Debug, Default, Display, PartialEq, Eq)]
+#[display(fmt = "\"{value}\"")]
+pub struct StringValue {
+  value: String,
+}
 
-  fn get_concrete(&self) -> Option<ConcreteValue> {
-    match self {
-      Self::Value(value) => Some(value.clone().into_owned().into()),
-      _ => None,
+#[duplicate_item(FromType; [&str]; [String];)]
+impl From<FromType> for StringValue {
+  fn from(value: FromType) -> Self {
+    StringValue {
+      value: value.into(),
     }
   }
 }
 
-#[duplicate_item(
-  value_type;
-  [&'a str];
-  [String];
-  [Cow<'a, str>];
-)]
-impl<'a> From<value_type> for BorrowedStringValue<'a> {
-  fn from(string: value_type) -> Self {
-    Self::Value(string.into())
-  }
+#[derive(Clone, Debug)]
+pub enum StringOperation {
+  GetArgument(GetArgumentOperation<StringExpression>),
 }
 
-impl<'a> From<Vec<String>> for BorrowedStringValue<'a> {
-  fn from(strings: Vec<String>) -> Self {
-    Self::Join {
-      values: strings.into_iter().map(Into::into).collect(),
-      separator: None,
-    }
+impl Evaluate<StringValue> for StringOperation {
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<StringValue> {
+    todo!()
   }
 }

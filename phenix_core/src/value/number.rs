@@ -1,63 +1,64 @@
-use crate::{BorrowedIdentifier, BorrowedValue, CreationArguments, Runtime};
+use std::ops::Add;
+
+use crate::evaluate::EvaluateResult;
+use crate::operations::{
+  AddOperation, EqualsOperation, EvaluateAdd, EvaluateEquals, EvaluateSub, GetArgumentOperation,
+  SubOperation,
+};
+use crate::value::expression::Expression;
+use crate::{runtime, BooleanValue, ComplexCreationArguments, Evaluate, EvaluateErr, Runtime};
+use derive_more::{Add, Display, From};
 use duplicate::duplicate_item;
 use rust_decimal::Decimal;
 
-use super::{ConcreteValue, ValueExt};
+pub type NumberExpression = Expression<NumberValue, NumberOperation>;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Number {
-  Integer(i32),
-  Unsigned(u32),
-  Decimal(Decimal),
-}
-
-#[duplicate_item(
-  value_type_name value_type;
-  [Self::Integer] [i32];
-  [Self::Unsigned] [u32];
-  [Self::Decimal] [Decimal];
-)]
-impl From<value_type> for Number {
-  fn from(value: value_type) -> Self {
-    value_type_name(value)
+#[duplicate_item(FromType; [i8]; [i16]; [i32]; [i64]; [u8]; [u16]; [u32]; [u64]; [Decimal];)]
+impl From<FromType> for NumberExpression {
+  fn from(value: FromType) -> Self {
+    Self::Value(value.into())
   }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum BorrowedNumberValue<'a> {
-  Value(Number),
-  GetArgument(BorrowedIdentifier<'a>),
+#[duplicate_item(FromType; [AddOperation<NumberExpression>]; [GetArgumentOperation<NumberExpression>];)]
+impl From<FromType> for NumberExpression {
+  fn from(operation: FromType) -> Self {
+    Self::Operation(Box::new(operation.into()))
+  }
 }
 
-impl<'a> ValueExt for BorrowedNumberValue<'a> {
-  fn eval<'b>(
-    &'b self,
-    runtime: &'b Runtime,
-    arguments: CreationArguments<'b>,
-  ) -> Result<BorrowedValue<'static>, String> {
+#[derive(Clone, Debug, Display, PartialEq, Eq, From)]
+#[from(forward)]
+pub struct NumberValue(Decimal);
+
+impl Add for NumberValue {
+  type Output = EvaluateResult<Self>;
+
+  fn add(self, rhs: Self) -> Self::Output {
+    let result = self.0 + rhs.0;
+    Ok(result.into())
+  }
+}
+
+#[derive(Clone, Debug, From)]
+pub enum NumberOperation {
+  Add(AddOperation<NumberExpression>),
+  Sub(SubOperation<NumberExpression>),
+  Equals(EqualsOperation<NumberExpression>),
+  GetArgument(GetArgumentOperation<NumberExpression>),
+}
+
+impl Evaluate<NumberValue> for NumberOperation {
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<NumberValue> {
     match self {
-      Self::Value(value) => Ok(value.to_owned().into()),
-      Self::GetArgument(_) => todo!(),
+      Self::Add(operation) => operation.evaluate(runtime, arguments),
+      Self::Sub(_) => todo!(),
+      Self::Equals(_) => todo!(),
+      Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
-  }
-
-  fn get_concrete(&self) -> Option<ConcreteValue> {
-    match self {
-      Self::Value(value) => Some(value.clone().into()),
-      _ => None,
-    }
-  }
-}
-
-#[duplicate_item(
-  value_type;
-  [i32];
-  [u32];
-  [Decimal];
-  [Number];
-)]
-impl<'a> From<value_type> for BorrowedNumberValue<'a> {
-  fn from(number: value_type) -> Self {
-    Self::Value(number.into())
   }
 }
