@@ -14,8 +14,7 @@ fn main() {
     .build();
 
   let creation = ComplexCreationBuilder::new("test:number")
-    .with("test:number$a", 1)
-    .with("test:number$b", 2)
+    .with("test:number$a", 100)
     .into();
 
   let result = runtime.evaluate(&creation);

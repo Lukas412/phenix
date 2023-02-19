@@ -3,14 +3,14 @@ use derive_more::Display;
 use super::{Name, Namespace};
 
 #[derive(Clone, Debug, Default, Display, PartialEq, Eq, Hash)]
-#[display(fmt = "{namespace}${name}")]
+#[display(fmt = "{namespace}{name}")]
 pub struct Identifier {
   namespace: Namespace,
   name: Name,
 }
 
 impl Identifier {
-  const SEPARATOR: &str = "$";
+  const SEPARATOR: &'static str = "$";
 
   fn new(namespace: Namespace, name: Name) -> Self {
     Self { namespace, name }
