@@ -55,9 +55,13 @@ impl TryFrom<AnyValue> for NumberValue {
 
 #[derive(Clone, Debug, From)]
 pub enum NumberOperation {
+  #[from]
   Add(AddOperation<NumberExpression>),
+  #[from]
   Sub(SubOperation<NumberExpression>),
+  #[from]
   Equals(EqualsOperation<NumberExpression>),
+  #[from(forward)]
   GetArgument(GetArgumentOperation),
 }
 

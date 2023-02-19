@@ -32,6 +32,7 @@ pub struct StringValue {
 
 #[derive(Clone, Debug, From)]
 pub enum StringOperation {
+  #[from(forward)]
   GetArgument(GetArgumentOperation),
 }
 
