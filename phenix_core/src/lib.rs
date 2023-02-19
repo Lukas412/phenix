@@ -1,5 +1,3 @@
-#![allow(unused, dead_code)]
-
 pub use crate::{
   creation::{ComplexCreationArguments, ComplexCreationBuilder, Creation},
   error::{ArgumentNotFoundError, EvaluateError, ExpressionNotFoundError, ExtractTypeFromAnyError, GetArgumentOperationError, ToType},
