@@ -1,14 +1,14 @@
 use std::ops::Add;
 
-use derive_more::{Add, Display, From};
+use derive_more::{Display, From};
 use duplicate::duplicate_item;
 use rust_decimal::Decimal;
 
-use crate::{AnyValue, BooleanValue, ComplexCreationArguments, Evaluate, EvaluateError, runtime, Runtime, ToType};
+use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, Runtime, ToType};
 use crate::error::ExtractTypeFromAnyError;
 use crate::evaluate::EvaluateResult;
 use crate::operations::{
-  AddOperation, EqualsOperation, EvaluateEquals, EvaluateSub, GetArgumentOperation,
+  AddOperation, EqualsOperation, GetArgumentOperation,
   SubOperation,
 };
 use crate::value::expression::Expression;

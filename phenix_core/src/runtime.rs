@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
-use crate::creation::ComplexCreation;
+
 use crate::evaluate::EvaluateResult;
 use crate::{
   ActionExpression, AnyExpression, AnyValue, BooleanExpression, ComplexCreationArguments, Creation,
-  Evaluate, EvaluateError, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression,
+  Evaluate, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression,
   StringExpression,
 };
 
@@ -50,7 +50,7 @@ impl RuntimeBuilder {
     Runtime::new(self.values)
   }
 
-  pub fn with_action<N, E>(mut self, namespace: N, action: E) -> Self
+  pub fn with_action<N, E>(self, namespace: N, action: E) -> Self
   where
     N: Into<Namespace>,
     E: Into<ActionExpression>,
@@ -58,7 +58,7 @@ impl RuntimeBuilder {
     self.with_expression(namespace, action.into())
   }
 
-  pub fn with_boolean<N, E>(mut self, namespace: N, boolean: E) -> Self
+  pub fn with_boolean<N, E>(self, namespace: N, boolean: E) -> Self
   where
     N: Into<Namespace>,
     E: Into<BooleanExpression>,
@@ -66,7 +66,7 @@ impl RuntimeBuilder {
     self.with_expression(namespace, boolean.into())
   }
 
-  pub fn with_number<N, E>(mut self, namespace: N, number: E) -> Self
+  pub fn with_number<N, E>(self, namespace: N, number: E) -> Self
   where
     N: Into<Namespace>,
     E: Into<NumberExpression>,
@@ -74,7 +74,7 @@ impl RuntimeBuilder {
     self.with_expression(namespace, number.into())
   }
 
-  pub fn with_path<N, E>(mut self, namespace: N, path: E) -> Self
+  pub fn with_path<N, E>(self, namespace: N, path: E) -> Self
   where
     N: Into<Namespace>,
     E: Into<PathExpression>,
@@ -82,7 +82,7 @@ impl RuntimeBuilder {
     self.with_expression(namespace, path.into())
   }
 
-  pub fn with_string<N, E>(mut self, namespace: N, string: E) -> Self
+  pub fn with_string<N, E>(self, namespace: N, string: E) -> Self
   where
     N: Into<Namespace>,
     E: Into<StringExpression>,

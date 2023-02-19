@@ -1,4 +1,4 @@
-use crate::{BooleanValue, Expression};
+use crate::{BooleanValue};
 use std::fmt::Debug;
 
 pub trait EvaluateEquals<Rhs = Self> {

@@ -14,7 +14,7 @@ pub type BooleanExpression = Expression<BooleanValue, BooleanOperation>;
 impl EvaluateAnd for BooleanExpression {
   type Output = BooleanValue;
 
-  fn evaluate_and(self, rhs: Self) -> Self::Output {
+  fn evaluate_and(self, _rhs: Self) -> Self::Output {
     todo!()
   }
 }
@@ -22,7 +22,7 @@ impl EvaluateAnd for BooleanExpression {
 impl EvaluateOr for BooleanExpression {
   type Output = BooleanValue;
 
-  fn evaluate_or(self, rhs: Self) -> Self::Output {
+  fn evaluate_or(self, _rhs: Self) -> Self::Output {
     todo!()
   }
 }
@@ -40,8 +40,8 @@ pub enum BooleanOperation {
 impl Evaluate<BooleanValue> for BooleanOperation {
   fn evaluate(
     &self,
-    runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    _runtime: &Runtime,
+    _arguments: ComplexCreationArguments,
   ) -> EvaluateResult<BooleanValue> {
     todo!()
   }

@@ -5,7 +5,7 @@ use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::value::expression::Expression;
 use crate::{ComplexCreationArguments, Evaluate, Runtime};
-use std::borrow::Cow;
+
 
 pub type StringExpression = Expression<StringValue, StringOperation>;
 
@@ -38,8 +38,8 @@ pub enum StringOperation {
 impl Evaluate<StringValue> for StringOperation {
   fn evaluate(
     &self,
-    runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    _runtime: &Runtime,
+    _arguments: ComplexCreationArguments,
   ) -> EvaluateResult<StringValue> {
     todo!()
   }

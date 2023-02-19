@@ -3,8 +3,8 @@ use std::fmt::Debug;
 use duplicate::duplicate_item;
 
 use crate::{
-  evaluate::EvaluateResult, ActionOperation, ActionValue, AnyValue, BooleanOperation, BooleanValue,
-  ComplexCreationArguments, Evaluate, EvaluateError, NumberOperation, NumberValue, PathOperation,
+  evaluate::EvaluateResult, ActionOperation, ActionValue, BooleanOperation, BooleanValue,
+  ComplexCreationArguments, Evaluate, NumberOperation, NumberValue, PathOperation,
   PathValue, Runtime, StringOperation, StringValue,
 };
 

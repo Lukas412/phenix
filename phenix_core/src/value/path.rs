@@ -1,12 +1,12 @@
-use derive_more::{Display, From};
+use derive_more::{From};
 
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::value::expression::Expression;
 use crate::{ComplexCreationArguments, Evaluate, Runtime};
-use std::borrow::Cow;
+
 use std::fmt::Display;
-use std::path::{Path, PathBuf};
+use std::path::{PathBuf};
 
 pub type PathExpression = Expression<PathValue, PathOperation>;
 
@@ -28,8 +28,8 @@ pub enum PathOperation {
 impl Evaluate<PathValue> for PathOperation {
   fn evaluate(
     &self,
-    runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    _runtime: &Runtime,
+    _arguments: ComplexCreationArguments,
   ) -> EvaluateResult<PathValue> {
     todo!()
   }

@@ -1,13 +1,13 @@
-use derive_more::{Display, From};
+use derive_more::{From};
 
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::value::array::ArrayValue;
 use crate::value::expression::Expression;
-use crate::value::path::PathValue;
+
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, PathExpression, Runtime,
-  StringExpression, StringValue,
+  ComplexCreationArguments, Evaluate, PathExpression, Runtime,
+  StringExpression,
 };
 
 pub type ActionExpression = Expression<ActionValue, ActionOperation>;
@@ -39,8 +39,8 @@ pub enum ActionOperation {
 impl Evaluate<ActionValue> for ActionOperation {
   fn evaluate(
     &self,
-    runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    _runtime: &Runtime,
+    _arguments: ComplexCreationArguments,
   ) -> EvaluateResult<ActionValue> {
     todo!()
   }
