@@ -3,7 +3,7 @@ use derive_more::{From};
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::value::expression::Expression;
-use crate::{ComplexCreationArguments, Evaluate, Runtime};
+use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError, Runtime, ToType};
 
 use std::fmt::Display;
 use std::path::{PathBuf};
@@ -20,17 +20,32 @@ impl Display for PathValue {
   }
 }
 
-#[derive(Clone, Debug)]
-pub enum PathOperation {
-  GetArgument(GetArgumentOperation),
+impl TryFrom<AnyValue> for PathValue {
+  type Error = EvaluateError;
+
+  fn try_from(value: AnyValue) -> Result<Self, Self::Error> {
+    match value {
+      AnyValue::Path(value) => Ok(value),
+      any => Err(ExtractTypeFromAnyError::new(any, ToType::Action).into()),
+    }
+  }
 }
 
-impl Evaluate<PathValue> for PathOperation {
+#[derive(Clone, Debug)]
+pub enum PathOperation {
+  GetArgument(GetArgumentOperation<PathValue>),
+}
+
+impl Evaluate for PathOperation {
+  type Result = PathValue;
+
   fn evaluate(
     &self,
-    _runtime: &Runtime,
-    _arguments: ComplexCreationArguments,
-  ) -> EvaluateResult<PathValue> {
-    todo!()
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    match self {
+      Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
+    }
   }
 }

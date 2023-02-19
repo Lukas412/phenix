@@ -28,12 +28,14 @@ impl<T, R> SubOperation<T, R> {
   }
 }
 
-impl<T, V, R> Evaluate<V> for SubOperation<T, R>
+impl<T, V, R> Evaluate for SubOperation<T, R>
 where
-  T: Evaluate<V>,
-  R: Evaluate<V>,
-  V: Sub<V, Output = EvaluateResult<V>>,
+  T: Evaluate,
+  R: Evaluate,
+  T::Result: Sub<R::Result, Output = EvaluateResult<V>>,
 {
+  type Result = V;
+
   fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<V> {
     let value = self.expression.evaluate(runtime, arguments.clone())?;
     let rhs_value = self.rhs_expression.evaluate(runtime, arguments)?;

@@ -1,14 +1,10 @@
-use derive_more::{From};
+use derive_more::From;
 
+use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError, PathExpression, Runtime, StringExpression, ToType};
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::value::array::ArrayValue;
 use crate::value::expression::Expression;
-
-use crate::{
-  ComplexCreationArguments, Evaluate, PathExpression, Runtime,
-  StringExpression,
-};
 
 pub type ActionExpression = Expression<ActionValue, ActionOperation>;
 
@@ -31,17 +27,32 @@ pub enum ActionValue {
   },
 }
 
-#[derive(Clone, Debug)]
-pub enum ActionOperation {
-  GetArgument(GetArgumentOperation),
+impl TryFrom<AnyValue> for ActionValue {
+  type Error = EvaluateError;
+
+  fn try_from(value: AnyValue) -> Result<Self, Self::Error> {
+    match value {
+      AnyValue::Action(value) => Ok(value),
+      any => Err(ExtractTypeFromAnyError::new(any, ToType::Action).into()),
+    }
+  }
 }
 
-impl Evaluate<ActionValue> for ActionOperation {
+#[derive(Clone, Debug)]
+pub enum ActionOperation {
+  GetArgument(GetArgumentOperation<ActionValue>),
+}
+
+impl Evaluate for ActionOperation {
+  type Result = ActionValue;
+
   fn evaluate(
     &self,
-    _runtime: &Runtime,
-    _arguments: ComplexCreationArguments,
-  ) -> EvaluateResult<ActionValue> {
-    todo!()
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    match self {
+      Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
+    }
   }
 }

@@ -23,12 +23,14 @@ where
   }
 }
 
-impl<V, O> Evaluate<V> for Expression<V, O>
+impl<V, O> Evaluate for Expression<V, O>
 where
   V: Clone,
-  O: Evaluate<V>,
+  O: Evaluate<Result = V>,
 {
-  fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<V> {
+  type Result = V;
+
+  fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
       Self::Operation(operation) => operation.evaluate(runtime, arguments),

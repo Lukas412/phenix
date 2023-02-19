@@ -22,7 +22,7 @@ impl From<FromType> for NumberExpression {
   }
 }
 
-#[duplicate_item(FromType; [AddOperation < NumberExpression >]; [GetArgumentOperation];)]
+#[duplicate_item(FromType; [AddOperation < NumberExpression >]; [GetArgumentOperation < NumberValue >];)]
 impl From<FromType> for NumberExpression {
   fn from(operation: FromType) -> Self {
     Self::Operation(Box::new(operation.into()))
@@ -71,15 +71,17 @@ pub enum NumberOperation {
   #[from]
   Equals(EqualsOperation<NumberExpression>),
   #[from(forward)]
-  GetArgument(GetArgumentOperation),
+  GetArgument(GetArgumentOperation<NumberValue>),
 }
 
-impl Evaluate<NumberValue> for NumberOperation {
+impl Evaluate for NumberOperation {
+  type Result = NumberValue;
+
   fn evaluate(
     &self,
     runtime: &Runtime,
     arguments: ComplexCreationArguments,
-  ) -> EvaluateResult<NumberValue> {
+  ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Add(operation) => operation.evaluate(runtime, arguments),
       Self::Sub(operation) => operation.evaluate(runtime, arguments),

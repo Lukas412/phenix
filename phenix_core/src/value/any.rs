@@ -25,12 +25,14 @@ pub enum AnyExpression {
   String(StringExpression),
 }
 
-impl Evaluate<AnyValue> for AnyExpression {
+impl Evaluate for AnyExpression {
+  type Result = AnyValue;
+
   fn evaluate(
     &self,
     runtime: &Runtime,
     arguments: ComplexCreationArguments,
-  ) -> EvaluateResult<AnyValue> {
+  ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Action(expression) => expression.evaluate(runtime, arguments).map(Into::into),
       Self::Boolean(expression) => expression.evaluate(runtime, arguments).map(Into::into),

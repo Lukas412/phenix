@@ -34,15 +34,17 @@ pub struct BooleanValue(bool);
 pub enum BooleanOperation {
   And(AndOperation<BooleanExpression>),
   Or(OrOperation<BooleanExpression>),
-  GetArgument(GetArgumentOperation),
+  GetArgument(GetArgumentOperation<BooleanValue>),
 }
 
-impl Evaluate<BooleanValue> for BooleanOperation {
+impl Evaluate for BooleanOperation {
+  type Result = BooleanValue;
+
   fn evaluate(
     &self,
     _runtime: &Runtime,
     _arguments: ComplexCreationArguments,
-  ) -> EvaluateResult<BooleanValue> {
+  ) -> EvaluateResult<Self::Result> {
     todo!()
   }
 }

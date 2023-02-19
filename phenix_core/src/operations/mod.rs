@@ -2,7 +2,7 @@ pub use self::{
   add::AddOperation,
   and::{AndOperation, EvaluateAnd},
   condition::ConditionOperation,
-  equals::{EqualsOperation, EvaluateEquals},
+  equals::EqualsOperation,
   get_argument::GetArgumentOperation,
   or::{EvaluateOr, OrOperation},
   sub::{EvaluateSub, SubOperation},

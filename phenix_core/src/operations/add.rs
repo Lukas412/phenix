@@ -23,12 +23,14 @@ impl<T, R> AddOperation<T, R> {
   }
 }
 
-impl<T, V, R> Evaluate<V> for AddOperation<T, R>
+impl<T, V, R> Evaluate for AddOperation<T, R>
 where
-  T: Evaluate<V>,
-  R: Evaluate<V>,
-  V: Add<V, Output = EvaluateResult<V>>,
+  T: Evaluate,
+  R: Evaluate,
+  T::Result: Add<R::Result, Output = EvaluateResult<V>>,
 {
+  type Result = V;
+
   fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<V> {
     let value = self.expression.evaluate(runtime, arguments.clone())?;
     let rhs_value = self.rhs_expression.evaluate(runtime, arguments)?;
