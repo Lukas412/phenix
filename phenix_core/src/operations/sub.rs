@@ -10,7 +10,7 @@ pub trait EvaluateSub<Rhs = Self> {
 }
 
 #[derive(Clone, Debug)]
-pub struct SubOperation<T, R> {
+pub struct SubOperation<T, R = T> {
   expression: T,
   rhs_expression: R,
 }
@@ -37,6 +37,6 @@ where
   fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<V> {
     let value = self.expression.evaluate(runtime, arguments.clone())?;
     let rhs_value = self.rhs_expression.evaluate(runtime, arguments)?;
-    value + rhs_value
+    value - rhs_value
   }
 }
