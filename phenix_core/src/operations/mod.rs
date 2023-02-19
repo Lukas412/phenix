@@ -1,8 +1,8 @@
 pub use self::{
-  add::{EvaluateAdd, AddOperation},
-  and::{EvaluateAnd, AndOperation},
+  add::AddOperation,
+  and::{AndOperation, EvaluateAnd},
   condition::ConditionOperation,
-  equals::{EvaluateEquals, EqualsOperation},
+  equals::{EqualsOperation, EvaluateEquals},
   get_argument::GetArgumentOperation,
   or::{EvaluateOr, OrOperation},
   sub::{EvaluateSub, SubOperation},

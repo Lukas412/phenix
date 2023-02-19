@@ -4,7 +4,7 @@ use super::Expression;
 use crate::{
   evaluate::EvaluateResult,
   operations::{
-    AndOperation, EvaluateAdd, EvaluateAnd, EvaluateOr, GetArgumentOperation, OrOperation,
+    AndOperation, EvaluateAnd, EvaluateOr, GetArgumentOperation, OrOperation,
   },
   ComplexCreationArguments, Evaluate, Runtime,
 };

@@ -4,15 +4,6 @@ use crate::{
   evaluate::EvaluateResult, AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, Runtime,
 };
 
-pub trait EvaluateAdd {
-  fn evaluate_add(
-    self,
-    rhs: Self,
-    runtime: &Runtime,
-    arguments: ComplexCreationArguments,
-  ) -> AnyValue;
-}
-
 #[derive(Clone, Debug)]
 pub struct AddOperation<T, R = T> {
   expression: T,

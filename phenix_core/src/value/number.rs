@@ -8,7 +8,7 @@ use crate::{AnyValue, BooleanValue, ComplexCreationArguments, Evaluate, Evaluate
 use crate::error::ExtractTypeFromAnyError;
 use crate::evaluate::EvaluateResult;
 use crate::operations::{
-  AddOperation, EqualsOperation, EvaluateAdd, EvaluateEquals, EvaluateSub, GetArgumentOperation,
+  AddOperation, EqualsOperation, EvaluateEquals, EvaluateSub, GetArgumentOperation,
   SubOperation,
 };
 use crate::value::expression::Expression;
