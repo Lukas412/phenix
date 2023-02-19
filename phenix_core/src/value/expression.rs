@@ -4,7 +4,7 @@ use duplicate::duplicate_item;
 
 use crate::{
   evaluate::EvaluateResult, ActionOperation, ActionValue, AnyValue, BooleanOperation, BooleanValue,
-  ComplexCreationArguments, Evaluate, EvaluateErr, NumberOperation, NumberValue, PathOperation,
+  ComplexCreationArguments, Evaluate, EvaluateError, NumberOperation, NumberValue, PathOperation,
   PathValue, Runtime, StringOperation, StringValue,
 };
 

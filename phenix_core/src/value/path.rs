@@ -22,7 +22,7 @@ impl Display for PathValue {
 
 #[derive(Clone, Debug)]
 pub enum PathOperation {
-  GetArgument(GetArgumentOperation<PathExpression>),
+  GetArgument(GetArgumentOperation),
 }
 
 impl Evaluate<PathValue> for PathOperation {

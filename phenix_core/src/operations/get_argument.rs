@@ -1,4 +1,4 @@
-use crate::{creation, evaluate::EvaluateResult, runtime, ArgumentNotFoundError, ComplexCreationArguments, Evaluate, Identifier, Runtime, EvaluateErr, Creation};
+use crate::{creation, evaluate::EvaluateResult, runtime, ArgumentNotFoundError, ComplexCreationArguments, Evaluate, Identifier, Runtime, EvaluateError, Creation, AnyValue};
 use std::{default, fmt::Debug};
 use crate::GetArgumentOperationError::ArgumentNotFound;
 
@@ -32,12 +32,13 @@ impl GetArgumentOperation {
 }
 
 impl<V> Evaluate<V> for GetArgumentOperation
+where V: TryFrom<AnyValue, Error = EvaluateError>
 {
   fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<V> {
     let creation = arguments.get(&self.identifier)
       .or_else(|| self.default.as_ref())
       .ok_or_else(|| ArgumentNotFoundError::new(self.identifier.clone()))?;
 
-    runtime.evaluate(creation)
+    runtime.evaluate(creation)?.try_into()
   }
 }

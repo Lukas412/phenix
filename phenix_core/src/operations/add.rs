@@ -1,7 +1,7 @@
 use std::{fmt::Debug, ops::Add};
 
 use crate::{
-  evaluate::EvaluateResult, AnyValue, ComplexCreationArguments, Evaluate, EvaluateErr, Runtime,
+  evaluate::EvaluateResult, AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, Runtime,
 };
 
 pub trait EvaluateAdd {

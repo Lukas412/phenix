@@ -33,7 +33,7 @@ impl From<FromType> for StringValue {
 
 #[derive(Clone, Debug)]
 pub enum StringOperation {
-  GetArgument(GetArgumentOperation<StringExpression>),
+  GetArgument(GetArgumentOperation),
 }
 
 impl Evaluate<StringValue> for StringOperation {

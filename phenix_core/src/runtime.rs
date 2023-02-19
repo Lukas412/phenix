@@ -4,7 +4,7 @@ use crate::creation::ComplexCreation;
 use crate::evaluate::EvaluateResult;
 use crate::{
   ActionExpression, AnyExpression, AnyValue, BooleanExpression, ComplexCreationArguments, Creation,
-  Evaluate, EvaluateErr, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression,
+  Evaluate, EvaluateError, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression,
   StringExpression,
 };
 

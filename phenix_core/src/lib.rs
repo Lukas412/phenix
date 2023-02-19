@@ -2,7 +2,7 @@
 
 pub use crate::{
   creation::{ComplexCreationArguments, ComplexCreationBuilder, Creation},
-  error::{ArgumentNotFoundError, EvaluateErr, ExpressionNotFoundError, GetArgumentOperationError},
+  error::{ArgumentNotFoundError, EvaluateError, ExpressionNotFoundError, ExtractTypeFromAnyError, GetArgumentOperationError, ToType},
   evaluate::Evaluate,
   names::{Identifier, Name, Namespace},
   operations::{AddOperation, GetArgumentOperation},

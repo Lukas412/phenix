@@ -1,15 +1,17 @@
 use std::ops::Add;
 
+use derive_more::{Add, Display, From};
+use duplicate::duplicate_item;
+use rust_decimal::Decimal;
+
+use crate::{AnyValue, BooleanValue, ComplexCreationArguments, Evaluate, EvaluateError, runtime, Runtime, ToType};
+use crate::error::ExtractTypeFromAnyError;
 use crate::evaluate::EvaluateResult;
 use crate::operations::{
   AddOperation, EqualsOperation, EvaluateAdd, EvaluateEquals, EvaluateSub, GetArgumentOperation,
   SubOperation,
 };
 use crate::value::expression::Expression;
-use crate::{runtime, BooleanValue, ComplexCreationArguments, Evaluate, EvaluateErr, Runtime};
-use derive_more::{Add, Display, From};
-use duplicate::duplicate_item;
-use rust_decimal::Decimal;
 
 pub type NumberExpression = Expression<NumberValue, NumberOperation>;
 
@@ -20,7 +22,7 @@ impl From<FromType> for NumberExpression {
   }
 }
 
-#[duplicate_item(FromType; [AddOperation<NumberExpression>]; [GetArgumentOperation<NumberExpression>];)]
+#[duplicate_item(FromType; [AddOperation < NumberExpression >]; [GetArgumentOperation];)]
 impl From<FromType> for NumberExpression {
   fn from(operation: FromType) -> Self {
     Self::Operation(Box::new(operation.into()))
@@ -40,12 +42,23 @@ impl Add for NumberValue {
   }
 }
 
+impl TryFrom<AnyValue> for NumberValue {
+  type Error = EvaluateError;
+
+  fn try_from(value: AnyValue) -> Result<Self, Self::Error> {
+    match value {
+      AnyValue::Number(value) => Ok(value),
+      any => Err(ExtractTypeFromAnyError::new(any, ToType::Number).into()),
+    }
+  }
+}
+
 #[derive(Clone, Debug, From)]
 pub enum NumberOperation {
   Add(AddOperation<NumberExpression>),
   Sub(SubOperation<NumberExpression>),
   Equals(EqualsOperation<NumberExpression>),
-  GetArgument(GetArgumentOperation<NumberExpression>),
+  GetArgument(GetArgumentOperation),
 }
 
 impl Evaluate<NumberValue> for NumberOperation {

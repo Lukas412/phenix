@@ -1,9 +1,11 @@
 pub use self::{
-  evaluate::EvaluateErr,
+  evaluate::EvaluateError,
   expression::ExpressionNotFoundError,
-  operation::{ArgumentNotFoundError, GetArgumentOperationError},
+  get_argument::{ArgumentNotFoundError, GetArgumentOperationError},
+  extract_type_from_any::{ExtractTypeFromAnyError, ToType},
 };
 
 mod evaluate;
 mod expression;
-mod operation;
+mod get_argument;
+mod extract_type_from_any;

@@ -34,7 +34,7 @@ pub struct BooleanValue(bool);
 pub enum BooleanOperation {
   And(AndOperation<BooleanExpression>),
   Or(OrOperation<BooleanExpression>),
-  GetArgument(GetArgumentOperation<BooleanExpression>),
+  GetArgument(GetArgumentOperation),
 }
 
 impl Evaluate<BooleanValue> for BooleanOperation {

@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use crate::{Expression, GetArgumentOperation};
 
-pub type ArrayExpression<T> = Expression<ArrayValue<T>, ArrayOperation<T>>;
+pub type ArrayExpression<T> = Expression<ArrayValue<T>, ArrayOperation>;
 
 #[derive(Clone, Debug, Default)]
 pub struct ArrayValue<T>
@@ -13,9 +13,7 @@ where
 }
 
 #[derive(Clone, Debug)]
-pub enum ArrayOperation<T>
-where
-  T: Clone + Debug,
+pub enum ArrayOperation
 {
-  GetArgument(GetArgumentOperation<ArrayExpression<T>>),
+  GetArgument(GetArgumentOperation),
 }

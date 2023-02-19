@@ -6,7 +6,7 @@ use crate::value::array::ArrayValue;
 use crate::value::expression::Expression;
 use crate::value::path::PathValue;
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateErr, PathExpression, Runtime,
+  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, PathExpression, Runtime,
   StringExpression, StringValue,
 };
 
@@ -33,7 +33,7 @@ pub enum ActionValue {
 
 #[derive(Clone, Debug)]
 pub enum ActionOperation {
-  GetArgument(GetArgumentOperation<ActionExpression>),
+  GetArgument(GetArgumentOperation),
 }
 
 impl Evaluate<ActionValue> for ActionOperation {
