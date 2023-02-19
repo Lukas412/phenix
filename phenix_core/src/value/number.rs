@@ -1,4 +1,4 @@
-use std::ops::Add;
+use std::ops::{Add, Sub};
 
 use derive_more::{Display, From};
 use duplicate::duplicate_item;
@@ -42,6 +42,15 @@ impl Add for NumberValue {
   }
 }
 
+impl Sub for NumberValue {
+  type Output = EvaluateResult<Self>;
+
+  fn sub(self, rhs: Self) -> Self::Output {
+    let result = self.0 - rhs.0;
+    Ok(result.into())
+  }
+}
+
 impl TryFrom<AnyValue> for NumberValue {
   type Error = EvaluateError;
 
@@ -73,7 +82,7 @@ impl Evaluate<NumberValue> for NumberOperation {
   ) -> EvaluateResult<NumberValue> {
     match self {
       Self::Add(operation) => operation.evaluate(runtime, arguments),
-      Self::Sub(_) => todo!(),
+      Self::Sub(operation) => operation.evaluate(runtime, arguments),
       Self::Equals(_) => todo!(),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
