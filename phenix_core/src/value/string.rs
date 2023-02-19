@@ -16,22 +16,21 @@ impl From<FromType> for StringExpression {
   }
 }
 
-#[derive(Clone, Debug, Default, Display, PartialEq, Eq)]
+#[duplicate_item(FromType; [GetArgumentOperation];)]
+impl From<FromType> for StringExpression {
+  fn from(operation: FromType) -> Self {
+    Self::Operation(Box::new(operation.into()))
+  }
+}
+
+#[derive(Clone, Debug, Default, Display, PartialEq, Eq, From)]
 #[display(fmt = "\"{value}\"")]
+#[from(forward)]
 pub struct StringValue {
   value: String,
 }
 
-#[duplicate_item(FromType; [&str]; [String];)]
-impl From<FromType> for StringValue {
-  fn from(value: FromType) -> Self {
-    StringValue {
-      value: value.into(),
-    }
-  }
-}
-
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, From)]
 pub enum StringOperation {
   GetArgument(GetArgumentOperation),
 }
