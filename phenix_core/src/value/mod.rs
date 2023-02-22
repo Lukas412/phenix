@@ -3,6 +3,7 @@ pub use self::{
   any::{AnyExpression, AnyValue},
   array::ArrayValue,
   boolean::{BooleanExpression, BooleanOperation, BooleanValue},
+  command::{CommandExpression, CommandValue, CommandOperation},
   expression::Expression,
   number::{NumberExpression, NumberOperation, NumberValue},
   path::{PathExpression, PathOperation, PathValue},

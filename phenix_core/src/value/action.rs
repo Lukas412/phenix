@@ -4,6 +4,7 @@ use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, Extract
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::value::array::ArrayValue;
+use crate::value::command::CommandExpression;
 use crate::value::expression::Expression;
 
 pub type ActionExpression = Expression<ActionValue, ActionOperation>;
@@ -14,10 +15,8 @@ pub enum ActionValue {
     location: PathExpression,
     actions: ArrayValue<ActionExpression>,
   },
-  ExecuteCommand {
-    name: StringExpression,
-    arguments: ArrayValue<StringExpression>,
-  },
+  #[from(forward)]
+  ExecuteCommand(CommandExpression),
   WriteContent {
     file: PathExpression,
     content: StringExpression,

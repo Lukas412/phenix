@@ -35,12 +35,6 @@ impl<T> GetArgumentOperation<T> {
   }
 }
 
-impl<T> From<Identifier> for GetArgumentOperation<T> {
-  fn from(identifier: Identifier) -> Self {
-    Self::new(identifier)
-  }
-}
-
 impl<V> Evaluate for GetArgumentOperation<V>
 where V: TryFrom<AnyValue, Error = EvaluateError>
 {

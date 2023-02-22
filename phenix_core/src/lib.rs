@@ -7,9 +7,9 @@ pub use crate::{
   runtime::{Runtime, RuntimeBuilder},
   value::{
     ActionExpression, ActionOperation, ActionValue, AnyExpression, AnyValue, ArrayValue,
-    BooleanExpression, BooleanOperation, BooleanValue, Expression, NumberExpression,
-    NumberOperation, NumberValue, PathExpression, PathOperation, PathValue, StringExpression,
-    StringOperation, StringValue,
+    BooleanExpression, BooleanOperation, BooleanValue, CommandExpression, CommandOperation,
+    CommandValue, Expression, NumberExpression, NumberOperation, NumberValue, PathExpression,
+    PathOperation, PathValue, StringExpression, StringOperation, StringValue,
   },
 };
 
