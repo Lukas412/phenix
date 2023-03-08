@@ -1,24 +1,23 @@
 use std::{fmt::Debug, ops::Add};
 
-use crate::{
-  evaluate::EvaluateResult, ComplexCreationArguments, Evaluate, Runtime,
-};
+use crate::{evaluate::EvaluateResult, ComplexCreationArguments, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
-pub struct AddOperation<T, R = T> {
-  expression: T,
-  rhs_expression: R,
+pub struct AddOperation<Expression, OtherExpression = Expression> {
+  expressions: (Expression, OtherExpression),
 }
 
-impl<T, R> AddOperation<T, R> {
-  pub fn new<A, B>(expression: A, rhs_expression: B) -> Self
+impl<Expression, OtherExpression> AddOperation<Expression, OtherExpression> {
+  pub fn new<IntoExpression, IntoOtherExpression>(
+    expression: IntoExpression,
+    other_expression: IntoOtherExpression,
+  ) -> Self
   where
-    A: Into<T>,
-    B: Into<R>,
+    IntoExpression: Into<Expression>,
+    IntoOtherExpression: Into<OtherExpression>,
   {
     Self {
-      expression: expression.into(),
-      rhs_expression: rhs_expression.into(),
+      expressions: (expression.into(), other_expression.into()),
     }
   }
 }
@@ -32,8 +31,7 @@ where
   type Result = V;
 
   fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<V> {
-    let value = self.expression.evaluate(runtime, arguments.clone())?;
-    let rhs_value = self.rhs_expression.evaluate(runtime, arguments)?;
-    value + rhs_value
+    let (value, other_value) = self.expressions.evaluate(runtime, arguments)?;
+    value + other_value
   }
 }
