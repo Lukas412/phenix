@@ -41,10 +41,6 @@ impl ComplexCreationBuilder {
     }
   }
 
-  pub fn build(self) -> ComplexCreation {
-    ComplexCreation::new(self.namespace, self.values.into())
-  }
-
   pub fn with<T, C>(mut self, identifier: T, creation: C) -> Self
   where
     T: Into<Identifier>,
@@ -52,5 +48,11 @@ impl ComplexCreationBuilder {
   {
     self.values.insert(identifier.into(), creation.into());
     self
+  }
+}
+
+impl From<ComplexCreationBuilder> for ComplexCreation {
+  fn from(value: ComplexCreationBuilder) -> Self {
+    Self::new(value.namespace, value.values.into())
   }
 }

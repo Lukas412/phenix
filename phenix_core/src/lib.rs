@@ -1,6 +1,9 @@
 pub use crate::{
   creation::{ComplexCreationArguments, ComplexCreationBuilder, Creation},
-  error::{ArgumentNotFoundError, EvaluateError, ExpressionNotFoundError, ExtractTypeFromAnyError, GetArgumentOperationError, ToType},
+  error::{
+    ArgumentNotFoundError, EvaluateError, ExpressionNotFoundError, ExtractTypeFromAnyError,
+    GetArgumentOperationError, ToType,
+  },
   evaluate::Evaluate,
   names::{Identifier, Name, Namespace},
   operations::{AddOperation, GetArgumentOperation},
@@ -8,8 +11,8 @@ pub use crate::{
   value::{
     ActionExpression, ActionOperation, ActionValue, AnyExpression, AnyValue, ArrayValue,
     BooleanExpression, BooleanOperation, BooleanValue, CommandExpression, CommandOperation,
-    CommandValue, Expression, NumberExpression, NumberOperation, NumberValue, PathExpression,
-    PathOperation, PathValue, StringExpression, StringOperation, StringValue,
+    CommandValue, NumberExpression, NumberOperation, NumberValue, PathExpression, PathOperation,
+    PathValue, TextExpression, TextOperation, TextValue,
   },
 };
 

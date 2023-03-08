@@ -1,30 +1,71 @@
-use crate::{Expression, GetArgumentOperation, StringExpression};
-use duplicate::duplicate_item;
+use crate::evaluate::EvaluateResult;
+use crate::{
+  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
+  GetArgumentOperation, Runtime, TextExpression, ToType,
+};
+use derive_more::From;
 
 use super::array::ArrayExpression;
 
-pub type CommandExpression = Expression<CommandValue, CommandOperation>;
+#[derive(Clone, Debug, From)]
+pub enum CommandExpression {
+  Value(CommandValue),
+  Operation(CommandOperation),
+}
 
-#[duplicate_item(FromType; [CommandValue];)]
-impl From<FromType> for CommandExpression {
-  fn from(value: FromType) -> Self {
-    Self::Value(value)
+impl Evaluate for CommandExpression {
+  type Result = CommandValue;
+
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    match self {
+      Self::Value(value) => Ok(value.clone()),
+      Self::Operation(operation) => operation.evaluate(runtime, arguments),
+    }
   }
 }
 
 #[derive(Clone, Debug)]
 pub struct CommandValue {
-  name: StringExpression,
-  arguments: ArrayExpression<StringExpression>,
+  name: TextExpression,
+  arguments: ArrayExpression<TextExpression>,
 }
 
 impl CommandValue {
-  pub fn new(name: StringExpression, arguments: ArrayExpression<StringExpression>) -> Self {
+  pub fn new(name: TextExpression, arguments: ArrayExpression<TextExpression>) -> Self {
     Self { name, arguments }
+  }
+}
+
+impl TryFrom<AnyValue> for CommandValue {
+  type Error = EvaluateError;
+
+  fn try_from(value: AnyValue) -> Result<Self, Self::Error> {
+    match value {
+      AnyValue::Command(value) => Ok(value),
+      any => Err(ExtractTypeFromAnyError::new(any, ToType::Command).into()),
+    }
   }
 }
 
 #[derive(Clone, Debug)]
 pub enum CommandOperation {
   GetArgument(GetArgumentOperation<CommandValue>),
+}
+
+impl Evaluate for CommandOperation {
+  type Result = CommandValue;
+
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    match self {
+      Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
+    }
+  }
 }

@@ -1,31 +1,45 @@
 use std::ops::{Add, Sub};
 
 use derive_more::{Display, From};
-use duplicate::duplicate_item;
 use rust_decimal::Decimal;
 
-use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, Runtime, ToType};
 use crate::error::ExtractTypeFromAnyError;
 use crate::evaluate::EvaluateResult;
-use crate::operations::{
-  AddOperation, EqualsOperation, GetArgumentOperation,
-  SubOperation,
-};
-use crate::value::expression::Expression;
+use crate::operations::{AddOperation, EqualsOperation, GetArgumentOperation, SubOperation};
+use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, Runtime, ToType};
 
-pub type NumberExpression = Expression<NumberValue, NumberOperation>;
+#[derive(Clone, Debug, From)]
+pub enum NumberExpression {
+  #[from(types(u8, u16, u32, u64, u128, i8, i16, i32, i64, i128, Decimal))]
+  Value(NumberValue),
+  #[from]
+  Operation(NumberOperation),
+}
 
-#[duplicate_item(FromType; [i8]; [i16]; [i32]; [i64]; [u8]; [u16]; [u32]; [u64]; [Decimal];)]
-impl From<FromType> for NumberExpression {
-  fn from(value: FromType) -> Self {
-    Self::Value(value.into())
+impl From<AddOperation<NumberExpression>> for NumberExpression {
+  fn from(operation: AddOperation<NumberExpression>) -> Self {
+    Self::Operation(operation.into())
   }
 }
 
-#[duplicate_item(FromType; [AddOperation < NumberExpression >]; [GetArgumentOperation < NumberValue >];)]
-impl From<FromType> for NumberExpression {
-  fn from(operation: FromType) -> Self {
-    Self::Operation(Box::new(operation.into()))
+impl From<GetArgumentOperation<NumberValue>> for NumberExpression {
+  fn from(operation: GetArgumentOperation<NumberValue>) -> Self {
+    Self::Operation(operation.into())
+  }
+}
+
+impl Evaluate for NumberExpression {
+  type Result = NumberValue;
+
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    match self {
+      Self::Value(value) => Ok(value.clone()),
+      Self::Operation(operation) => operation.evaluate(runtime, arguments),
+    }
   }
 }
 

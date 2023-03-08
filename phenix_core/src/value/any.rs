@@ -1,28 +1,51 @@
-use std::ops::Add;
-
-use derive_more::{From};
-
+use derive_more::From;
+use rust_decimal::Decimal;
 
 use crate::{
-  evaluate::EvaluateResult, ActionExpression, ActionValue, BooleanExpression, BooleanValue,
-  ComplexCreationArguments, Evaluate, NumberExpression, NumberValue, PathExpression,
-  PathValue, Runtime, StringExpression, StringValue,
+  evaluate::EvaluateResult, ActionExpression, ActionOperation, ActionValue, BooleanExpression,
+  BooleanValue, CommandValue, ComplexCreationArguments, Evaluate, GetArgumentOperation,
+  NumberExpression, NumberOperation, NumberValue, PathExpression, PathValue, Runtime,
+  TextExpression, TextOperation, TextValue,
 };
-
-
 
 #[derive(Clone, Debug, From)]
 pub enum AnyExpression {
-  #[from]
+  #[from(types(ActionOperation, ActionValue))]
   Action(ActionExpression),
   #[from]
   Boolean(BooleanExpression),
-  #[from(forward)]
+  #[from(types(
+    NumberOperation,
+    NumberValue,
+    u8,
+    u16,
+    u32,
+    u64,
+    u128,
+    i8,
+    i16,
+    i32,
+    i64,
+    i128,
+    Decimal
+  ))]
   Number(NumberExpression),
   #[from]
   Path(PathExpression),
-  #[from]
-  String(StringExpression),
+  #[from(types(TextOperation, TextValue, String))]
+  Text(TextExpression),
+}
+
+impl From<&str> for AnyExpression {
+  fn from(value: &str) -> Self {
+    Self::Text(value.into())
+  }
+}
+
+impl From<GetArgumentOperation<TextValue>> for AnyExpression {
+  fn from(operation: GetArgumentOperation<TextValue>) -> Self {
+    Self::Text(operation.into())
+  }
 }
 
 impl Evaluate for AnyExpression {
@@ -38,7 +61,7 @@ impl Evaluate for AnyExpression {
       Self::Boolean(expression) => expression.evaluate(runtime, arguments).map(Into::into),
       Self::Number(expression) => expression.evaluate(runtime, arguments).map(Into::into),
       Self::Path(expression) => expression.evaluate(runtime, arguments).map(Into::into),
-      Self::String(expression) => expression.evaluate(runtime, arguments).map(Into::into),
+      Self::Text(expression) => expression.evaluate(runtime, arguments).map(Into::into),
     }
   }
 }
@@ -47,15 +70,8 @@ impl Evaluate for AnyExpression {
 pub enum AnyValue {
   Action(ActionValue),
   Boolean(BooleanValue),
+  Command(CommandValue),
   Number(NumberValue),
   Path(PathValue),
-  String(StringValue),
-}
-
-impl Add for AnyValue {
-  type Output = AnyValue;
-
-  fn add(self, _rhs: Self) -> Self::Output {
-    todo!("Add for AnyValue not implemented")
-  }
+  String(TextValue),
 }
