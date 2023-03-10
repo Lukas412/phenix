@@ -1,29 +1,24 @@
+use crate::evaluate::EvaluateResult;
+use crate::{ComplexCreationArguments, Evaluate, Runtime};
 use std::fmt::Debug;
 use std::ops::Sub;
-use crate::{ComplexCreationArguments, Evaluate, Runtime};
-use crate::evaluate::EvaluateResult;
-
-pub trait EvaluateSub<Rhs = Self> {
-  type Output;
-
-  fn evaluate_sub(self, rhs: Rhs) -> Self::Output;
-}
 
 #[derive(Clone, Debug)]
-pub struct SubOperation<T, R = T> {
-  expression: T,
-  rhs_expression: R,
+pub struct SubOperation<Expression, OtherExpression = Expression> {
+  expressions: (Expression, OtherExpression),
 }
 
-impl<T, R> SubOperation<T, R> {
-  pub fn new<A, B>(expression: A, rhs_expression: B) -> Self
+impl<Expression, OtherExpression> SubOperation<Expression, OtherExpression> {
+  pub fn new<IntoExpression, IntoOtherExpression>(
+    expression: IntoExpression,
+    rhs_expression: IntoOtherExpression,
+  ) -> Self
   where
-    A: Into<T>,
-    B: Into<R>,
+    IntoExpression: Into<Expression>,
+    IntoOtherExpression: Into<OtherExpression>,
   {
     Self {
-      expression: expression.into(),
-      rhs_expression: rhs_expression.into(),
+      expressions: (expression.into(), rhs_expression.into()),
     }
   }
 }
@@ -37,8 +32,7 @@ where
   type Result = V;
 
   fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<V> {
-    let value = self.expression.evaluate(runtime, arguments.clone())?;
-    let rhs_value = self.rhs_expression.evaluate(runtime, arguments)?;
-    value - rhs_value
+    let (value, other_value) = self.expressions.evaluate(runtime, arguments)?;
+    value - other_value
   }
 }
