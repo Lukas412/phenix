@@ -4,4 +4,5 @@ members = [
 	"phenix_core",
 	"phenix_std",
 	"phenix_test",
+	"phenix_svelte"
 ]

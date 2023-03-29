@@ -8,4 +8,5 @@ edition = "2021"
 [dependencies]
 phenix_core = { path="../phenix_core" }
 phenix_std = { path="../phenix_std" }
+phenix_svelte = { path="../phenix_svelte" }
 

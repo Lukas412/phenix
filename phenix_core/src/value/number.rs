@@ -5,7 +5,9 @@ use rust_decimal::Decimal;
 
 use crate::error::ExtractTypeFromAnyError;
 use crate::evaluate::EvaluateResult;
-use crate::operations::{AddOperation, EqualsOperation, GetArgumentOperation, SubOperation};
+use crate::operations::{
+  AddOperation, EqualsOperation, GetArgumentOperation, SubOperation, ToBooleanOperation,
+};
 use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, Runtime, ToType};
 
 #[derive(Clone, Debug, From)]
@@ -84,6 +86,8 @@ pub enum NumberOperation {
   Sub(SubOperation<NumberExpression>),
   #[from]
   Equals(EqualsOperation<NumberExpression>),
+  #[from]
+  ToBoolean(ToBooleanOperation<NumberExpression>),
   #[from(forward)]
   GetArgument(GetArgumentOperation<NumberValue>),
 }
