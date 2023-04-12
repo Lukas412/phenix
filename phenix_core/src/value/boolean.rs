@@ -18,7 +18,7 @@ impl Evaluate for BooleanExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -43,7 +43,7 @@ impl Evaluate for BooleanOperation {
   fn evaluate(
     &self,
     _runtime: &Runtime,
-    _arguments: ComplexCreationArguments,
+    _arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     todo!()
   }

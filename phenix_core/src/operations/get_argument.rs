@@ -43,7 +43,7 @@ where
 {
   type Result = V;
 
-  fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<V> {
+  fn evaluate(&self, runtime: &Runtime, arguments: &ComplexCreationArguments) -> EvaluateResult<V> {
     let creation = arguments
       .get(&self.identifier)
       .or(self.default.as_deref())

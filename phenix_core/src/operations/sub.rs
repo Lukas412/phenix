@@ -35,7 +35,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Value> {
     let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
     result - other_result

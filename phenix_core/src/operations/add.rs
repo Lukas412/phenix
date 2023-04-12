@@ -4,7 +4,7 @@ use crate::{evaluate::EvaluateResult, ComplexCreationArguments, Evaluate, Runtim
 
 #[derive(Clone, Debug)]
 pub struct AddOperation<Expression, OtherExpression = Expression> {
-  expressions: Box<(Expression, OtherExpression)>
+  expressions: Box<(Expression, OtherExpression)>,
 }
 
 impl<Expression, OtherExpression> AddOperation<Expression, OtherExpression> {
@@ -30,9 +30,12 @@ where
 {
   type Result = Value;
 
-  fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<Value> {
-    let (result, other_result) =
-      self.expressions.evaluate(runtime, arguments)?;
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: &ComplexCreationArguments,
+  ) -> EvaluateResult<Value> {
+    let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
     result + other_result
   }
 }

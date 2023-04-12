@@ -1,4 +1,4 @@
-use crate::{BooleanValue, Evaluate};
+use crate::{BooleanValue, ComplexCreationArguments, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct ToBooleanOperation<Expression> {
@@ -24,8 +24,8 @@ where
 
   fn evaluate(
     &self,
-    runtime: &crate::Runtime,
-    arguments: crate::ComplexCreationArguments,
+    runtime: &Runtime,
+    arguments: &ComplexCreationArguments,
   ) -> crate::evaluate::EvaluateResult<Self::Result> {
     self
       .expression

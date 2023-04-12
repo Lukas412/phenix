@@ -36,7 +36,7 @@ impl Evaluate for NumberExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -98,12 +98,13 @@ impl Evaluate for NumberOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Add(operation) => operation.evaluate(runtime, arguments),
       Self::Sub(operation) => operation.evaluate(runtime, arguments),
       Self::Equals(_) => todo!(),
+      Self::ToBoolean(_) => todo!(),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

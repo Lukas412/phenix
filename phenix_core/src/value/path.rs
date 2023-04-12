@@ -22,7 +22,7 @@ impl Evaluate for PathExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -63,7 +63,7 @@ impl Evaluate for PathOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),

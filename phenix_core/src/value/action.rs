@@ -5,8 +5,8 @@ use crate::operations::GetArgumentOperation;
 use crate::value::array::ArrayValue;
 use crate::value::command::CommandExpression;
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
-  PathExpression, Runtime, TextExpression, ToType,
+  AnyValue, CommandOperation, CommandValue, ComplexCreationArguments, Evaluate, EvaluateError,
+  ExtractTypeFromAnyError, PathExpression, Runtime, TextExpression, ToType,
 };
 
 #[derive(Clone, Debug, From)]
@@ -23,7 +23,7 @@ impl Evaluate for ActionExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -34,11 +34,13 @@ impl Evaluate for ActionExpression {
 
 #[derive(Clone, Debug, From)]
 pub enum ActionValue {
+  #[from]
+  Array(Vec<ActionValue>),
   ChangeLocation {
     location: PathExpression,
     actions: ArrayValue<ActionExpression>,
   },
-  #[from(forward)]
+  #[from(types(CommandValue, CommandOperation))]
   ExecuteCommand(CommandExpression),
   WriteContent {
     file: PathExpression,
@@ -63,6 +65,8 @@ impl TryFrom<AnyValue> for ActionValue {
 #[derive(Clone, Debug, From)]
 pub enum ActionOperation {
   #[from]
+  Array(Vec<ActionExpression>),
+  #[from]
   GetArgument(GetArgumentOperation<ActionValue>),
 }
 
@@ -72,9 +76,14 @@ impl Evaluate for ActionOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
+      Self::Array(expressions) => expressions
+        .iter()
+        .map(|expression| expression.evaluate(runtime, arguments))
+        .collect::<EvaluateResult<Vec<_>>>()
+        .map(Into::into),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

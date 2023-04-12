@@ -6,7 +6,7 @@ pub trait Evaluate {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result>;
 }
 
@@ -22,10 +22,10 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     let (expression, other_expression) = self;
-    let result = expression.evaluate(runtime, arguments.clone())?;
+    let result = expression.evaluate(runtime, arguments)?;
     let other_result = other_expression.evaluate(runtime, arguments)?;
     Ok((result, other_result))
   }

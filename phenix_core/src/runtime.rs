@@ -15,11 +15,12 @@ impl Runtime {
   pub fn evaluate<'b>(&'b self, creation: &'b Creation) -> EvaluateResult<AnyValue> {
     match creation {
       Creation::Expression(expression) => {
-        expression.evaluate(self, ComplexCreationArguments::default())
+        let arguments = ComplexCreationArguments::default();
+        expression.evaluate(self, &arguments)
       }
       Creation::Complex(complex) => self
         .get_expression(complex.namespace())?
-        .evaluate(self, complex.values().to_owned()),
+        .evaluate(self, complex.values()),
     }
   }
 

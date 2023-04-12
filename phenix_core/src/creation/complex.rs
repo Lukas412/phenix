@@ -1,8 +1,7 @@
 use crate::{Creation, Identifier, Namespace};
 use std::collections::HashMap;
-use std::rc::Rc;
 
-pub type ComplexCreationArguments = Rc<HashMap<Identifier, Creation>>;
+pub type ComplexCreationArguments = HashMap<Identifier, Creation>;
 
 #[derive(Clone, Debug)]
 pub struct ComplexCreation {

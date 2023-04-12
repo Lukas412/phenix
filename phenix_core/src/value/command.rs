@@ -19,7 +19,7 @@ impl Evaluate for CommandExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -35,8 +35,18 @@ pub struct CommandValue {
 }
 
 impl CommandValue {
-  pub fn new(name: TextExpression, arguments: ArrayExpression<TextExpression>) -> Self {
-    Self { name, arguments }
+  pub fn new<IntoTextExpression, IntoTextArrayExpression>(
+    name: IntoTextExpression,
+    arguments: IntoTextArrayExpression,
+  ) -> Self
+  where
+    IntoTextExpression: Into<TextExpression>,
+    IntoTextArrayExpression: Into<ArrayExpression<TextExpression>>,
+  {
+    Self {
+      name: name.into(),
+      arguments: arguments.into(),
+    }
   }
 }
 
@@ -62,7 +72,7 @@ impl Evaluate for CommandOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),

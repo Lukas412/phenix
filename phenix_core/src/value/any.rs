@@ -54,7 +54,7 @@ impl Evaluate for AnyExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Action(expression) => expression.evaluate(runtime, arguments).map(Into::into),
