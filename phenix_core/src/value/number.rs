@@ -88,7 +88,7 @@ pub enum NumberOperation {
   Equals(EqualsOperation<NumberExpression>),
   #[from]
   ToBoolean(ToBooleanOperation<NumberExpression>),
-  #[from(forward)]
+  #[from]
   GetArgument(GetArgumentOperation<NumberValue>),
 }
 
