@@ -2,7 +2,7 @@ use derive_more::{Display, Error};
 
 use crate::Namespace;
 
-#[derive(Debug, Display, Error)]
+#[derive(Clone, Debug, Display, Error)]
 #[display(fmt = "Expression for {namespace} could not be found!")]
 pub struct ExpressionNotFoundError {
   namespace: Namespace,

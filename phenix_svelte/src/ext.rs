@@ -1,4 +1,4 @@
-use phenix_core::{ActionExpression, ActionOperation, ActionValue, RuntimeBuilder};
+use phenix_core::{ActionValue, CommandValue, RuntimeBuilder};
 
 pub trait PhenixSvelteExtension {
   fn with_svelte(self) -> Self;
@@ -6,6 +6,9 @@ pub trait PhenixSvelteExtension {
 
 impl PhenixSvelteExtension for RuntimeBuilder {
   fn with_svelte(self) -> Self {
-    self.with_action("svelte:project:init", vec![ActionValue])
+    self.with_action(
+      "svelte:project:init",
+      vec![ActionValue::from(CommandValue::new("svelte", vec![]))],
+    )
   }
 }

@@ -5,8 +5,6 @@ use crate::{
 };
 use derive_more::From;
 
-use super::array::ArrayExpression;
-
 #[derive(Clone, Debug, From)]
 pub enum CommandExpression {
   Value(CommandValue),
@@ -31,7 +29,7 @@ impl Evaluate for CommandExpression {
 #[derive(Clone, Debug)]
 pub struct CommandValue {
   name: TextExpression,
-  arguments: ArrayExpression<TextExpression>,
+  arguments: TextExpression,
 }
 
 impl CommandValue {
@@ -41,7 +39,7 @@ impl CommandValue {
   ) -> Self
   where
     IntoTextExpression: Into<TextExpression>,
-    IntoTextArrayExpression: Into<ArrayExpression<TextExpression>>,
+    IntoTextArrayExpression: Into<TextExpression>,
   {
     Self {
       name: name.into(),

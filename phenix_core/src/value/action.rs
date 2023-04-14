@@ -2,7 +2,6 @@ use derive_more::From;
 
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
-use crate::value::array::ArrayValue;
 use crate::value::command::CommandExpression;
 use crate::{
   AnyValue, CommandOperation, CommandValue, ComplexCreationArguments, Evaluate, EvaluateError,
@@ -11,10 +10,22 @@ use crate::{
 
 #[derive(Clone, Debug, From)]
 pub enum ActionExpression {
-  #[from]
+  #[from(types(CommandExpression, CommandValue, CommandOperation))]
   Value(ActionValue),
   #[from]
   Operation(ActionOperation),
+}
+
+impl From<Vec<ActionValue>> for ActionExpression {
+  fn from(values: Vec<ActionValue>) -> Self {
+    Self::Value(values.into())
+  }
+}
+
+impl From<Vec<ActionExpression>> for ActionExpression {
+  fn from(expressions: Vec<ActionExpression>) -> Self {
+    Self::Operation(expressions.into())
+  }
 }
 
 impl Evaluate for ActionExpression {
@@ -38,7 +49,7 @@ pub enum ActionValue {
   Array(Vec<ActionValue>),
   ChangeLocation {
     location: PathExpression,
-    actions: ArrayValue<ActionExpression>,
+    actions: Box<ActionExpression>,
   },
   #[from(types(CommandValue, CommandOperation))]
   ExecuteCommand(CommandExpression),

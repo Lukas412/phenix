@@ -32,7 +32,7 @@ pub enum AnyExpression {
   Number(NumberExpression),
   #[from]
   Path(PathExpression),
-  #[from(types(TextOperation, TextValue, String))]
+  #[from(types(TextOperation, TextValue))]
   Text(TextExpression),
 }
 

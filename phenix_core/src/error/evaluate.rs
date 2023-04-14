@@ -2,10 +2,10 @@ use std::num::TryFromIntError;
 
 use derive_more::{Display, Error, From};
 
-use crate::{ExpressionNotFoundError, GetArgumentOperationError};
 use crate::error::ExtractTypeFromAnyError;
+use crate::{ExpressionNotFoundError, GetArgumentOperationError};
 
-#[derive(Debug, Display, Error, From)]
+#[derive(Clone, Debug, Display, Error, From)]
 pub enum EvaluateError {
   #[display(fmt = "Error while evaluating:\n{error}")]
   #[from(forward)]

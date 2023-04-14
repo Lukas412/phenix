@@ -1,15 +1,15 @@
-use derive_more::{Display, From};
+use derive_more::From;
 
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError, Runtime,
-  ToType,
+  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
+  JoinOperation, Runtime, ToType,
 };
 
 #[derive(Clone, Debug, From)]
 pub enum TextExpression {
-  #[from(types(String))]
+  #[from]
   Value(TextValue),
   #[from]
   Operation(TextOperation),
@@ -18,6 +18,18 @@ pub enum TextExpression {
 impl From<&str> for TextExpression {
   fn from(value: &str) -> Self {
     Self::Value(value.into())
+  }
+}
+
+impl From<Vec<TextExpression>> for TextExpression {
+  fn from(expressions: Vec<TextExpression>) -> Self {
+    JoinOperation::new("", expressions).into()
+  }
+}
+
+impl From<JoinOperation<TextExpression, TextExpression>> for TextExpression {
+  fn from(operation: JoinOperation<TextExpression, TextExpression>) -> Self {
+    Self::Operation(operation.into())
   }
 }
 
@@ -42,19 +54,7 @@ impl Evaluate for TextExpression {
   }
 }
 
-#[derive(Clone, Debug, Default, Display, PartialEq, Eq, From)]
-#[display(fmt = "\"{value}\"")]
-pub struct TextValue {
-  value: String,
-}
-
-impl From<&str> for TextValue {
-  fn from(value: &str) -> Self {
-    Self {
-      value: value.into(),
-    }
-  }
-}
+pub type TextValue = String;
 
 impl TryFrom<AnyValue> for TextValue {
   type Error = EvaluateError;
@@ -70,6 +70,8 @@ impl TryFrom<AnyValue> for TextValue {
 #[derive(Clone, Debug, From)]
 pub enum TextOperation {
   #[from]
+  Join(JoinOperation<TextExpression, TextExpression>),
+  #[from]
   GetArgument(GetArgumentOperation<TextValue>),
 }
 
@@ -82,6 +84,7 @@ impl Evaluate for TextOperation {
     arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
+      Self::Join(operation) => todo!(),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

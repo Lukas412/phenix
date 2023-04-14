@@ -6,13 +6,16 @@ pub use crate::{
   },
   evaluate::Evaluate,
   names::{Identifier, Name, Namespace},
-  operations::{AddOperation, GetArgumentOperation},
+  operations::{
+    AddOperation, AndOperation, ConditionOperation, EqualsOperation, GetArgumentOperation,
+    JoinOperation, OrOperation, SubOperation, ToBooleanOperation,
+  },
   runtime::{Runtime, RuntimeBuilder},
   value::{
-    ActionExpression, ActionOperation, ActionValue, AnyExpression, AnyValue, ArrayValue,
-    BooleanExpression, BooleanOperation, BooleanValue, CommandExpression, CommandOperation,
-    CommandValue, NumberExpression, NumberOperation, NumberValue, PathExpression, PathOperation,
-    PathValue, TextExpression, TextOperation, TextValue,
+    ActionExpression, ActionOperation, ActionValue, AnyExpression, AnyValue, BooleanExpression,
+    BooleanOperation, BooleanValue, CommandExpression, CommandOperation, CommandValue,
+    NumberExpression, NumberOperation, NumberValue, PathExpression, PathOperation, PathValue,
+    TextExpression, TextOperation, TextValue,
   },
 };
 
