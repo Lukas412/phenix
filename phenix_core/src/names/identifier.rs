@@ -1,9 +1,10 @@
 use derive_more::Display;
+use std::cmp::min;
 
 use super::{Name, Namespace};
 
 #[derive(Clone, Debug, Default, Display, PartialEq, Eq, Hash)]
-#[display(fmt = "{namespace}{name}")]
+#[display(fmt = "{namespace}${name}")]
 pub struct Identifier {
   namespace: Namespace,
   name: Name,
@@ -21,7 +22,7 @@ impl From<&str> for Identifier {
   fn from(value: &str) -> Self {
     value
       .find(Self::SEPARATOR)
-      .map(|index| value.split_at(index).into())
+      .map(|index| (&value[..index], &value[min(index, value.len())..]).into())
       .unwrap_or_default()
   }
 }

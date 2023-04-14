@@ -8,7 +8,7 @@ pub use crate::{
   names::{Identifier, Name, Namespace},
   operations::{
     AddOperation, AndOperation, ConditionOperation, EqualsOperation, GetArgumentOperation,
-    JoinOperation, OrOperation, SubOperation, ToBooleanOperation,
+    JoinOperation, LinesOperation, OrOperation, SubOperation, ToBooleanOperation, WordsOperation,
   },
   runtime::{Runtime, RuntimeBuilder},
   value::{

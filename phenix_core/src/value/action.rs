@@ -1,18 +1,16 @@
-use derive_more::From;
-
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
-use crate::value::command::CommandExpression;
 use crate::{
-  AnyValue, CommandOperation, CommandValue, ComplexCreationArguments, Evaluate, EvaluateError,
-  ExtractTypeFromAnyError, PathExpression, Runtime, TextExpression, ToType,
+  AnyValue, CommandExpression, CommandOperation, CommandValue, ComplexCreationArguments, Evaluate,
+  EvaluateError, ExtractTypeFromAnyError, PathExpression, PathValue, Runtime, TextValue, ToType,
 };
+use derive_more::From;
 
 #[derive(Clone, Debug, From)]
 pub enum ActionExpression {
-  #[from(types(CommandExpression, CommandValue, CommandOperation))]
+  #[from(types(CommandValue))]
   Value(ActionValue),
-  #[from]
+  #[from(types(CommandExpression, CommandOperation))]
   Operation(ActionOperation),
 }
 
@@ -48,14 +46,14 @@ pub enum ActionValue {
   #[from]
   Array(Vec<ActionValue>),
   ChangeLocation {
-    location: PathExpression,
-    actions: Box<ActionExpression>,
+    location: PathValue,
+    actions: Box<ActionValue>,
   },
-  #[from(types(CommandValue, CommandOperation))]
-  ExecuteCommand(CommandExpression),
+  #[from]
+  ExecuteCommand(CommandValue),
   WriteContent {
-    file: PathExpression,
-    content: TextExpression,
+    file: PathValue,
+    content: TextValue,
   },
   EnsureDirectory {
     file: PathExpression,
@@ -77,6 +75,8 @@ impl TryFrom<AnyValue> for ActionValue {
 pub enum ActionOperation {
   #[from]
   Array(Vec<ActionExpression>),
+  #[from(types(CommandOperation))]
+  CommandExpression(CommandExpression),
   #[from]
   GetArgument(GetArgumentOperation<ActionValue>),
 }
@@ -95,6 +95,9 @@ impl Evaluate for ActionOperation {
         .map(|expression| expression.evaluate(runtime, arguments))
         .collect::<EvaluateResult<Vec<_>>>()
         .map(Into::into),
+      Self::CommandExpression(expression) => {
+        expression.evaluate(runtime, arguments).map(Into::into)
+      }
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

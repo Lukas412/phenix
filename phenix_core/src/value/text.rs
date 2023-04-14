@@ -1,10 +1,11 @@
 use derive_more::From;
+use duplicate::duplicate_item;
 
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
   AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
-  JoinOperation, Runtime, ToType,
+  JoinOperation, LinesOperation, Runtime, ToType, WordsOperation,
 };
 
 #[derive(Clone, Debug, From)]
@@ -27,14 +28,15 @@ impl From<Vec<TextExpression>> for TextExpression {
   }
 }
 
-impl From<JoinOperation<TextExpression, TextExpression>> for TextExpression {
-  fn from(operation: JoinOperation<TextExpression, TextExpression>) -> Self {
-    Self::Operation(operation.into())
-  }
-}
-
-impl From<GetArgumentOperation<TextValue>> for TextExpression {
-  fn from(operation: GetArgumentOperation<TextValue>) -> Self {
+#[duplicate_item(
+  OperationType;
+  [JoinOperation<TextExpression, TextExpression>];
+  [WordsOperation<TextExpression>];
+  [LinesOperation<TextExpression>];
+  [GetArgumentOperation<TextValue>];
+)]
+impl From<OperationType> for TextExpression {
+  fn from(operation: OperationType) -> Self {
     Self::Operation(operation.into())
   }
 }
@@ -56,6 +58,18 @@ impl Evaluate for TextExpression {
 
 pub type TextValue = String;
 
+impl Evaluate for TextValue {
+  type Result = TextValue;
+
+  fn evaluate(
+    &self,
+    _runtime: &Runtime,
+    _arguments: &ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    Ok(self.clone())
+  }
+}
+
 impl TryFrom<AnyValue> for TextValue {
   type Error = EvaluateError;
 
@@ -72,6 +86,10 @@ pub enum TextOperation {
   #[from]
   Join(JoinOperation<TextExpression, TextExpression>),
   #[from]
+  Words(WordsOperation<TextExpression>),
+  #[from]
+  Lines(LinesOperation<TextExpression>),
+  #[from]
   GetArgument(GetArgumentOperation<TextValue>),
 }
 
@@ -84,7 +102,9 @@ impl Evaluate for TextOperation {
     arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
-      Self::Join(operation) => todo!(),
+      Self::Join(operation) => operation.evaluate(runtime, arguments),
+      Self::Words(operation) => operation.evaluate(runtime, arguments),
+      Self::Lines(operation) => operation.evaluate(runtime, arguments),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }
