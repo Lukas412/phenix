@@ -8,14 +8,15 @@ pub use crate::{
   names::{Identifier, Name, Namespace},
   operations::{
     AddOperation, AndOperation, ConditionOperation, EqualsOperation, GetArgumentOperation,
-    JoinOperation, LinesOperation, OrOperation, SubOperation, ToBooleanOperation, WordsOperation,
+    OrOperation, PathJoinOperation, SubOperation, TextJoinOperation, TextLinesOperation,
+    TextWordsOperation, ToBooleanOperation, ToPathOperation,
   },
   runtime::{Runtime, RuntimeBuilder},
   value::{
     ActionExpression, ActionOperation, ActionValue, AnyExpression, AnyValue, BooleanExpression,
-    BooleanOperation, BooleanValue, CommandOperation, CommandValue, NumberExpression,
-    NumberOperation, NumberValue, PathExpression, PathOperation, PathValue, TextExpression,
-    TextOperation, TextValue,
+    BooleanOperation, BooleanValue, CommandOperation, CommandValue, LocationOperation,
+    LocationValue, NumberExpression, NumberOperation, NumberValue, PathExpression, PathOperation,
+    PathValue, TextExpression, TextOperation, TextValue,
   },
 };
 

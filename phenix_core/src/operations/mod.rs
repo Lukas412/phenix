@@ -1,7 +1,14 @@
 pub use self::{
-  add::AddOperation, and::AndOperation, condition::ConditionOperation, equals::EqualsOperation,
-  get_argument::GetArgumentOperation, join::JoinOperation, lines::LinesOperation, or::OrOperation,
-  sub::SubOperation, to_boolean::ToBooleanOperation, words::WordsOperation,
+  add::AddOperation,
+  and::AndOperation,
+  condition::ConditionOperation,
+  equals::EqualsOperation,
+  get_argument::GetArgumentOperation,
+  or::OrOperation,
+  path::{PathJoinOperation, ToPathOperation},
+  string::{TextJoinOperation, TextLinesOperation, TextWordsOperation},
+  sub::SubOperation,
+  to_boolean::ToBooleanOperation,
 };
 
 mod add;
@@ -9,9 +16,8 @@ mod and;
 mod condition;
 mod equals;
 mod get_argument;
-mod join;
-mod lines;
 mod or;
+mod path;
+mod string;
 mod sub;
 mod to_boolean;
-mod words;

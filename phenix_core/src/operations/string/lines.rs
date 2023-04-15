@@ -1,20 +1,20 @@
 use crate::evaluate::EvaluateResult;
-use crate::{ComplexCreationArguments, Evaluate, JoinOperation, Runtime, TextValue};
+use crate::{ComplexCreationArguments, Evaluate, Runtime, TextJoinOperation, TextValue};
 
 #[derive(Clone, Debug)]
-pub struct LinesOperation<Expression> {
-  operation: JoinOperation<TextValue, Expression>,
+pub struct TextLinesOperation<Expression> {
+  operation: TextJoinOperation<TextValue, Expression>,
 }
 
-impl<Expression> LinesOperation<Expression> {
+impl<Expression> TextLinesOperation<Expression> {
   pub fn new(expressions: Vec<Expression>) -> Self {
     Self {
-      operation: JoinOperation::new("\n", expressions),
+      operation: TextJoinOperation::new("\n", expressions),
     }
   }
 }
 
-impl<Expression> Evaluate for LinesOperation<Expression>
+impl<Expression> Evaluate for TextLinesOperation<Expression>
 where
   Expression: Evaluate<Result = TextValue>,
 {

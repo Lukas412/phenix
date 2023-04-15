@@ -18,7 +18,7 @@ impl<Expression> ToBooleanOperation<Expression> {
 impl<Expression> Evaluate for ToBooleanOperation<Expression>
 where
   Expression: Evaluate,
-  Expression::Result: Into<bool>,
+  Expression::Result: Into<BooleanValue>,
 {
   type Result = BooleanValue;
 
@@ -27,10 +27,6 @@ where
     runtime: &Runtime,
     arguments: &ComplexCreationArguments,
   ) -> crate::evaluate::EvaluateResult<Self::Result> {
-    self
-      .expression
-      .evaluate(runtime, arguments)
-      .map(|result| result.into())
-      .map(|boolean: bool| boolean.into())
+    self.expression.evaluate(runtime, arguments).map(Into::into)
   }
 }

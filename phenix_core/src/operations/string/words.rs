@@ -1,20 +1,20 @@
 use crate::evaluate::EvaluateResult;
-use crate::{ComplexCreationArguments, Evaluate, JoinOperation, Runtime, TextValue};
+use crate::{ComplexCreationArguments, Evaluate, Runtime, TextJoinOperation, TextValue};
 
 #[derive(Clone, Debug)]
-pub struct WordsOperation<Expression> {
-  operation: JoinOperation<TextValue, Expression>,
+pub struct TextWordsOperation<Expression> {
+  operation: TextJoinOperation<TextValue, Expression>,
 }
 
-impl<Expression> WordsOperation<Expression> {
+impl<Expression> TextWordsOperation<Expression> {
   pub fn new(expressions: Vec<Expression>) -> Self {
     Self {
-      operation: JoinOperation::new(" ", expressions),
+      operation: TextJoinOperation::new(" ", expressions),
     }
   }
 }
 
-impl<Into1, Into2, Into3, Expression> From<(Into1, Into2, Into3)> for WordsOperation<Expression>
+impl<Into1, Into2, Into3, Expression> From<(Into1, Into2, Into3)> for TextWordsOperation<Expression>
 where
   Into1: Into<Expression>,
   Into2: Into<Expression>,
@@ -25,7 +25,7 @@ where
   }
 }
 
-impl<Expression, IntoExpression> From<Vec<IntoExpression>> for WordsOperation<Expression>
+impl<Expression, IntoExpression> From<Vec<IntoExpression>> for TextWordsOperation<Expression>
 where
   IntoExpression: Into<Expression>,
 {
@@ -35,7 +35,7 @@ where
   }
 }
 
-impl<Expression> Evaluate for WordsOperation<Expression>
+impl<Expression> Evaluate for TextWordsOperation<Expression>
 where
   Expression: Evaluate<Result = TextValue>,
 {

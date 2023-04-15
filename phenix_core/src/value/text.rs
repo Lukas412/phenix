@@ -4,8 +4,8 @@ use duplicate::duplicate_item;
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
-  JoinOperation, LinesOperation, Runtime, ToType, WordsOperation,
+  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError, Runtime,
+  TextJoinOperation, TextLinesOperation, TextWordsOperation, ToType,
 };
 
 #[derive(Clone, Debug, From)]
@@ -24,15 +24,15 @@ impl From<&str> for TextExpression {
 
 impl From<Vec<TextExpression>> for TextExpression {
   fn from(expressions: Vec<TextExpression>) -> Self {
-    JoinOperation::new("", expressions).into()
+    TextJoinOperation::new("", expressions).into()
   }
 }
 
 #[duplicate_item(
   OperationType;
-  [JoinOperation<TextExpression, TextExpression>];
-  [WordsOperation<TextExpression>];
-  [LinesOperation<TextExpression>];
+  [TextJoinOperation<TextExpression, TextExpression>];
+  [TextWordsOperation<TextExpression>];
+  [TextLinesOperation<TextExpression>];
   [GetArgumentOperation<TextValue>];
 )]
 impl From<OperationType> for TextExpression {
@@ -84,11 +84,11 @@ impl TryFrom<AnyValue> for TextValue {
 #[derive(Clone, Debug, From)]
 pub enum TextOperation {
   #[from]
-  Join(JoinOperation<TextExpression, TextExpression>),
+  Join(TextJoinOperation<TextExpression, TextExpression>),
   #[from]
-  Words(WordsOperation<TextExpression>),
+  Words(TextWordsOperation<TextExpression>),
   #[from]
-  Lines(LinesOperation<TextExpression>),
+  Lines(TextLinesOperation<TextExpression>),
   #[from]
   GetArgument(GetArgumentOperation<TextValue>),
 }

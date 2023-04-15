@@ -1,5 +1,8 @@
 pub use self::{
-  action::{ActionExpression, ActionOperation, ActionValue, CommandOperation, CommandValue},
+  action::{
+    ActionExpression, ActionOperation, ActionValue, CommandOperation, CommandValue,
+    LocationOperation, LocationValue,
+  },
   any::{AnyExpression, AnyValue},
   boolean::{BooleanExpression, BooleanOperation, BooleanValue},
   number::{NumberExpression, NumberOperation, NumberValue},

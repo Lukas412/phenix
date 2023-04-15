@@ -1,8 +1,8 @@
 use derive_more::From;
 
 pub use {
-  change_location::ChangeLocationValue,
   command::{CommandOperation, CommandValue},
+  location::{LocationOperation, LocationValue},
 };
 
 use crate::evaluate::EvaluateResult;
@@ -12,14 +12,14 @@ use crate::{
   PathExpression, PathValue, Runtime, TextValue, ToType,
 };
 
-mod change_location;
 mod command;
+mod location;
 
 #[derive(Clone, Debug, From)]
 pub enum ActionExpression {
   #[from(types(CommandValue))]
   Value(ActionValue),
-  #[from(types(CommandOperation))]
+  #[from(types(CommandOperation, LocationOperation))]
   Operation(ActionOperation),
 }
 
@@ -54,12 +54,10 @@ impl Evaluate for ActionExpression {
 pub enum ActionValue {
   #[from]
   Array(Vec<ActionValue>),
-  ChangeLocation {
-    location: PathValue,
-    actions: Box<ActionValue>,
-  },
   #[from]
-  ExecuteCommand(CommandValue),
+  Location(LocationValue),
+  #[from]
+  Command(CommandValue),
   WriteContent {
     file: PathValue,
     content: TextValue,
@@ -67,6 +65,16 @@ pub enum ActionValue {
   EnsureDirectory {
     file: PathExpression,
   },
+}
+
+impl<Into1, Into2> From<(Into1, Into2)> for ActionValue
+where
+  Into1: Into<ActionValue>,
+  Into2: Into<ActionValue>,
+{
+  fn from(values: (Into1, Into2)) -> Self {
+    Self::Array(vec![values.0.into(), values.1.into()])
+  }
 }
 
 impl TryFrom<AnyValue> for ActionValue {
@@ -87,6 +95,8 @@ pub enum ActionOperation {
   #[from]
   Command(CommandOperation),
   #[from]
+  Location(LocationOperation),
+  #[from]
   GetArgument(GetArgumentOperation<ActionValue>),
 }
 
@@ -105,6 +115,7 @@ impl Evaluate for ActionOperation {
         .collect::<EvaluateResult<Vec<_>>>()
         .map(Into::into),
       Self::Command(operation) => operation.evaluate(runtime, arguments).map(Into::into),
+      Self::Location(operation) => operation.evaluate(runtime, arguments).map(Into::into),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

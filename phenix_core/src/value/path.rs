@@ -1,19 +1,31 @@
-use std::fmt::Display;
 use std::path::PathBuf;
 
 use derive_more::From;
+use duplicate::duplicate_item;
 
 use crate::evaluate::EvaluateResult;
-use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError, Runtime,
-  ToType,
+  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
+  GetArgumentOperation, PathJoinOperation, Runtime, TextExpression, ToPathOperation, ToType,
 };
 
 #[derive(Clone, Debug, From)]
 pub enum PathExpression {
+  #[from]
   Value(PathValue),
+  #[from(types(PathJoinOperation))]
   Operation(PathOperation),
+}
+
+#[duplicate_item(
+  OperationType;
+  [ToPathOperation<TextExpression>];
+  [GetArgumentOperation<PathValue>];
+)]
+impl From<OperationType> for PathExpression {
+  fn from(operation: OperationType) -> Self {
+    Self::Operation(operation.into())
+  }
 }
 
 impl Evaluate for PathExpression {
@@ -31,15 +43,7 @@ impl Evaluate for PathExpression {
   }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, From)]
-#[from(forward)]
-pub struct PathValue(PathBuf);
-
-impl Display for PathValue {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    write!(f, "{}", self.0.to_string_lossy())
-  }
-}
+pub type PathValue = PathBuf;
 
 impl TryFrom<AnyValue> for PathValue {
   type Error = EvaluateError;
@@ -52,8 +56,10 @@ impl TryFrom<AnyValue> for PathValue {
   }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, From)]
 pub enum PathOperation {
+  StringToPath(ToPathOperation<TextExpression>),
+  Join(PathJoinOperation),
   GetArgument(GetArgumentOperation<PathValue>),
 }
 
@@ -66,6 +72,8 @@ impl Evaluate for PathOperation {
     arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
+      Self::StringToPath(operation) => operation.evaluate(runtime, arguments),
+      Self::Join(operation) => operation.evaluate(runtime, arguments),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

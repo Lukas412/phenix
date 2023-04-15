@@ -4,12 +4,12 @@ use crate::evaluate::EvaluateResult;
 use crate::{ComplexCreationArguments, Evaluate, Runtime, TextValue};
 
 #[derive(Clone, Debug)]
-pub struct JoinOperation<Separator, Expression> {
+pub struct TextJoinOperation<Separator, Expression> {
   separator: Box<Separator>,
   expressions: Vec<Expression>,
 }
 
-impl<Separator, Expression> JoinOperation<Separator, Expression> {
+impl<Separator, Expression> TextJoinOperation<Separator, Expression> {
   pub fn new<IntoSeparator>(separator: IntoSeparator, expressions: Vec<Expression>) -> Self
   where
     IntoSeparator: Into<Separator>,
@@ -21,7 +21,7 @@ impl<Separator, Expression> JoinOperation<Separator, Expression> {
   }
 }
 
-impl<Separator, Expression> Evaluate for JoinOperation<Separator, Expression>
+impl<Separator, Expression> Evaluate for TextJoinOperation<Separator, Expression>
 where
   Separator: Evaluate<Result = TextValue>,
   Expression: Evaluate<Result = TextValue>,
