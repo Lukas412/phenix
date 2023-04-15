@@ -2,6 +2,7 @@
 
 members = [
 	"phenix_core",
+	"phenix_npm",
 	"phenix_std",
 	"phenix_test",
 	"phenix_svelte"
