@@ -7,44 +7,6 @@ use crate::{
 };
 
 #[derive(Clone, Debug, From)]
-pub enum CommandExpression {
-  Value(CommandValue),
-  Operation(CommandOperation),
-}
-
-impl CommandExpression {
-  pub fn new<IntoNameTextExpression, IntoFlagsTextExpression>(
-    name: IntoNameTextExpression,
-    flags: IntoFlagsTextExpression,
-  ) -> Self
-  where
-    IntoNameTextExpression: Into<TextExpression>,
-    IntoFlagsTextExpression: Into<TextExpression>,
-  {
-    let command = CommandOperation::Expression {
-      name: name.into(),
-      flags: flags.into(),
-    };
-    command.into()
-  }
-}
-
-impl Evaluate for CommandExpression {
-  type Result = CommandValue;
-
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
-  ) -> EvaluateResult<Self::Result> {
-    match self {
-      Self::Value(value) => Ok(value.clone()),
-      Self::Operation(operation) => operation.evaluate(runtime, arguments),
-    }
-  }
-}
-
-#[derive(Clone, Debug, From)]
 pub struct CommandValue(TextValue);
 
 impl CommandValue {

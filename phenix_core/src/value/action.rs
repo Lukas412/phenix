@@ -1,16 +1,25 @@
+use derive_more::From;
+
+pub use {
+  change_location::ChangeLocationValue,
+  command::{CommandOperation, CommandValue},
+};
+
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, CommandExpression, CommandOperation, CommandValue, ComplexCreationArguments, Evaluate,
-  EvaluateError, ExtractTypeFromAnyError, PathExpression, PathValue, Runtime, TextValue, ToType,
+  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
+  PathExpression, PathValue, Runtime, TextValue, ToType,
 };
-use derive_more::From;
+
+mod change_location;
+mod command;
 
 #[derive(Clone, Debug, From)]
 pub enum ActionExpression {
   #[from(types(CommandValue))]
   Value(ActionValue),
-  #[from(types(CommandExpression, CommandOperation))]
+  #[from(types(CommandOperation))]
   Operation(ActionOperation),
 }
 
@@ -75,8 +84,8 @@ impl TryFrom<AnyValue> for ActionValue {
 pub enum ActionOperation {
   #[from]
   Array(Vec<ActionExpression>),
-  #[from(types(CommandOperation))]
-  CommandExpression(CommandExpression),
+  #[from]
+  Command(CommandOperation),
   #[from]
   GetArgument(GetArgumentOperation<ActionValue>),
 }
@@ -95,9 +104,7 @@ impl Evaluate for ActionOperation {
         .map(|expression| expression.evaluate(runtime, arguments))
         .collect::<EvaluateResult<Vec<_>>>()
         .map(Into::into),
-      Self::CommandExpression(expression) => {
-        expression.evaluate(runtime, arguments).map(Into::into)
-      }
+      Self::Command(operation) => operation.evaluate(runtime, arguments).map(Into::into),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

@@ -1,8 +1,7 @@
 pub use self::{
-  action::{ActionExpression, ActionOperation, ActionValue},
+  action::{ActionExpression, ActionOperation, ActionValue, CommandOperation, CommandValue},
   any::{AnyExpression, AnyValue},
   boolean::{BooleanExpression, BooleanOperation, BooleanValue},
-  command::{CommandExpression, CommandOperation, CommandValue},
   number::{NumberExpression, NumberOperation, NumberValue},
   path::{PathExpression, PathOperation, PathValue},
   text::{TextExpression, TextOperation, TextValue},
@@ -11,7 +10,6 @@ pub use self::{
 mod action;
 mod any;
 mod boolean;
-mod command;
 mod number;
 mod path;
 mod text;

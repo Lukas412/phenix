@@ -13,9 +13,9 @@ pub use crate::{
   runtime::{Runtime, RuntimeBuilder},
   value::{
     ActionExpression, ActionOperation, ActionValue, AnyExpression, AnyValue, BooleanExpression,
-    BooleanOperation, BooleanValue, CommandExpression, CommandOperation, CommandValue,
-    NumberExpression, NumberOperation, NumberValue, PathExpression, PathOperation, PathValue,
-    TextExpression, TextOperation, TextValue,
+    BooleanOperation, BooleanValue, CommandOperation, CommandValue, NumberExpression,
+    NumberOperation, NumberValue, PathExpression, PathOperation, PathValue, TextExpression,
+    TextOperation, TextValue,
   },
 };
 

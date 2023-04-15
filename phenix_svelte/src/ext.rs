@@ -1,5 +1,5 @@
 use phenix_core::{
-  ActionOperation, CommandExpression, GetArgumentOperation, RuntimeBuilder, WordsOperation,
+  ActionOperation, CommandOperation, GetArgumentOperation, RuntimeBuilder, WordsOperation,
 };
 
 pub trait PhenixSvelteExtension {
@@ -10,7 +10,7 @@ impl PhenixSvelteExtension for RuntimeBuilder {
   fn with_svelte(self) -> Self {
     self.with_action(
       "svelte:project:init",
-      ActionOperation::from(vec![CommandExpression::new(
+      ActionOperation::from(vec![CommandOperation::new(
         "npm",
         WordsOperation::from((
           "create",
