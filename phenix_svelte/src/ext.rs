@@ -1,7 +1,5 @@
-use phenix_core::{
-  ActionOperation, ActionValue, CommandOperation, CommandValue, GetArgumentOperation,
-  LocationOperation, RuntimeBuilder, TextWordsOperation, ToPathOperation,
-};
+use crate::project::{new_init_svelte_project_command, new_setup_svelte_project_action};
+use phenix_core::RuntimeBuilder;
 
 pub trait PhenixSvelteExtension {
   fn with_svelte(self) -> Self;
@@ -9,27 +7,8 @@ pub trait PhenixSvelteExtension {
 
 impl PhenixSvelteExtension for RuntimeBuilder {
   fn with_svelte(self) -> Self {
-    self.with_action(
-      "svelte:project:init",
-      ActionOperation::from(vec![
-        CommandOperation::new(
-          "npm",
-          TextWordsOperation::from((
-            "create",
-            "svelte@latest",
-            GetArgumentOperation::new("svelte:project$name"),
-          )),
-        )
-        .into(),
-        LocationOperation::new(
-          ToPathOperation::new(GetArgumentOperation::new("svelte:project$name")),
-          ActionValue::from((
-            CommandValue::new("npm install"),
-            CommandValue::new("npm run dev -- --open"),
-          )),
-        )
-        .into(),
-      ]),
-    )
+    self
+      .with_action("svelte:project:init", new_init_svelte_project_command())
+      .with_action("svelte:project:create", new_setup_svelte_project_action())
   }
 }

@@ -100,6 +100,16 @@ pub enum ActionOperation {
   GetArgument(GetArgumentOperation<ActionValue>),
 }
 
+impl<Into1, Into2> From<(Into1, Into2)> for ActionOperation
+where
+  Into1: Into<ActionExpression>,
+  Into2: Into<ActionExpression>,
+{
+  fn from(values: (Into1, Into2)) -> Self {
+    Self::from(vec![values.0.into(), values.1.into()])
+  }
+}
+
 impl Evaluate for ActionOperation {
   type Result = ActionValue;
 
