@@ -1,29 +1,29 @@
 use derive_more::{Display, From};
 
-use super::Expression;
 use crate::{
   evaluate::EvaluateResult,
-  operations::{
-    AndOperation, EvaluateAnd, EvaluateOr, GetArgumentOperation, OrOperation,
-  },
+  operations::{AndOperation, GetArgumentOperation, OrOperation},
   ComplexCreationArguments, Evaluate, Runtime,
 };
 
-pub type BooleanExpression = Expression<BooleanValue, BooleanOperation>;
-
-impl EvaluateAnd for BooleanExpression {
-  type Output = BooleanValue;
-
-  fn evaluate_and(self, _rhs: Self) -> Self::Output {
-    todo!()
-  }
+#[derive(Clone, Debug, From)]
+pub enum BooleanExpression {
+  Value(BooleanValue),
+  Operation(BooleanOperation),
 }
 
-impl EvaluateOr for BooleanExpression {
-  type Output = BooleanValue;
+impl Evaluate for BooleanExpression {
+  type Result = BooleanValue;
 
-  fn evaluate_or(self, _rhs: Self) -> Self::Output {
-    todo!()
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    match self {
+      Self::Value(value) => Ok(value.clone()),
+      Self::Operation(operation) => operation.evaluate(runtime, arguments),
+    }
   }
 }
 

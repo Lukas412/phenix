@@ -3,37 +3,34 @@ use std::fmt::Debug;
 use crate::evaluate::EvaluateResult;
 
 #[derive(Clone, Debug)]
-pub struct EqualsOperation<T, R = T> {
-  expression: T,
-  rhs_expression: R,
+pub struct EqualsOperation<Expression, Other = Expression> {
+  expressions: Box<(Expression, Other)>,
 }
 
-impl<T, R> EqualsOperation<T, R> {
-  pub fn new<A, B>(expression: A, rhs_expression: B) -> Self
+impl<Expression, Other> EqualsOperation<Expression, Other> {
+  pub fn new<IntoExpression, IntoOther>(expression: IntoExpression, other: IntoOther) -> Self
   where
-    A: Into<T>,
-    B: Into<R>,
+    IntoExpression: Into<Expression>,
+    IntoOther: Into<Other>,
   {
     Self {
-      expression: expression.into(),
-      rhs_expression: rhs_expression.into(),
+      expressions: (expression.into(), other.into()).into(),
     }
   }
 }
 
-impl<T, R> Evaluate for EqualsOperation<T, R>
+impl<Expression, Other> Evaluate for EqualsOperation<Expression, Other>
 where
-  T: Evaluate,
-  R: Evaluate,
-  T::Result: PartialEq<R::Result>
+  Expression: Evaluate,
+  Other: Evaluate,
+  Expression::Result: PartialEq<Other::Result>
 {
   type Result = BooleanValue;
 
   fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<Self::Result> {
-    let value = self.expression.evaluate(runtime, arguments.clone())?;
-    let rhs_value = self.rhs_expression.evaluate(runtime, arguments)?;
-    let result = value == rhs_value;
-    Ok(result.into())
+    let (result, other_result) =
+      self.expressions.evaluate(runtime, arguments)?;
+    Ok((result == other_result).into())
   }
 }
 

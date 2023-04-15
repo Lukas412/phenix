@@ -1,38 +1,43 @@
-use crate::evaluate::EvaluateResult;
-use crate::{ComplexCreationArguments, Evaluate, Runtime};
 use std::fmt::Debug;
 use std::ops::Sub;
 
+use crate::evaluate::EvaluateResult;
+use crate::{ComplexCreationArguments, Evaluate, Runtime};
+
 #[derive(Clone, Debug)]
 pub struct SubOperation<Expression, OtherExpression = Expression> {
-  expressions: (Expression, OtherExpression),
+  expressions: Box<(Expression, OtherExpression)>,
 }
 
 impl<Expression, OtherExpression> SubOperation<Expression, OtherExpression> {
   pub fn new<IntoExpression, IntoOtherExpression>(
     expression: IntoExpression,
-    rhs_expression: IntoOtherExpression,
+    other: IntoOtherExpression,
   ) -> Self
   where
     IntoExpression: Into<Expression>,
     IntoOtherExpression: Into<OtherExpression>,
   {
     Self {
-      expressions: (expression.into(), rhs_expression.into()),
+      expressions: (expression.into(), other.into()).into(),
     }
   }
 }
 
-impl<T, V, R> Evaluate for SubOperation<T, R>
+impl<Expression, OtherExpression, Value> Evaluate for SubOperation<Expression, OtherExpression>
 where
-  T: Evaluate,
-  R: Evaluate,
-  T::Result: Sub<R::Result, Output = EvaluateResult<V>>,
+  Expression: Evaluate,
+  OtherExpression: Evaluate,
+  Expression::Result: Sub<OtherExpression::Result, Output = EvaluateResult<Value>>,
 {
-  type Result = V;
+  type Result = Value;
 
-  fn evaluate(&self, runtime: &Runtime, arguments: ComplexCreationArguments) -> EvaluateResult<V> {
-    let (value, other_value) = self.expressions.evaluate(runtime, arguments)?;
-    value - other_value
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<Value> {
+    let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
+    result - other_result
   }
 }

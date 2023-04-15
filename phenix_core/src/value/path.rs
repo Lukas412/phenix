@@ -1,14 +1,35 @@
-use derive_more::{From};
+use std::fmt::Display;
+use std::path::PathBuf;
+
+use derive_more::From;
 
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
-use crate::value::expression::Expression;
-use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError, Runtime, ToType};
+use crate::{
+  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError, Runtime,
+  ToType,
+};
 
-use std::fmt::Display;
-use std::path::{PathBuf};
+#[derive(Clone, Debug, From)]
+pub enum PathExpression {
+  Value(PathValue),
+  Operation(PathOperation),
+}
 
-pub type PathExpression = Expression<PathValue, PathOperation>;
+impl Evaluate for PathExpression {
+  type Result = PathValue;
+
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    match self {
+      Self::Value(value) => Ok(value.clone()),
+      Self::Operation(operation) => operation.evaluate(runtime, arguments),
+    }
+  }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, From)]
 #[from(forward)]

@@ -11,11 +11,12 @@ pub struct ExtractTypeFromAnyError {
 
 impl ExtractTypeFromAnyError {
   pub fn new<V>(value: V, to_type: ToType) -> Self
-  where V: Into<AnyValue>
+  where
+    V: Into<AnyValue>,
   {
     Self {
       value: value.into(),
-      to_type
+      to_type,
     }
   }
 }
@@ -24,6 +25,7 @@ impl ExtractTypeFromAnyError {
 pub enum ToType {
   Action,
   Boolean,
+  Command,
   Number,
   Path,
   String,

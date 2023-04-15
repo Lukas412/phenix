@@ -25,8 +25,8 @@ where
     arguments: ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     let (expression, other_expression) = self;
-    let value = expression.evaluate(runtime, arguments.clone())?;
-    let other_value = other_expression.evaluate(runtime, arguments)?;
-    Ok((value, other_value))
+    let result = expression.evaluate(runtime, arguments.clone())?;
+    let other_result = other_expression.evaluate(runtime, arguments)?;
+    Ok((result, other_result))
   }
 }

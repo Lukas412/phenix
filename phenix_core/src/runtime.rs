@@ -1,11 +1,9 @@
 use std::collections::HashMap;
 
-
 use crate::evaluate::EvaluateResult;
 use crate::{
   ActionExpression, AnyExpression, AnyValue, BooleanExpression, ComplexCreationArguments, Creation,
-  Evaluate, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression,
-  StringExpression,
+  Evaluate, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression, TextExpression,
 };
 
 #[derive(Debug, Default)]
@@ -85,7 +83,7 @@ impl RuntimeBuilder {
   pub fn with_string<N, E>(self, namespace: N, string: E) -> Self
   where
     N: Into<Namespace>,
-    E: Into<StringExpression>,
+    E: Into<TextExpression>,
   {
     self.with_expression(namespace, string.into())
   }

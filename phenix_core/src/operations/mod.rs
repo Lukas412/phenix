@@ -1,18 +1,13 @@
 pub use self::{
-  add::AddOperation,
-  and::{AndOperation, EvaluateAnd},
-  condition::ConditionOperation,
-  equals::EqualsOperation,
-  get_argument::GetArgumentOperation,
-  or::{EvaluateOr, OrOperation},
-  sub::{EvaluateSub, SubOperation},
+  add::AddOperation, and::AndOperation, condition::ConditionOperation, equals::EqualsOperation,
+  get_argument::GetArgumentOperation, or::OrOperation, sub::SubOperation,
 };
 
 mod add;
 mod and;
 mod condition;
+mod equals;
 mod get_argument;
 mod or;
-mod equals;
-mod to_boolean;
 mod sub;
+mod to_boolean;
