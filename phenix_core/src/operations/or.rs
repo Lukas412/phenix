@@ -1,4 +1,12 @@
+use crate::evaluate::EvaluateResult;
+use crate::{ComplexCreationArguments, Evaluate, Runtime};
 use std::fmt::Debug;
+
+pub trait Or<Rhs = Self> {
+  type Output;
+
+  fn or(self, other: Rhs) -> Self::Output;
+}
 
 #[derive(Clone, Debug)]
 pub struct OrOperation<Expression, OtherExpression = Expression> {
@@ -6,13 +14,34 @@ pub struct OrOperation<Expression, OtherExpression = Expression> {
 }
 
 impl<Expression, OtherExpression> OrOperation<Expression, OtherExpression> {
-  pub fn new<IntoExpression, IntoOtherExpression>(expression: IntoExpression, other_expression: IntoOtherExpression) -> Self
-    where
-      IntoExpression: Into<Expression>,
-      IntoOtherExpression: Into<OtherExpression>,
+  pub fn new<IntoExpression, IntoOtherExpression>(
+    expression: IntoExpression,
+    other_expression: IntoOtherExpression,
+  ) -> Self
+  where
+    IntoExpression: Into<Expression>,
+    IntoOtherExpression: Into<OtherExpression>,
   {
     Self {
-      expressions: (expression.into(), other_expression.into()).into()
+      expressions: (expression.into(), other_expression.into()).into(),
     }
+  }
+}
+
+impl<Expression, OtherExpression, Value> Evaluate for OrOperation<Expression, OtherExpression>
+where
+  Expression: Evaluate,
+  OtherExpression: Evaluate,
+  Expression::Result: Or<OtherExpression::Result, Output = EvaluateResult<Value>>,
+{
+  type Result = Value;
+
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: &ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
+    result.or(other_result)
   }
 }

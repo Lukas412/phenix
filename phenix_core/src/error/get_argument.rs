@@ -2,7 +2,7 @@ use derive_more::{Display, Error, From};
 
 use crate::Identifier;
 
-#[derive(Debug, Display, Error, From)]
+#[derive(Clone, Debug, Display, Error, From)]
 pub enum GetArgumentOperationError {
   #[from(forward)]
   ArgumentNotFound {
@@ -11,7 +11,7 @@ pub enum GetArgumentOperationError {
   },
 }
 
-#[derive(Debug, Display, Error)]
+#[derive(Clone, Debug, Display, Error)]
 #[display(fmt = "Argument was not found: {identifier}")]
 pub struct ArgumentNotFoundError {
   identifier: Identifier,

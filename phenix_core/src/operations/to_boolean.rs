@@ -1,11 +1,32 @@
-use crate::BooleanValue;
+use crate::{BooleanValue, ComplexCreationArguments, Evaluate, Runtime};
 
-pub trait EvaluateToBoolean {
-  fn to_boolean(self) -> BooleanValue;
+#[derive(Clone, Debug)]
+pub struct ToBooleanOperation<Expression> {
+  expression: Box<Expression>,
 }
 
-pub struct ToBooleanOperation<T>
-  where T: EvaluateToBoolean
+impl<Expression> ToBooleanOperation<Expression> {
+  pub fn new<IntoExpression>(expression: IntoExpression) -> Self
+  where
+    IntoExpression: Into<Expression>,
+  {
+    let expression = Box::from(expression.into());
+    Self { expression }
+  }
+}
+
+impl<Expression> Evaluate for ToBooleanOperation<Expression>
+where
+  Expression: Evaluate,
+  Expression::Result: Into<BooleanValue>,
 {
-  expression: T,
+  type Result = BooleanValue;
+
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: &ComplexCreationArguments,
+  ) -> crate::evaluate::EvaluateResult<Self::Result> {
+    self.expression.evaluate(runtime, arguments).map(Into::into)
+  }
 }

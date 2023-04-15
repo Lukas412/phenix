@@ -2,7 +2,7 @@ use derive_more::{Display, Error};
 
 use crate::AnyValue;
 
-#[derive(Debug, Display, Error)]
+#[derive(Clone, Debug, Display, Error)]
 #[display(fmt = "Can not extract type {to_type} from value {value:?}")]
 pub struct ExtractTypeFromAnyError {
   value: AnyValue,
@@ -21,7 +21,7 @@ impl ExtractTypeFromAnyError {
   }
 }
 
-#[derive(Debug, Display)]
+#[derive(Clone, Copy, Debug, Display)]
 pub enum ToType {
   Action,
   Boolean,

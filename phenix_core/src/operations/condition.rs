@@ -1,9 +1,8 @@
-use crate::operations::to_boolean::EvaluateToBoolean;
+use crate::BooleanExpression;
 
-pub struct ConditionOperation<C, T>
-  where C: EvaluateToBoolean
-{
-  condition: C,
-  then: T,
-  other: T,
+#[allow(unused)]
+pub struct ConditionOperation<Expression> {
+  condition: BooleanExpression,
+  then: Expression,
+  other: Expression,
 }

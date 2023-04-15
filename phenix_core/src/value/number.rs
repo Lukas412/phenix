@@ -5,7 +5,9 @@ use rust_decimal::Decimal;
 
 use crate::error::ExtractTypeFromAnyError;
 use crate::evaluate::EvaluateResult;
-use crate::operations::{AddOperation, EqualsOperation, GetArgumentOperation, SubOperation};
+use crate::operations::{
+  AddOperation, EqualsOperation, GetArgumentOperation, SubOperation, ToBooleanOperation,
+};
 use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, Runtime, ToType};
 
 #[derive(Clone, Debug, From)]
@@ -34,7 +36,7 @@ impl Evaluate for NumberExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -84,7 +86,9 @@ pub enum NumberOperation {
   Sub(SubOperation<NumberExpression>),
   #[from]
   Equals(EqualsOperation<NumberExpression>),
-  #[from(forward)]
+  #[from]
+  ToBoolean(ToBooleanOperation<NumberExpression>),
+  #[from]
   GetArgument(GetArgumentOperation<NumberValue>),
 }
 
@@ -94,12 +98,13 @@ impl Evaluate for NumberOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Add(operation) => operation.evaluate(runtime, arguments),
       Self::Sub(operation) => operation.evaluate(runtime, arguments),
       Self::Equals(_) => todo!(),
+      Self::ToBoolean(_) => todo!(),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

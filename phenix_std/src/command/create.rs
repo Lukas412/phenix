@@ -1,7 +1,7 @@
-use phenix_core::{ActionValue, CommandValue, GetArgumentOperation};
+use phenix_core::{ActionExpression, CommandOperation, GetArgumentOperation};
 
-pub(crate) fn create_command_value() -> ActionValue {
-  let name = GetArgumentOperation::new("std:command$name").into();
-  let arguments = GetArgumentOperation::new("std:command$arguments").into();
-  CommandValue::new(name, arguments).into()
+pub(crate) fn create_command_value() -> ActionExpression {
+  let name = GetArgumentOperation::new("std:command$name");
+  let arguments = GetArgumentOperation::new("std:command$arguments");
+  CommandOperation::new(name, arguments).into()
 }

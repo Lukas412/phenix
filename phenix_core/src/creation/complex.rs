@@ -1,8 +1,8 @@
-use crate::{Creation, Identifier, Namespace};
 use std::collections::HashMap;
-use std::rc::Rc;
 
-pub type ComplexCreationArguments = Rc<HashMap<Identifier, Creation>>;
+use crate::{Creation, Identifier, Namespace};
+
+pub type ComplexCreationArguments = HashMap<Identifier, Creation>;
 
 #[derive(Clone, Debug)]
 pub struct ComplexCreation {
@@ -31,9 +31,9 @@ pub struct ComplexCreationBuilder {
 }
 
 impl ComplexCreationBuilder {
-  pub fn new<N>(namespace: N) -> Self
+  pub fn new<IntoNamespace>(namespace: IntoNamespace) -> Self
   where
-    N: Into<Namespace>,
+    IntoNamespace: Into<Namespace>,
   {
     Self {
       namespace: namespace.into(),
@@ -41,10 +41,14 @@ impl ComplexCreationBuilder {
     }
   }
 
-  pub fn with<T, C>(mut self, identifier: T, creation: C) -> Self
+  pub fn with<IntoIdentifier, IntoCreation>(
+    mut self,
+    identifier: IntoIdentifier,
+    creation: IntoCreation,
+  ) -> Self
   where
-    T: Into<Identifier>,
-    C: Into<Creation>,
+    IntoIdentifier: Into<Identifier>,
+    IntoCreation: Into<Creation>,
   {
     self.values.insert(identifier.into(), creation.into());
     self
@@ -53,6 +57,6 @@ impl ComplexCreationBuilder {
 
 impl From<ComplexCreationBuilder> for ComplexCreation {
   fn from(value: ComplexCreationBuilder) -> Self {
-    Self::new(value.namespace, value.values.into())
+    Self::new(value.namespace, value.values)
   }
 }

@@ -1,21 +1,12 @@
-use phenix_core::{AddOperation, ComplexCreationBuilder, GetArgumentOperation, RuntimeBuilder};
+use phenix_core::{ComplexCreationBuilder, RuntimeBuilder};
 use phenix_std::RuntimeBuilderStdExt;
+use phenix_svelte::PhenixSvelteExtension;
 
 fn main() {
-  let runtime = RuntimeBuilder::default()
-    .with_std()
-    .with_number(
-      "test:number",
-      AddOperation::new(
-        GetArgumentOperation::new("test:number$a"),
-        GetArgumentOperation::new("test:number$b"),
-      ),
-    )
-    .build();
+  let runtime = RuntimeBuilder::default().with_std().with_svelte().build();
 
-  let creation = ComplexCreationBuilder::new("test:number")
-    .with("test:number$a", 100)
-    .with("test:number$b", 567654)
+  let creation = ComplexCreationBuilder::new("svelte:project:init")
+    .with("svelte:project$name", "my_test_project")
     .into();
 
   let result = runtime.evaluate(&creation);

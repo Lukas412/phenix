@@ -1,4 +1,4 @@
-use derive_more::{Display, From};
+use derive_more::From;
 
 use crate::{
   evaluate::EvaluateResult,
@@ -18,17 +18,16 @@ impl Evaluate for BooleanExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: ComplexCreationArguments,
+    arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
-      Self::Value(value) => Ok(value.clone()),
+      Self::Value(value) => Ok(*value),
       Self::Operation(operation) => operation.evaluate(runtime, arguments),
     }
   }
 }
 
-#[derive(Clone, Debug, Display, From)]
-pub struct BooleanValue(bool);
+pub type BooleanValue = bool;
 
 #[derive(Clone, Debug)]
 pub enum BooleanOperation {
@@ -43,7 +42,7 @@ impl Evaluate for BooleanOperation {
   fn evaluate(
     &self,
     _runtime: &Runtime,
-    _arguments: ComplexCreationArguments,
+    _arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     todo!()
   }

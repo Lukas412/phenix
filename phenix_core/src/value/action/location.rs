@@ -1,0 +1,64 @@
+use crate::evaluate::EvaluateResult;
+use crate::{
+  ActionExpression, ActionValue, ComplexCreationArguments, Evaluate, PathExpression, PathValue,
+  Runtime,
+};
+
+#[derive(Clone, Debug)]
+pub struct LocationValue {
+  location: PathValue,
+  action: Box<ActionValue>,
+}
+
+impl LocationValue {
+  pub fn new<IntoPathValue, IntoActionValue>(
+    location: IntoPathValue,
+    action: IntoActionValue,
+  ) -> Self
+  where
+    IntoPathValue: Into<PathValue>,
+    IntoActionValue: Into<ActionValue>,
+  {
+    Self {
+      location: location.into(),
+      action: Box::new(action.into()),
+    }
+  }
+}
+
+#[derive(Clone, Debug)]
+pub struct LocationOperation {
+  location: PathExpression,
+  action: Box<ActionExpression>,
+}
+
+impl LocationOperation {
+  pub fn new<IntoPathExpression, IntoActionExpression>(
+    location: IntoPathExpression,
+    action: IntoActionExpression,
+  ) -> Self
+  where
+    IntoPathExpression: Into<PathExpression>,
+    IntoActionExpression: Into<ActionExpression>,
+  {
+    Self {
+      location: location.into(),
+      action: Box::new(action.into()),
+    }
+  }
+}
+
+impl Evaluate for LocationOperation {
+  type Result = LocationValue;
+
+  fn evaluate(
+    &self,
+    runtime: &Runtime,
+    arguments: &ComplexCreationArguments,
+  ) -> EvaluateResult<Self::Result> {
+    Ok(LocationValue::new(
+      self.location.evaluate(runtime, arguments)?,
+      self.action.evaluate(runtime, arguments)?,
+    ))
+  }
+}
