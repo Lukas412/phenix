@@ -14,6 +14,17 @@ impl<Expression> WordsOperation<Expression> {
   }
 }
 
+impl<Into1, Into2, Into3, Expression> From<(Into1, Into2, Into3)> for WordsOperation<Expression>
+where
+  Into1: Into<Expression>,
+  Into2: Into<Expression>,
+  Into3: Into<Expression>,
+{
+  fn from(values: (Into1, Into2, Into3)) -> Self {
+    Self::new(vec![values.0.into(), values.1.into(), values.2.into()])
+  }
+}
+
 impl<Expression, IntoExpression> From<Vec<IntoExpression>> for WordsOperation<Expression>
 where
   IntoExpression: Into<Expression>,

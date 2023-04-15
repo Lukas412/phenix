@@ -22,7 +22,10 @@ impl From<&str> for Identifier {
   fn from(value: &str) -> Self {
     value
       .find(Self::SEPARATOR)
-      .map(|index| (&value[..index], &value[min(index, value.len())..]).into())
+      .map(|index| {
+        let name_start_index_in_bounds = min(index + 1, value.len());
+        (&value[..index], &value[name_start_index_in_bounds..]).into()
+      })
       .unwrap_or_default()
   }
 }

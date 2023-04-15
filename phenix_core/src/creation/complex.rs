@@ -57,6 +57,6 @@ impl ComplexCreationBuilder {
 
 impl From<ComplexCreationBuilder> for ComplexCreation {
   fn from(value: ComplexCreationBuilder) -> Self {
-    Self::new(value.namespace, value.values.into())
+    Self::new(value.namespace, value.values)
   }
 }

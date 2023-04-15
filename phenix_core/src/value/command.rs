@@ -47,6 +47,15 @@ impl Evaluate for CommandExpression {
 #[derive(Clone, Debug, From)]
 pub struct CommandValue(TextValue);
 
+impl CommandValue {
+  pub fn new<IntoTextValue>(value: IntoTextValue) -> Self
+  where
+    IntoTextValue: Into<TextValue>,
+  {
+    Self(value.into())
+  }
+}
+
 impl TryFrom<AnyValue> for CommandValue {
   type Error = EvaluateError;
 
@@ -65,6 +74,22 @@ pub enum CommandOperation {
     flags: TextExpression,
   },
   GetArgument(GetArgumentOperation<CommandValue>),
+}
+
+impl CommandOperation {
+  pub fn new<IntoNameTextExpression, IntoFlagsTextExpression>(
+    name: IntoNameTextExpression,
+    flags: IntoFlagsTextExpression,
+  ) -> Self
+  where
+    IntoNameTextExpression: Into<TextExpression>,
+    IntoFlagsTextExpression: Into<TextExpression>,
+  {
+    Self::Expression {
+      name: name.into(),
+      flags: flags.into(),
+    }
+  }
 }
 
 impl Evaluate for CommandOperation {

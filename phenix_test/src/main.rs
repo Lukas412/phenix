@@ -6,8 +6,7 @@ fn main() {
   let runtime = RuntimeBuilder::default().with_std().with_svelte().build();
 
   let creation = ComplexCreationBuilder::new("svelte:project:init")
-    .with("test:number$a", 100)
-    .with("test:number$b", 567654)
+    .with("svelte:project$name", "my_test_project")
     .into();
 
   let result = runtime.evaluate(&creation);
