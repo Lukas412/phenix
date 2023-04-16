@@ -13,3 +13,12 @@ pub enum Creation {
   #[from(types(ComplexCreationBuilder))]
   Complex(ComplexCreation),
 }
+
+impl Creation {
+  pub fn new<IntoAnyExpression>(any_expression: IntoAnyExpression) -> Self
+  where
+    IntoAnyExpression: Into<AnyExpression>,
+  {
+    Self::Expression(any_expression.into())
+  }
+}
