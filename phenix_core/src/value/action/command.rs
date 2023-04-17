@@ -3,7 +3,7 @@ use derive_more::From;
 use crate::evaluate::EvaluateResult;
 use crate::{
   AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
-  GetArgumentOperation, Runtime, TextExpression, TextValue, ToType,
+  GetArgumentOperation, Runtime, TextExpression, TextValue, TextWordsOperation, ToType,
 };
 
 #[derive(Clone, Debug, From)]
@@ -31,26 +31,49 @@ impl TryFrom<AnyValue> for CommandValue {
 
 #[derive(Clone, Debug)]
 pub enum CommandOperation {
-  Expression {
-    name: TextExpression,
-    flags: TextExpression,
-  },
+  Expression(TextExpression),
   GetArgument(GetArgumentOperation<CommandValue>),
 }
 
 impl CommandOperation {
-  pub fn new<IntoNameTextExpression, IntoFlagsTextExpression>(
-    name: IntoNameTextExpression,
-    flags: IntoFlagsTextExpression,
-  ) -> Self
+  pub fn new<IntoTextExpression>(expression: IntoTextExpression) -> Self
   where
-    IntoNameTextExpression: Into<TextExpression>,
-    IntoFlagsTextExpression: Into<TextExpression>,
+    IntoTextExpression: Into<TextExpression>,
   {
-    Self::Expression {
-      name: name.into(),
-      flags: flags.into(),
-    }
+    Self::Expression(expression.into())
+  }
+}
+
+impl<Into1, Into2> From<(Into1, Into2)> for CommandOperation
+where
+  Into1: Into<TextExpression>,
+  Into2: Into<TextExpression>,
+{
+  fn from(values: (Into1, Into2)) -> Self {
+    Self::new(TextWordsOperation::from(values))
+  }
+}
+
+impl<Into1, Into2, Into3> From<(Into1, Into2, Into3)> for CommandOperation
+where
+  Into1: Into<TextExpression>,
+  Into2: Into<TextExpression>,
+  Into3: Into<TextExpression>,
+{
+  fn from(values: (Into1, Into2, Into3)) -> Self {
+    Self::new(TextWordsOperation::from(values))
+  }
+}
+
+impl<Into1, Into2, Into3, Into4> From<(Into1, Into2, Into3, Into4)> for CommandOperation
+where
+  Into1: Into<TextExpression>,
+  Into2: Into<TextExpression>,
+  Into3: Into<TextExpression>,
+  Into4: Into<TextExpression>,
+{
+  fn from(values: (Into1, Into2, Into3, Into4)) -> Self {
+    Self::new(TextWordsOperation::from(values))
   }
 }
 
@@ -63,12 +86,9 @@ impl Evaluate for CommandOperation {
     arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
-      Self::Expression { name, flags } => {
-        let name = name.evaluate(runtime, arguments)?;
-        let flags = flags.evaluate(runtime, arguments)?;
-        let command = name + " " + flags.as_str();
-        Ok(command.into())
-      }
+      Self::Expression(expression) => expression
+        .evaluate(runtime, arguments)
+        .map(CommandValue::new),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

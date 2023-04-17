@@ -12,7 +12,7 @@ use crate::{
 pub enum TextExpression {
   #[from]
   Value(TextValue),
-  #[from]
+  #[from(types(TextWordsOperation))]
   Operation(TextOperation),
 }
 
@@ -31,7 +31,6 @@ impl From<Vec<TextExpression>> for TextExpression {
 #[duplicate_item(
   OperationType;
   [TextJoinOperation<TextExpression, TextExpression>];
-  [TextWordsOperation<TextExpression>];
   [TextLinesOperation<TextExpression>];
   [GetArgumentOperation<TextValue>];
 )]
@@ -86,7 +85,7 @@ pub enum TextOperation {
   #[from]
   Join(TextJoinOperation<TextExpression, TextExpression>),
   #[from]
-  Words(TextWordsOperation<TextExpression>),
+  Words(TextWordsOperation),
   #[from]
   Lines(TextLinesOperation<TextExpression>),
   #[from]

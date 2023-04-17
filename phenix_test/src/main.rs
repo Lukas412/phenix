@@ -5,7 +5,7 @@ use phenix_svelte::PhenixSvelteExtension;
 fn main() {
   let runtime = RuntimeBuilder::default().with_std().with_svelte().build();
 
-  let creation = ComplexCreationBuilder::new("svelte:project:init")
+  let creation = ComplexCreationBuilder::new("svelte:project:create")
     .with("svelte:project$name", "my_test_project")
     .into();
 

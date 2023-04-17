@@ -1,14 +1,8 @@
-pub fn add(left: usize, right: usize) -> usize {
-  left + right
-}
+pub use {
+  ext::PhenixNpmExtension,
+  install::{new_npm_blank_install_command, new_npm_install_packages_command},
+};
 
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[test]
-  fn it_works() {
-    let result = add(2, 2);
-    assert_eq!(result, 4);
-  }
-}
+mod ext;
+mod install;
+mod run;

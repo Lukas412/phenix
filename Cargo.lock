@@ -227,6 +227,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "phenix_npm"
+version = "0.1.0"
+dependencies = [
+ "phenix_core",
+]
+
+[[package]]
 name = "phenix_std"
 version = "0.1.0"
 dependencies = [
@@ -238,6 +245,7 @@ name = "phenix_svelte"
 version = "0.1.0"
 dependencies = [
  "phenix_core",
+ "phenix_npm",
 ]
 
 [[package]]
