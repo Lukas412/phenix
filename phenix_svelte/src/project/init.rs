@@ -1,4 +1,4 @@
-use phenix_core::{CommandOperation, GetArgumentOperation, TextWordsOperation};
+use phenix_core::{CommandOperation, GetArgumentOperation};
 
 pub(crate) fn new_init_svelte_project_command() -> CommandOperation {
   CommandOperation::from((
