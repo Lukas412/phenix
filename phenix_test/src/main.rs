@@ -11,6 +11,8 @@ fn main() {
 
   let result = runtime.evaluate(&creation).and_then(ActionValue::try_from);
 
+  dbg!(&result);
+
   match result {
     Ok(value) => println!("{}", value.as_bash()),
     Err(error) => println!("{}", error),

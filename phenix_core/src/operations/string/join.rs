@@ -39,7 +39,7 @@ where
       .expressions
       .iter()
       .map(|expression| expression.evaluate(runtime, arguments))
-      .filter_ok(TextValue::is_empty)
+      .filter_ok(|value| !value.is_empty())
       .intersperse(Ok(separator))
       .collect()
   }

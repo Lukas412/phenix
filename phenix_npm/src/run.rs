@@ -9,7 +9,7 @@ pub const NPM_RUN__ARGUMENTS: &str = "npm:run$arguments";
 
 pub fn new_npm_run_command_operation() -> CommandOperation {
   CommandOperation::from((
-    "npm",
+    "npm run",
     GetArgumentOperation::new(NPM_RUN__NAME),
     ConditionOperation::new(
       HasArgumentOperation::new(NPM_RUN__ARGUMENTS),

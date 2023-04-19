@@ -1,9 +1,10 @@
 use crate::evaluate::EvaluateResult;
 use crate::{Evaluate, EvaluateArguments, Runtime};
 
+#[derive(Clone, Debug)]
 pub struct ContextSwitchOperation<Expression> {
   context: EvaluateArguments,
-  expression: Expression,
+  expression: Box<Expression>,
 }
 
 impl<Expression> ContextSwitchOperation<Expression> {
@@ -17,7 +18,7 @@ impl<Expression> ContextSwitchOperation<Expression> {
   {
     Self {
       context: context.into(),
-      expression: expression.into(),
+      expression: Box::new(expression.into()),
     }
   }
 }

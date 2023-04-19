@@ -2,7 +2,7 @@ use derive_more::From;
 
 use crate::AnyExpression;
 
-pub use self::complex::{ComplexCreation, ComplexCreationBuilder, EvaluateArguments};
+pub use self::complex::{ComplexCreation, ComplexCreationBuilder};
 
 mod complex;
 

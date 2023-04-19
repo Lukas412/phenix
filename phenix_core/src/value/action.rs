@@ -1,4 +1,5 @@
 use derive_more::From;
+use duplicate::duplicate_item;
 use itertools::Itertools;
 
 pub use {
@@ -9,8 +10,8 @@ pub use {
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, AsBash, Evaluate, EvaluateArguments, EvaluateError, ExtractTypeFromAnyError,
-  PathExpression, PathValue, Runtime, TextValue, ToType,
+  AnyValue, AsBash, ContextSwitchOperation, Evaluate, EvaluateArguments, EvaluateError,
+  ExtractTypeFromAnyError, PathExpression, PathValue, Runtime, TextValue, ToType,
 };
 
 mod command;
@@ -30,8 +31,13 @@ impl From<Vec<ActionValue>> for ActionExpression {
   }
 }
 
-impl From<Vec<ActionExpression>> for ActionExpression {
-  fn from(expressions: Vec<ActionExpression>) -> Self {
+#[duplicate_item(
+  OperationType;
+  [Vec<ActionExpression>];
+  [ContextSwitchOperation<ActionExpression>];
+)]
+impl From<OperationType> for ActionExpression {
+  fn from(expressions: OperationType) -> Self {
     Self::Operation(expressions.into())
   }
 }
@@ -103,14 +109,11 @@ impl TryFrom<AnyValue> for ActionValue {
 
 #[derive(Clone, Debug, From)]
 pub enum ActionOperation {
-  #[from]
   Array(Vec<ActionExpression>),
-  #[from]
   Command(CommandOperation),
-  #[from]
   Location(LocationOperation),
-  #[from]
   GetArgument(GetArgumentOperation<ActionValue>),
+  ContextSwitch(ContextSwitchOperation<ActionExpression>),
 }
 
 impl<Into1, Into2> From<(Into1, Into2)> for ActionOperation
@@ -140,6 +143,7 @@ impl Evaluate for ActionOperation {
       Self::Command(operation) => operation.evaluate(runtime, arguments).map(Into::into),
       Self::Location(operation) => operation.evaluate(runtime, arguments).map(Into::into),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
+      Self::ContextSwitch(operation) => operation.evaluate(runtime, arguments),
     }
   }
 }

@@ -1,16 +1,17 @@
 pub use crate::{
   bash::AsBash,
-  creation::{ComplexCreationBuilder, Creation, EvaluateArguments},
+  creation::{ComplexCreationBuilder, Creation},
   error::{
     ArgumentNotFoundError, EvaluateError, ExpressionNotFoundError, ExtractTypeFromAnyError,
     GetArgumentOperationError, ToType,
   },
-  evaluate::Evaluate,
+  evaluate::{Evaluate, EvaluateArguments},
   names::{Identifier, Name, Namespace},
   operations::{
-    AddOperation, And, AndOperation, ConditionOperation, EqualsOperation, GetArgumentOperation,
-    HasArgumentOperation, Or, OrOperation, PathJoinOperation, SubOperation, TextBlockOperation,
-    TextJoinOperation, TextLinesOperation, TextWordsOperation, ToBooleanOperation, ToPathOperation,
+    AddOperation, And, AndOperation, ConditionOperation, ContextExtendOperation,
+    ContextSwitchOperation, EqualsOperation, GetArgumentOperation, HasArgumentOperation, Or,
+    OrOperation, PathJoinOperation, SubOperation, TextBlockOperation, TextJoinOperation,
+    TextLinesOperation, TextWordsOperation, ToBooleanOperation, ToPathOperation,
   },
   runtime::{Runtime, RuntimeBuilder},
   value::{

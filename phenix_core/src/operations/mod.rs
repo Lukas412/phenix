@@ -3,6 +3,7 @@ pub use self::{
   and::{And, AndOperation},
   boolean::{HasArgumentOperation, ToBooleanOperation},
   condition::ConditionOperation,
+  context::{ContextExtendOperation, ContextSwitchOperation},
   equals::EqualsOperation,
   get_argument::GetArgumentOperation,
   or::{Or, OrOperation},

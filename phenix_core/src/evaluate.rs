@@ -1,4 +1,7 @@
-use crate::{EvaluateArguments, EvaluateError, Runtime};
+use crate::{EvaluateError, Runtime};
+pub use arguments::EvaluateArguments;
+
+mod arguments;
 
 pub trait Evaluate {
   type Result;

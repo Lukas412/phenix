@@ -1,8 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{Creation, Identifier, Namespace};
-
-pub type EvaluateArguments = HashMap<Identifier, Creation>;
+use crate::{Creation, EvaluateArguments, Identifier, Namespace};
 
 #[derive(Clone, Debug)]
 pub struct ComplexCreation {
