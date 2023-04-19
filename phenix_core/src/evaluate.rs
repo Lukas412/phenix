@@ -1,4 +1,4 @@
-use crate::{ComplexCreationArguments, EvaluateError, Runtime};
+use crate::{EvaluateArguments, EvaluateError, Runtime};
 
 pub trait Evaluate {
   type Result;
@@ -6,7 +6,7 @@ pub trait Evaluate {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result>;
 }
 
@@ -22,7 +22,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     let (expression, other_expression) = self;
     let result = expression.evaluate(runtime, arguments)?;

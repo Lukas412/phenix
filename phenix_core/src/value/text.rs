@@ -4,8 +4,9 @@ use duplicate::duplicate_item;
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError, Runtime,
-  TextBlockOperation, TextJoinOperation, TextLinesOperation, TextWordsOperation, ToType,
+  AnyValue, ConditionOperation, Evaluate, EvaluateArguments, EvaluateError,
+  ExtractTypeFromAnyError, Runtime, TextBlockOperation, TextJoinOperation, TextLinesOperation,
+  TextWordsOperation, ToType,
 };
 
 #[derive(Clone, Debug, From)]
@@ -24,7 +25,7 @@ impl From<&str> for TextExpression {
 
 impl From<Vec<TextExpression>> for TextExpression {
   fn from(expressions: Vec<TextExpression>) -> Self {
-    TextJoinOperation::new("", expressions).into()
+    TextBlockOperation::new(expressions).into()
   }
 }
 
@@ -32,6 +33,7 @@ impl From<Vec<TextExpression>> for TextExpression {
   OperationType;
   [TextJoinOperation<TextExpression, TextExpression>];
   [TextLinesOperation<TextExpression>];
+  [ConditionOperation<TextExpression>];
   [GetArgumentOperation<TextValue>];
 )]
 impl From<OperationType> for TextExpression {
@@ -46,7 +48,7 @@ impl Evaluate for TextExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -63,7 +65,7 @@ impl Evaluate for TextValue {
   fn evaluate(
     &self,
     _runtime: &Runtime,
-    _arguments: &ComplexCreationArguments,
+    _arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     Ok(self.clone())
   }
@@ -82,15 +84,11 @@ impl TryFrom<AnyValue> for TextValue {
 
 #[derive(Clone, Debug, From)]
 pub enum TextOperation {
-  #[from]
   Join(TextJoinOperation<TextExpression, TextExpression>),
-  #[from]
   Block(TextBlockOperation),
-  #[from]
   Words(TextWordsOperation),
-  #[from]
   Lines(TextLinesOperation<TextExpression>),
-  #[from]
+  Condition(ConditionOperation<TextExpression>),
   GetArgument(GetArgumentOperation<TextValue>),
 }
 
@@ -100,13 +98,14 @@ impl Evaluate for TextOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Join(operation) => operation.evaluate(runtime, arguments),
       Self::Block(operation) => operation.evaluate(runtime, arguments),
       Self::Words(operation) => operation.evaluate(runtime, arguments),
       Self::Lines(operation) => operation.evaluate(runtime, arguments),
+      Self::Condition(operation) => operation.evaluate(runtime, arguments),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
     }
   }

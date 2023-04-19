@@ -1,6 +1,6 @@
 pub use crate::{
   bash::AsBash,
-  creation::{ComplexCreationArguments, ComplexCreationBuilder, Creation},
+  creation::{ComplexCreationBuilder, Creation, EvaluateArguments},
   error::{
     ArgumentNotFoundError, EvaluateError, ExpressionNotFoundError, ExtractTypeFromAnyError,
     GetArgumentOperationError, ToType,

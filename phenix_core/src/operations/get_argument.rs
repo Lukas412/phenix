@@ -1,6 +1,6 @@
 use crate::{
-  evaluate::EvaluateResult, AnyValue, ArgumentNotFoundError, ComplexCreationArguments, Creation,
-  Evaluate, EvaluateError, Identifier, Runtime,
+  evaluate::EvaluateResult, AnyValue, ArgumentNotFoundError, Creation, Evaluate, EvaluateArguments,
+  EvaluateError, Identifier, Runtime,
 };
 use std::fmt::Debug;
 use std::marker::PhantomData;
@@ -43,7 +43,7 @@ where
 {
   type Result = V;
 
-  fn evaluate(&self, runtime: &Runtime, arguments: &ComplexCreationArguments) -> EvaluateResult<V> {
+  fn evaluate(&self, runtime: &Runtime, arguments: &EvaluateArguments) -> EvaluateResult<V> {
     let creation = arguments
       .get(&self.identifier)
       .or(self.default.as_deref())

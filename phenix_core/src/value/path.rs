@@ -5,7 +5,7 @@ use duplicate::duplicate_item;
 
 use crate::evaluate::EvaluateResult;
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
+  AnyValue, Evaluate, EvaluateArguments, EvaluateError, ExtractTypeFromAnyError,
   GetArgumentOperation, PathJoinOperation, Runtime, TextExpression, ToPathOperation, ToType,
 };
 
@@ -34,7 +34,7 @@ impl Evaluate for PathExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -69,7 +69,7 @@ impl Evaluate for PathOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::StringToPath(operation) => operation.evaluate(runtime, arguments),

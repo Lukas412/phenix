@@ -2,8 +2,9 @@ use std::collections::HashMap;
 
 use crate::evaluate::EvaluateResult;
 use crate::{
-  ActionExpression, AnyExpression, AnyValue, BooleanExpression, ComplexCreationArguments, Creation,
-  Evaluate, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression, TextExpression,
+  ActionExpression, AnyExpression, AnyValue, BooleanExpression, Creation, Evaluate,
+  EvaluateArguments, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression,
+  TextExpression,
 };
 
 #[derive(Debug, Default)]
@@ -15,7 +16,7 @@ impl Runtime {
   pub fn evaluate<'b>(&'b self, creation: &'b Creation) -> EvaluateResult<AnyValue> {
     match creation {
       Creation::Expression(expression) => {
-        let arguments = ComplexCreationArguments::default();
+        let arguments = EvaluateArguments::default();
         expression.evaluate(self, &arguments)
       }
       Creation::Complex(complex) => self

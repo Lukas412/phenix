@@ -9,7 +9,7 @@ pub use {
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, AsBash, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
+  AnyValue, AsBash, Evaluate, EvaluateArguments, EvaluateError, ExtractTypeFromAnyError,
   PathExpression, PathValue, Runtime, TextValue, ToType,
 };
 
@@ -42,7 +42,7 @@ impl Evaluate for ActionExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -129,7 +129,7 @@ impl Evaluate for ActionOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Array(expressions) => expressions

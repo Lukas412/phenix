@@ -2,16 +2,16 @@ use std::collections::HashMap;
 
 use crate::{Creation, Identifier, Namespace};
 
-pub type ComplexCreationArguments = HashMap<Identifier, Creation>;
+pub type EvaluateArguments = HashMap<Identifier, Creation>;
 
 #[derive(Clone, Debug)]
 pub struct ComplexCreation {
   namespace: Namespace,
-  values: ComplexCreationArguments,
+  values: EvaluateArguments,
 }
 
 impl ComplexCreation {
-  fn new(namespace: Namespace, values: ComplexCreationArguments) -> Self {
+  fn new(namespace: Namespace, values: EvaluateArguments) -> Self {
     Self { namespace, values }
   }
 
@@ -19,7 +19,7 @@ impl ComplexCreation {
     &self.namespace
   }
 
-  pub(crate) fn values(&self) -> &ComplexCreationArguments {
+  pub(crate) fn values(&self) -> &EvaluateArguments {
     &self.values
   }
 }

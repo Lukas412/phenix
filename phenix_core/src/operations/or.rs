@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{ComplexCreationArguments, Evaluate, Runtime};
+use crate::{Evaluate, EvaluateArguments, Runtime};
 use std::fmt::Debug;
 
 pub trait Or<Rhs = Self> {
@@ -39,7 +39,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
     result.or(other_result)

@@ -1,7 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{
-  ComplexCreationArguments, Evaluate, Runtime, TextExpression, TextJoinOperation, TextValue,
-};
+use crate::{Evaluate, EvaluateArguments, Runtime, TextExpression, TextJoinOperation, TextValue};
 
 #[derive(Clone, Debug)]
 pub struct TextWordsOperation {
@@ -70,7 +68,7 @@ impl Evaluate for TextWordsOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     self.operation.evaluate(runtime, arguments)
   }

@@ -15,6 +15,7 @@ mod add;
 mod and;
 mod boolean;
 mod condition;
+mod context;
 mod equals;
 mod get_argument;
 mod or;

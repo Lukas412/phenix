@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use crate::evaluate::EvaluateResult;
-use crate::{ComplexCreationArguments, Evaluate, Runtime};
+use crate::{Evaluate, EvaluateArguments, Runtime};
 
 pub trait And<Rhs = Self> {
   type Output;
@@ -37,11 +37,7 @@ where
 {
   type Result = Value;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
-  ) -> EvaluateResult<Value> {
+  fn evaluate(&self, runtime: &Runtime, arguments: &EvaluateArguments) -> EvaluateResult<Value> {
     self
       .expressions
       .evaluate(runtime, arguments)

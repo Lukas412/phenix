@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{ComplexCreationArguments, Evaluate, PathValue, Runtime};
+use crate::{Evaluate, EvaluateArguments, PathValue, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct ToPathOperation<Expression> {
@@ -27,7 +27,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     self.expression.evaluate(runtime, arguments).map(Into::into)
   }

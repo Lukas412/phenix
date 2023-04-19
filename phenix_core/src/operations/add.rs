@@ -1,6 +1,6 @@
 use std::{fmt::Debug, ops::Add};
 
-use crate::{evaluate::EvaluateResult, ComplexCreationArguments, Evaluate, Runtime};
+use crate::{evaluate::EvaluateResult, Evaluate, EvaluateArguments, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct AddOperation<Expression, OtherExpression = Expression> {
@@ -30,11 +30,7 @@ where
 {
   type Result = Value;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
-  ) -> EvaluateResult<Value> {
+  fn evaluate(&self, runtime: &Runtime, arguments: &EvaluateArguments) -> EvaluateResult<Value> {
     let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
     result + other_result
   }

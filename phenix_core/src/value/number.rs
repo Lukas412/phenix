@@ -8,7 +8,7 @@ use crate::evaluate::EvaluateResult;
 use crate::operations::{
   AddOperation, EqualsOperation, GetArgumentOperation, SubOperation, ToBooleanOperation,
 };
-use crate::{AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, Runtime, ToType};
+use crate::{AnyValue, Evaluate, EvaluateArguments, EvaluateError, Runtime, ToType};
 
 #[derive(Clone, Debug, From)]
 pub enum NumberExpression {
@@ -36,7 +36,7 @@ impl Evaluate for NumberExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -98,7 +98,7 @@ impl Evaluate for NumberOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Add(operation) => operation.evaluate(runtime, arguments),

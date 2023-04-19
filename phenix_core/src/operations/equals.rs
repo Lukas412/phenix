@@ -1,6 +1,7 @@
-use crate::evaluate::EvaluateResult;
-use crate::{BooleanValue, ComplexCreationArguments, Evaluate, Runtime};
 use std::fmt::Debug;
+
+use crate::evaluate::EvaluateResult;
+use crate::{BooleanValue, Evaluate, EvaluateArguments, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct EqualsOperation<Expression, Other = Expression> {
@@ -30,9 +31,11 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &ComplexCreationArguments,
+    arguments: &EvaluateArguments,
   ) -> EvaluateResult<Self::Result> {
-    let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
-    Ok((result == other_result).into())
+    self
+      .expressions
+      .evaluate(runtime, arguments)
+      .map(|(result, other)| result == other)
   }
 }
