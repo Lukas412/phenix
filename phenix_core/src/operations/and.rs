@@ -1,6 +1,7 @@
+use std::fmt::Debug;
+
 use crate::evaluate::EvaluateResult;
 use crate::{ComplexCreationArguments, Evaluate, Runtime};
-use std::fmt::Debug;
 
 pub trait And<Rhs = Self> {
   type Output;
@@ -41,7 +42,9 @@ where
     runtime: &Runtime,
     arguments: &ComplexCreationArguments,
   ) -> EvaluateResult<Value> {
-    let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
-    And::and(result, other_result)
+    self
+      .expressions
+      .evaluate(runtime, arguments)
+      .and_then(|(result, other)| result.and(other))
   }
 }

@@ -3,8 +3,7 @@ pub use {
 };
 
 pub const NPM_INSTALL: &str = "npm:install";
-pub const NPM_INSTALL_BLANK: &str = "npm:install:blank";
-pub const NPM_INSTALL_PACKAGES: &str = "npm:install$packages";
+pub const NPM_INSTALL__PACKAGES: &str = "npm:install$packages";
 
 mod blank;
 mod packages;

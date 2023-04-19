@@ -1,4 +1,5 @@
 use derive_more::From;
+use itertools::Itertools;
 
 pub use {
   command::{CommandOperation, CommandValue},
@@ -8,7 +9,7 @@ pub use {
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
+  AnyValue, AsBash, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
   PathExpression, PathValue, Runtime, TextValue, ToType,
 };
 
@@ -65,6 +66,18 @@ pub enum ActionValue {
   EnsureDirectory {
     file: PathExpression,
   },
+}
+
+impl AsBash for ActionValue {
+  fn as_bash(&self) -> String {
+    match self {
+      Self::Array(values) => values.iter().map(AsBash::as_bash).join("\n"),
+      Self::Location(location) => location.as_bash(),
+      Self::Command(command) => command.as_bash(),
+      Self::WriteContent { .. } => todo!(),
+      Self::EnsureDirectory { .. } => todo!(),
+    }
+  }
 }
 
 impl<Into1, Into2> From<(Into1, Into2)> for ActionValue

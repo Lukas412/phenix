@@ -1,4 +1,4 @@
-use phenix_core::{ComplexCreationBuilder, RuntimeBuilder};
+use phenix_core::{ActionValue, AsBash, ComplexCreationBuilder, RuntimeBuilder};
 use phenix_std::RuntimeBuilderStdExt;
 use phenix_svelte::{PhenixSvelteExtension, SVELTE_PROJECT, SVELTE_PROJECT__NAME};
 
@@ -9,10 +9,10 @@ fn main() {
     .with(SVELTE_PROJECT__NAME, "my_test_project")
     .into();
 
-  let result = runtime.evaluate(&creation);
+  let result = runtime.evaluate(&creation).and_then(ActionValue::try_from);
 
   match result {
-    Ok(value) => println!("{:#?}", value),
+    Ok(value) => println!("{}", value.as_bash()),
     Err(error) => println!("{}", error),
   }
 }

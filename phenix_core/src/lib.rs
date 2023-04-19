@@ -1,4 +1,5 @@
 pub use crate::{
+  bash::AsBash,
   creation::{ComplexCreationArguments, ComplexCreationBuilder, Creation},
   error::{
     ArgumentNotFoundError, EvaluateError, ExpressionNotFoundError, ExtractTypeFromAnyError,
@@ -7,9 +8,9 @@ pub use crate::{
   evaluate::Evaluate,
   names::{Identifier, Name, Namespace},
   operations::{
-    AddOperation, AndOperation, ConditionOperation, EqualsOperation, GetArgumentOperation,
-    OrOperation, PathJoinOperation, SubOperation, TextBlockOperation, TextJoinOperation,
-    TextLinesOperation, TextWordsOperation, ToBooleanOperation, ToPathOperation,
+    AddOperation, And, AndOperation, ConditionOperation, EqualsOperation, GetArgumentOperation,
+    HasArgumentOperation, Or, OrOperation, PathJoinOperation, SubOperation, TextBlockOperation,
+    TextJoinOperation, TextLinesOperation, TextWordsOperation, ToBooleanOperation, ToPathOperation,
   },
   runtime::{Runtime, RuntimeBuilder},
   value::{
@@ -20,6 +21,7 @@ pub use crate::{
   },
 };
 
+mod bash;
 mod creation;
 mod error;
 mod evaluate;

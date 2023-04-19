@@ -2,7 +2,7 @@ use derive_more::From;
 
 use crate::evaluate::EvaluateResult;
 use crate::{
-  AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
+  AnyValue, AsBash, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError,
   GetArgumentOperation, Runtime, TextExpression, TextValue, TextWordsOperation, ToType,
 };
 
@@ -15,6 +15,12 @@ impl CommandValue {
     IntoTextValue: Into<TextValue>,
   {
     Self(value.into())
+  }
+}
+
+impl AsBash for CommandValue {
+  fn as_bash(&self) -> String {
+    self.0.clone()
   }
 }
 

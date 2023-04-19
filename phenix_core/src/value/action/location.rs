@@ -1,7 +1,7 @@
 use crate::evaluate::EvaluateResult;
 use crate::{
-  ActionExpression, ActionValue, ComplexCreationArguments, Evaluate, PathExpression, PathValue,
-  Runtime,
+  ActionExpression, ActionValue, AsBash, ComplexCreationArguments, Evaluate, PathExpression,
+  PathValue, Runtime,
 };
 
 #[derive(Clone, Debug)]
@@ -23,6 +23,16 @@ impl LocationValue {
       location: location.into(),
       action: Box::new(action.into()),
     }
+  }
+}
+
+impl AsBash for LocationValue {
+  fn as_bash(&self) -> String {
+    format!(
+      "pushd {}\n{}\npopd",
+      self.location.display(),
+      self.action.as_bash()
+    )
   }
 }
 
