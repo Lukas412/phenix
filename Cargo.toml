@@ -2,9 +2,10 @@
 
 members = [
 	"phenix_core",
-	"phenix_npm",
-	"phenix_std",
 	"phenix_test",
-	"phenix_svelte",
-	"phenix_xml"
+	"extensions/phenix_html",
+	"extensions/phenix_npm",
+	"extensions/phenix_std",
+	"extensions/phenix_svelte",
+	"extensions/phenix_xml",
 ]
