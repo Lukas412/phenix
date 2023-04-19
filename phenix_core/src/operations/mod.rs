@@ -6,7 +6,7 @@ pub use self::{
   get_argument::GetArgumentOperation,
   or::OrOperation,
   path::{PathJoinOperation, ToPathOperation},
-  string::{TextJoinOperation, TextLinesOperation, TextWordsOperation},
+  string::{TextJoinOperation, TextLinesOperation, TextWordsOperation, TextBlockOperation},
   sub::SubOperation,
   to_boolean::ToBooleanOperation,
 };

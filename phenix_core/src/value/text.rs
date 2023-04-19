@@ -5,14 +5,14 @@ use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
   AnyValue, ComplexCreationArguments, Evaluate, EvaluateError, ExtractTypeFromAnyError, Runtime,
-  TextJoinOperation, TextLinesOperation, TextWordsOperation, ToType,
+  TextBlockOperation, TextJoinOperation, TextLinesOperation, TextWordsOperation, ToType,
 };
 
 #[derive(Clone, Debug, From)]
 pub enum TextExpression {
   #[from]
   Value(TextValue),
-  #[from(types(TextWordsOperation))]
+  #[from(types(TextBlockOperation, TextWordsOperation))]
   Operation(TextOperation),
 }
 
@@ -85,6 +85,8 @@ pub enum TextOperation {
   #[from]
   Join(TextJoinOperation<TextExpression, TextExpression>),
   #[from]
+  Block(TextBlockOperation),
+  #[from]
   Words(TextWordsOperation),
   #[from]
   Lines(TextLinesOperation<TextExpression>),
@@ -102,6 +104,7 @@ impl Evaluate for TextOperation {
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Join(operation) => operation.evaluate(runtime, arguments),
+      Self::Block(operation) => operation.evaluate(runtime, arguments),
       Self::Words(operation) => operation.evaluate(runtime, arguments),
       Self::Lines(operation) => operation.evaluate(runtime, arguments),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),

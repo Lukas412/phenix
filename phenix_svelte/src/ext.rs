@@ -1,4 +1,7 @@
-use crate::project::{new_init_svelte_project_command, new_setup_svelte_project_action};
+use crate::project::{
+  new_svelte_project_init_operation, new_svelte_project_operation, SVELTE_PROJECT_INIT,
+};
+use crate::SVELTE_PROJECT;
 use phenix_core::RuntimeBuilder;
 
 pub trait PhenixSvelteExtension {
@@ -8,7 +11,7 @@ pub trait PhenixSvelteExtension {
 impl PhenixSvelteExtension for RuntimeBuilder {
   fn with_svelte(self) -> Self {
     self
-      .with_action("svelte:project:init", new_init_svelte_project_command())
-      .with_action("svelte:project:create", new_setup_svelte_project_action())
+      .with_action(SVELTE_PROJECT_INIT, new_svelte_project_init_operation())
+      .with_action(SVELTE_PROJECT, new_svelte_project_operation())
   }
 }
