@@ -82,7 +82,7 @@ impl RuntimeBuilder {
     self.with_expression(namespace, path.into())
   }
 
-  pub fn with_string<N, E>(self, namespace: N, string: E) -> Self
+  pub fn with_text<N, E>(self, namespace: N, string: E) -> Self
   where
     N: Into<Namespace>,
     E: Into<TextExpression>,

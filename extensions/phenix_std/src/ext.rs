@@ -9,7 +9,7 @@ pub trait RuntimeBuilderStdExt {
 impl RuntimeBuilderStdExt for RuntimeBuilder {
   fn with_std(self) -> Self {
     self
-      .with_string("std:string:empty", "")
+      .with_text("std:string:empty", "")
       .with_action("std:command:create", new_std_create_command())
   }
 }

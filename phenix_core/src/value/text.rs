@@ -4,7 +4,7 @@ use duplicate::duplicate_item;
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, ConditionOperation, Evaluate, EvaluateArguments, EvaluateError,
+  AnyValue, ConditionOperation, ContextSwitchOperation, Evaluate, EvaluateArguments, EvaluateError,
   ExtractTypeFromAnyError, Runtime, TextBlockOperation, TextJoinOperation, TextLinesOperation,
   TextWordsOperation, ToType,
 };
@@ -90,6 +90,7 @@ pub enum TextOperation {
   Lines(TextLinesOperation<TextExpression>),
   Condition(ConditionOperation<TextExpression>),
   GetArgument(GetArgumentOperation<TextValue>),
+  ContextSwitch(ContextSwitchOperation<TextExpression>),
 }
 
 impl Evaluate for TextOperation {
@@ -107,6 +108,7 @@ impl Evaluate for TextOperation {
       Self::Lines(operation) => operation.evaluate(runtime, arguments),
       Self::Condition(operation) => operation.evaluate(runtime, arguments),
       Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
+      Self::ContextSwitch(operation) => operation.evaluate(runtime, arguments),
     }
   }
 }

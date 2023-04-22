@@ -44,11 +44,11 @@ where
   type Result = V;
 
   fn evaluate(&self, runtime: &Runtime, arguments: &EvaluateArguments) -> EvaluateResult<V> {
-    let creation = arguments
+    arguments
       .get(&self.identifier)
       .or(self.default.as_deref())
-      .ok_or_else(|| ArgumentNotFoundError::new(self.identifier.clone()))?;
-
-    runtime.evaluate(creation)?.try_into()
+      .ok_or_else(|| ArgumentNotFoundError::new(self.identifier.clone()).into())
+      .and_then(|creation| runtime.evaluate(creation))?
+      .try_into()
   }
 }

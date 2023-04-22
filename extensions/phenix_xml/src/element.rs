@@ -11,23 +11,30 @@ mod close_tag;
 mod empty;
 mod open_tag;
 
+pub const XML_ELEMENT: &str = "xml:element";
 pub const XML_ELEMENT__NAME: &str = "xml:element$name";
 pub const XML_ELEMENT__ARGUMENTS: &str = "xml:element$arguments";
 pub const XML_ELEMENT__INNER: &str = "xml:element$inner";
 
-pub fn new_xml_element_operation(
+pub fn new_xml_element_operation_with_context_switch(
   name: impl Into<Creation>,
   arguments: impl Into<Creation>,
   inner: impl Into<Creation>,
-) -> impl Into<TextOperation> {
+) -> TextOperation {
   ContextSwitchOperation::new(
     new_xml_element_context(name, arguments, inner),
-    TextBlockOperation::from((
-      new_xml_element_open_tag_operation(),
-      GetArgumentOperation::new(XML_ELEMENT__INNER),
-      new_xml_element_close_tag_operation(),
-    )),
+    new_xml_element_operation(),
   )
+  .into()
+}
+
+pub fn new_xml_element_operation() -> TextBlockOperation {
+  (
+    new_xml_element_open_tag_operation(),
+    GetArgumentOperation::new(XML_ELEMENT__INNER),
+    new_xml_element_close_tag_operation(),
+  )
+    .into()
 }
 
 fn new_xml_element_context(
