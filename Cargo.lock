@@ -110,6 +110,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "const-str"
+version = "0.5.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b62c6d3ea43cbe0bc5a081f276fd477e4291d168aacc9f9d98073325333c0d4"
+
+[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -245,6 +251,7 @@ dependencies = [
 name = "phenix_std"
 version = "0.1.0"
 dependencies = [
+ "const-str",
  "phenix_core",
 ]
 
@@ -252,8 +259,11 @@ dependencies = [
 name = "phenix_svelte"
 version = "0.1.0"
 dependencies = [
+ "const-str",
  "phenix_core",
+ "phenix_html",
  "phenix_npm",
+ "phenix_xml",
 ]
 
 [[package]]
@@ -269,7 +279,9 @@ dependencies = [
 name = "phenix_xml"
 version = "0.1.0"
 dependencies = [
+ "const-str",
  "phenix_core",
+ "phenix_std",
 ]
 
 [[package]]

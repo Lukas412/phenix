@@ -1,7 +1,10 @@
 pub use {
+  elements::{
+    new_html_element_script_operation, new_html_element_script_with, HTML_ELEMENT_SCRIPT,
+    HTML_ELEMENT_SCRIPT__ARGUMENTS, HTML_ELEMENT_SCRIPT__CONTENT,
+  },
   ext::PhenixHtmlExt,
-  script::{new_html_script_operation, HTML_SCRIPT, HTML_SCRIPT__ARGUMENTS, HTML_SCRIPT__CONTENT},
 };
 
+mod elements;
 mod ext;
-mod script;

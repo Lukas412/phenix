@@ -13,10 +13,7 @@ pub struct GetArgumentOperation<T> {
 }
 
 impl<T> GetArgumentOperation<T> {
-  pub fn new<I>(identifier: I) -> Self
-  where
-    I: Into<Identifier>,
-  {
+  pub fn new(identifier: impl Into<Identifier>) -> Self {
     Self {
       identifier: identifier.into(),
       default: None,
@@ -24,11 +21,10 @@ impl<T> GetArgumentOperation<T> {
     }
   }
 
-  pub fn with_default<I, D>(identifier: I, default: D) -> Self
-  where
-    I: Into<Identifier>,
-    D: Into<Creation>,
-  {
+  pub fn with_default<I, D>(
+    identifier: impl Into<Identifier>,
+    default: impl Into<Creation>,
+  ) -> Self {
     Self {
       identifier: identifier.into(),
       default: Some(Box::new(default.into())),
