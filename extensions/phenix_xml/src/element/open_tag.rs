@@ -1,12 +1,12 @@
-use crate::element::{XML_ELEMENT_ARGUMENTS, XML_ELEMENT_NAME};
+use crate::element::{XML_ELEMENT__ARGUMENTS, XML_ELEMENT__NAME};
 use phenix_core::{GetArgumentOperation, TextBlockOperation, TextOperation, TextWordsOperation};
 
 pub fn new_xml_element_open_tag_operation() -> TextOperation {
   TextBlockOperation::from((
     "<",
     TextWordsOperation::from((
-      GetArgumentOperation::new(XML_ELEMENT_NAME),
-      GetArgumentOperation::new(XML_ELEMENT_ARGUMENTS),
+      GetArgumentOperation::new(XML_ELEMENT__NAME),
+      GetArgumentOperation::new(XML_ELEMENT__ARGUMENTS),
     )),
     ">",
   ))

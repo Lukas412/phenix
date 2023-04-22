@@ -3,6 +3,7 @@ name = "phenix_html"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+phenix_core = { path="../../phenix_core" }
+phenix_prelude = { path="../../phenix_prelude" }
+phenix_xml = { path="../phenix_xml" }

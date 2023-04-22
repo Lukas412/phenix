@@ -20,13 +20,7 @@ pub fn new_svelte_project_operation() -> ActionOperation {
       ToPathOperation::new(GetArgumentOperation::new(SVELTE_PROJECT__NAME)),
       ActionOperation::from((
         new_npm_install_blank_command_value(),
-        ContextSwitchOperation::new(
-          [
-            (NPM_RUN__NAME.into(), "dev".into()),
-            (NPM_RUN__ARGUMENTS.into(), "--open".into()),
-          ],
-          new_npm_run_command_operation(),
-        ),
+        new_npm_run_command_operation("dev", Some("--open")),
       )),
     ),
   ))
