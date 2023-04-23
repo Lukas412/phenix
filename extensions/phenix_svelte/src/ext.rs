@@ -1,7 +1,5 @@
-use crate::project::{
-  new_svelte_project_init_operation, new_svelte_project_operation, SVELTE_PROJECT_INIT,
-};
 use crate::SVELTE_PROJECT;
+use crate::{new_svelte_project_init_operation, new_svelte_project_operation, SVELTE_PROJECT_INIT};
 use phenix_core::RuntimeBuilder;
 
 pub trait PhenixSvelteExtension {

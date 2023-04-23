@@ -1,3 +1,4 @@
+use crate::SVELTE_PROJECT__NAME;
 pub use init::new_svelte_project_init_operation;
 use phenix_core::{ActionOperation, GetArgumentOperation, LocationOperation, ToPathOperation};
 use phenix_npm::{
