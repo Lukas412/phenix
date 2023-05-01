@@ -1,11 +1,8 @@
+use crate::{HTML_ELEMENT_SCRIPT__ARGUMENTS, HTML_ELEMENT_SCRIPT__CONTENT};
 use phenix_core::{
   ContextSwitchOperation, Creation, EvaluateArguments, GetArgumentOperation, TextOperation,
 };
-use phenix_xml::new_xml_element_operation_with_context_switch;
-
-pub const HTML_ELEMENT_SCRIPT: &str = "html:element:script";
-pub const HTML_ELEMENT_SCRIPT__ARGUMENTS: &str = "html:element:script$arguments";
-pub const HTML_ELEMENT_SCRIPT__CONTENT: &str = "html:element:script$content";
+use phenix_xml::new_xml_element_with;
 
 pub fn new_html_element_script_with(
   arguments: impl Into<TextOperation>,
@@ -13,16 +10,16 @@ pub fn new_html_element_script_with(
 ) -> TextOperation {
   ContextSwitchOperation::new(
     new_html_element_script_context(arguments.into(), content.into()),
-    new_html_element_script_operation(),
+    new_html_element_script(),
   )
   .into()
 }
 
-pub fn new_html_element_script_operation() -> TextOperation {
-  new_xml_element_operation_with_context_switch(
+pub fn new_html_element_script() -> TextOperation {
+  new_xml_element_with(
     "script",
-    TextOperation::from(GetArgumentOperation::new(HTML_ELEMENT_SCRIPT__ARGUMENTS)),
-    TextOperation::from(GetArgumentOperation::new(HTML_ELEMENT_SCRIPT__CONTENT)),
+    GetArgumentOperation::new(HTML_ELEMENT_SCRIPT__ARGUMENTS),
+    GetArgumentOperation::new(HTML_ELEMENT_SCRIPT__CONTENT),
   )
 }
 

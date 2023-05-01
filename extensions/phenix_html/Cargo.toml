@@ -4,5 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+const-str = "0.5.4"
 phenix_core = { path="../../phenix_core" }
 phenix_xml = { path="../phenix_xml" }

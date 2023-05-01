@@ -5,7 +5,7 @@ pub use {
     STD_TEXT, STD_TEXT_EMPTY, STD_TEXT_QUOTED, STD_TEXT_QUOTED_DOUBLE, STD_TEXT_QUOTED_SINGLE,
     STD_TEXT__VALUE,
   },
-  text::{new_std_text_quoted_double_operation, new_std_text_with, new_text_empty},
+  text::{new_std_text_empty, new_std_text_quoted_double_operation, new_std_text_with},
 };
 
 mod command;

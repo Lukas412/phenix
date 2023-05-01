@@ -14,3 +14,6 @@ pub const SVELTE_COMPONENT_CONTENT: &str = concat!(SVELTE_COMPONENT, ":content")
 
 pub const SVELTE_COMPONENT_SCRIPT: &str = concat!(SVELTE_COMPONENT, ":script");
 pub const SVELTE_COMPONENT_SCRIPT__CONTENT: &str = concat!(SVELTE_COMPONENT_SCRIPT, "$content");
+
+pub const SVELTE_COMPONENT_STYLE: &str = concat!(SVELTE_COMPONENT, ":style");
+pub const SVELTE_COMPONENT_STYLE__CONTENT: &str = concat!(SVELTE_COMPONENT_STYLE, "$content");

@@ -17,7 +17,7 @@ pub const XML_ELEMENT__NAME: &str = "xml:element$name";
 pub const XML_ELEMENT__ATTRIBUTES: &str = "xml:element$attributes";
 pub const XML_ELEMENT__INNER: &str = "xml:element$inner";
 
-pub fn new_xml_element_operation_with_context_switch(
+pub fn new_xml_element_with(
   name: impl Into<TextExpression>,
   arguments: impl Into<TextExpression>,
   inner: impl Into<TextExpression>,

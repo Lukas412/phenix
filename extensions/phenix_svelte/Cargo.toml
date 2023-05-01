@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+phenix_std = { path="../phenix_std" }
 phenix_core = { path= "../../phenix_core" }
 phenix_npm = { path= "../phenix_npm" }
 phenix_html = { path= "../phenix_html" }
