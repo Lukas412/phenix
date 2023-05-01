@@ -1,6 +1,5 @@
 use crate::{
-  new_html_element_script, new_html_element_style, HTML_ELEMENT, HTML_ELEMENT_SCRIPT,
-  HTML_ELEMENT_STYLE,
+  new_html_element_script, new_html_element_style, HTML_ELEMENT_SCRIPT, HTML_ELEMENT_STYLE,
 };
 use phenix_core::RuntimeBuilder;
 
