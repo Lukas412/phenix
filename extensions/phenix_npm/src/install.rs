@@ -1,9 +1,11 @@
-pub use {
-  blank::new_npm_install_blank_command_value, packages::new_npm_install_packages_command_operation,
-};
+pub use packages::{new_npm_install_packages, new_npm_install_packages_with};
+use phenix_core::CommandValue;
 
 pub const NPM_INSTALL: &str = "npm:install";
 pub const NPM_INSTALL__PACKAGES: &str = "npm:install$packages";
 
-mod blank;
 mod packages;
+
+pub fn new_npm_install() -> CommandValue {
+  CommandValue::new("npm install")
+}
