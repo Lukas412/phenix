@@ -50,9 +50,9 @@ where
   }
 }
 
-impl<IntoExpression> From<Vec<IntoExpression>> for TextBlockOperation
+impl<IntoExpression, Context> From<Vec<IntoExpression>> for TextBlockOperation
 where
-  IntoExpression: Into<TextExpression>,
+  IntoExpression: Into<TextExpression<Context>>,
 {
   fn from(expressions: Vec<IntoExpression>) -> Self {
     let expressions = expressions.into_iter().map(Into::into).collect();
@@ -60,14 +60,10 @@ where
   }
 }
 
-impl Evaluate for TextBlockOperation {
+impl<Context> Evaluate<Context> for TextBlockOperation {
   type Result = TextValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, arguments: &Context) -> EvaluateResult<Self::Result> {
     self
       .expressions
       .iter()

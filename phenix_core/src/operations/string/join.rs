@@ -21,24 +21,20 @@ impl<Separator, Expression> TextJoinOperation<Separator, Expression> {
   }
 }
 
-impl<Separator, Expression> Evaluate for TextJoinOperation<Separator, Expression>
+impl<Separator, Expression, Context> Evaluate<Context> for TextJoinOperation<Separator, Expression>
 where
-  Separator: Evaluate<Result = TextValue>,
-  Expression: Evaluate<Result = TextValue>,
+  Separator: Evaluate<Context, Result = TextValue>,
+  Expression: Evaluate<Context, Result = TextValue>,
 {
   type Result = TextValue;
 
   #[allow(unstable_name_collisions)]
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
-    let separator = self.separator.evaluate(runtime, arguments)?;
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
+    let separator = self.separator.evaluate(runtime, context)?;
     self
       .expressions
       .iter()
-      .map(|expression| expression.evaluate(runtime, arguments))
+      .map(|expression| expression.evaluate(runtime, context))
       .filter_ok(|value| !value.is_empty())
       .intersperse(Ok(separator))
       .collect()

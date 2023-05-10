@@ -36,66 +36,61 @@ impl TryFrom<AnyValue> for CommandValue {
 }
 
 #[derive(Clone, Debug)]
-pub enum CommandOperation {
-  Expression(TextExpression),
+pub enum CommandOperation<Context> {
+  Expression(TextExpression<Context>),
   GetArgument(GetArgumentOperation<CommandValue>),
 }
 
-impl CommandOperation {
+impl<Context> CommandOperation<Context> {
   pub fn new<IntoTextExpression>(expression: IntoTextExpression) -> Self
   where
-    IntoTextExpression: Into<TextExpression>,
+    IntoTextExpression: Into<TextExpression<Context>>,
   {
     Self::Expression(expression.into())
   }
 }
 
-impl<Into1, Into2> From<(Into1, Into2)> for CommandOperation
+impl<Into1, Into2, Context> From<(Into1, Into2)> for CommandOperation<Context>
 where
-  Into1: Into<TextExpression>,
-  Into2: Into<TextExpression>,
+  Into1: Into<TextExpression<Context>>,
+  Into2: Into<TextExpression<Context>>,
 {
   fn from(values: (Into1, Into2)) -> Self {
     Self::new(TextWordsOperation::from(values))
   }
 }
 
-impl<Into1, Into2, Into3> From<(Into1, Into2, Into3)> for CommandOperation
+impl<Into1, Into2, Into3, Context> From<(Into1, Into2, Into3)> for CommandOperation<Context>
 where
-  Into1: Into<TextExpression>,
-  Into2: Into<TextExpression>,
-  Into3: Into<TextExpression>,
+  Into1: Into<TextExpression<Context>>,
+  Into2: Into<TextExpression<Context>>,
+  Into3: Into<TextExpression<Context>>,
 {
   fn from(values: (Into1, Into2, Into3)) -> Self {
     Self::new(TextWordsOperation::from(values))
   }
 }
 
-impl<Into1, Into2, Into3, Into4> From<(Into1, Into2, Into3, Into4)> for CommandOperation
+impl<Into1, Into2, Into3, Into4, Context> From<(Into1, Into2, Into3, Into4)>
+  for CommandOperation<Context>
 where
-  Into1: Into<TextExpression>,
-  Into2: Into<TextExpression>,
-  Into3: Into<TextExpression>,
-  Into4: Into<TextExpression>,
+  Into1: Into<TextExpression<Context>>,
+  Into2: Into<TextExpression<Context>>,
+  Into3: Into<TextExpression<Context>>,
+  Into4: Into<TextExpression<Context>>,
 {
   fn from(values: (Into1, Into2, Into3, Into4)) -> Self {
     Self::new(TextWordsOperation::from(values))
   }
 }
 
-impl Evaluate for CommandOperation {
+impl<Context> Evaluate<Context> for CommandOperation<Context> {
   type Result = CommandValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
-      Self::Expression(expression) => expression
-        .evaluate(runtime, arguments)
-        .map(CommandValue::new),
-      Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
+      Self::Expression(expression) => expression.evaluate(runtime, context).map(CommandValue::new),
+      Self::GetArgument(operation) => operation.evaluate(runtime, context),
     }
   }
 }

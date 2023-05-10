@@ -14,9 +14,9 @@ impl<Expression> TextLinesOperation<Expression> {
   }
 }
 
-impl<Expression> Evaluate for TextLinesOperation<Expression>
+impl<Expression, Context> Evaluate<Context> for TextLinesOperation<Expression>
 where
-  Expression: Evaluate<Result = TextValue>,
+  Expression: Evaluate<Context, Result = TextValue>,
 {
   type Result = TextValue;
 

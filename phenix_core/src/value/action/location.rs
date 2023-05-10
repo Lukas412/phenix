@@ -37,19 +37,19 @@ impl AsBash for LocationValue {
 }
 
 #[derive(Clone, Debug)]
-pub struct LocationOperation {
+pub struct LocationOperation<Context> {
   location: PathExpression,
-  action: Box<ActionExpression>,
+  action: Box<ActionExpression<Context>>,
 }
 
-impl LocationOperation {
+impl<Context> LocationOperation<Context> {
   pub fn new<IntoPathExpression, IntoActionExpression>(
     location: IntoPathExpression,
     action: IntoActionExpression,
   ) -> Self
   where
     IntoPathExpression: Into<PathExpression>,
-    IntoActionExpression: Into<ActionExpression>,
+    IntoActionExpression: Into<ActionExpression<Context>>,
   {
     Self {
       location: location.into(),
@@ -58,7 +58,7 @@ impl LocationOperation {
   }
 }
 
-impl Evaluate for LocationOperation {
+impl<Context> Evaluate<Context> for LocationOperation<Context> {
   type Result = LocationValue;
 
   fn evaluate(

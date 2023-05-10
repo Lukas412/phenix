@@ -12,7 +12,7 @@ impl PathJoinOperation {
   }
 }
 
-impl Evaluate for PathJoinOperation {
+impl<Context> Evaluate<Context> for PathJoinOperation {
   type Result = PathValue;
 
   fn evaluate(

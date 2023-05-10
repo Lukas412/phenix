@@ -10,39 +10,39 @@ use crate::{
 };
 
 #[derive(Clone, Debug, From)]
-pub enum TextExpression {
+pub enum TextExpression<Context> {
   #[from]
   Value(TextValue),
   #[from(types(TextBlockOperation, TextWordsOperation))]
-  Operation(TextOperation),
+  Operation(TextOperation<Context>),
 }
 
-impl From<&str> for TextExpression {
+impl<Context> From<&str> for TextExpression<Context> {
   fn from(value: &str) -> Self {
     Self::Value(value.into())
   }
 }
 
-impl From<Vec<TextExpression>> for TextExpression {
-  fn from(expressions: Vec<TextExpression>) -> Self {
+impl<Context> From<Vec<TextExpression<Context>>> for TextExpression<Context> {
+  fn from(expressions: Vec<TextExpression<Context>>) -> Self {
     TextBlockOperation::new(expressions).into()
   }
 }
 
 #[duplicate_item(
   OperationType;
-  [TextJoinOperation<TextExpression, TextExpression>];
-  [TextLinesOperation<TextExpression>];
-  [ConditionOperation<TextExpression>];
+  [TextJoinOperation<TextExpression<Context>, TextExpression<Context>>];
+  [TextLinesOperation<TextExpression<Context>>];
+  [ConditionOperation<TextExpression<Context>>];
   [GetArgumentOperation<TextValue>];
 )]
-impl From<OperationType> for TextExpression {
+impl<Context> From<OperationType> for TextExpression<Context> {
   fn from(operation: OperationType) -> Self {
     Self::Operation(operation.into())
   }
 }
 
-impl Evaluate for TextExpression {
+impl<Context> Evaluate<Context> for TextExpression<Context> {
   type Result = TextValue;
 
   fn evaluate(
@@ -59,14 +59,10 @@ impl Evaluate for TextExpression {
 
 pub type TextValue = String;
 
-impl Evaluate for TextValue {
+impl<Context> Evaluate<Context> for TextValue {
   type Result = TextValue;
 
-  fn evaluate(
-    &self,
-    _runtime: &Runtime,
-    _arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, _runtime: &Runtime, _context: &Context) -> EvaluateResult<Self::Result> {
     Ok(self.clone())
   }
 }
@@ -83,17 +79,17 @@ impl TryFrom<AnyValue> for TextValue {
 }
 
 #[derive(Clone, Debug, From)]
-pub enum TextOperation {
-  Join(TextJoinOperation<TextExpression, TextExpression>),
+pub enum TextOperation<Context> {
+  Join(TextJoinOperation<TextExpression<Context>, TextExpression<Context>>),
   Block(TextBlockOperation),
   Words(TextWordsOperation),
-  Lines(TextLinesOperation<TextExpression>),
-  Condition(ConditionOperation<TextExpression>),
+  Lines(TextLinesOperation<TextExpression<Context>>),
+  Condition(ConditionOperation<TextExpression<Context>>),
   GetArgument(GetArgumentOperation<TextValue>),
-  ContextSwitch(ContextSwitchOperation<TextExpression>),
+  ContextSwitch(ContextSwitchOperation<TextExpression<Context>, Context>),
 }
 
-impl Evaluate for TextOperation {
+impl<Context> Evaluate<Context> for TextOperation<Context> {
   type Result = TextValue;
 
   fn evaluate(

@@ -18,24 +18,24 @@ mod command;
 mod location;
 
 #[derive(Clone, Debug, From)]
-pub enum ActionExpression {
+pub enum ActionExpression<Context> {
   #[from(types(CommandValue))]
   Value(ActionValue),
   #[from(types(CommandOperation, LocationOperation))]
-  Operation(ActionOperation),
+  Operation(ActionOperation<Context>),
 }
 
-impl From<Vec<ActionValue>> for ActionExpression {
+impl<Context> From<Vec<ActionValue>> for ActionExpression<Context> {
   fn from(values: Vec<ActionValue>) -> Self {
     Self::Value(values.into())
   }
 }
 
-impl<Into1, Into2, Into3> From<(Into1, Into2, Into3)> for ActionExpression
+impl<Into1, Into2, Into3, Context> From<(Into1, Into2, Into3)> for ActionExpression<Context>
 where
-  Into1: Into<ActionExpression>,
-  Into2: Into<ActionExpression>,
-  Into3: Into<ActionExpression>,
+  Into1: Into<ActionExpression<Context>>,
+  Into2: Into<ActionExpression<Context>>,
+  Into3: Into<ActionExpression<Context>>,
 {
   fn from(values: (Into1, Into2, Into3)) -> Self {
     Self::Operation(values.into())
@@ -44,16 +44,16 @@ where
 
 #[duplicate_item(
   OperationType;
-  [Vec<ActionExpression>];
-  [ContextSwitchOperation<ActionExpression>];
+  [Vec<ActionExpression<Context>>];
+  [ContextSwitchOperation<ActionExpression<Context>, Context>];
 )]
-impl From<OperationType> for ActionExpression {
+impl<Context> From<OperationType> for ActionExpression<Context> {
   fn from(expressions: OperationType) -> Self {
     Self::Operation(expressions.into())
   }
 }
 
-impl Evaluate for ActionExpression {
+impl<Context> Evaluate<Context> for ActionExpression<Context> {
   type Result = ActionValue;
 
   fn evaluate(
@@ -130,36 +130,36 @@ impl TryFrom<AnyValue> for ActionValue {
 }
 
 #[derive(Clone, Debug, From)]
-pub enum ActionOperation {
-  Array(Vec<ActionExpression>),
+pub enum ActionOperation<Context> {
+  Array(Vec<ActionExpression<Context>>),
   Command(CommandOperation),
   Location(LocationOperation),
   GetArgument(GetArgumentOperation<ActionValue>),
-  ContextSwitch(ContextSwitchOperation<ActionExpression>),
+  ContextSwitch(ContextSwitchOperation<ActionExpression<Context>, Context>),
 }
 
-impl<Into1, Into2> From<(Into1, Into2)> for ActionOperation
+impl<Into1, Into2, Context> From<(Into1, Into2)> for ActionOperation<Context>
 where
-  Into1: Into<ActionExpression>,
-  Into2: Into<ActionExpression>,
+  Into1: Into<ActionExpression<Context>>,
+  Into2: Into<ActionExpression<Context>>,
 {
   fn from(values: (Into1, Into2)) -> Self {
     Self::from(vec![values.0.into(), values.1.into()])
   }
 }
 
-impl<Into1, Into2, Into3> From<(Into1, Into2, Into3)> for ActionOperation
+impl<Into1, Into2, Into3, Context> From<(Into1, Into2, Into3)> for ActionOperation<Context>
 where
-  Into1: Into<ActionExpression>,
-  Into2: Into<ActionExpression>,
-  Into3: Into<ActionExpression>,
+  Into1: Into<ActionExpression<Context>>,
+  Into2: Into<ActionExpression<Context>>,
+  Into3: Into<ActionExpression<Context>>,
 {
   fn from(values: (Into1, Into2, Into3)) -> Self {
     Self::from(vec![values.0.into(), values.1.into(), values.2.into()])
   }
 }
 
-impl Evaluate for ActionOperation {
+impl<Context> Evaluate<Context> for ActionOperation<Context> {
   type Result = ActionValue;
 
   fn evaluate(

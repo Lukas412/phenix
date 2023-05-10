@@ -24,10 +24,11 @@ impl<Expression, OtherExpression> SubOperation<Expression, OtherExpression> {
   }
 }
 
-impl<Expression, OtherExpression, Value> Evaluate for SubOperation<Expression, OtherExpression>
+impl<Expression, OtherExpression, Value, Context> Evaluate<Context>
+  for SubOperation<Expression, OtherExpression>
 where
-  Expression: Evaluate,
-  OtherExpression: Evaluate,
+  Expression: Evaluate<Context>,
+  OtherExpression: Evaluate<Context>,
   Expression::Result: Sub<OtherExpression::Result, Output = EvaluateResult<Value>>,
 {
   type Result = Value;

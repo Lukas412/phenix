@@ -1,4 +1,5 @@
 use derive_more::From;
+use duplicate::duplicate_item;
 use rust_decimal::Decimal;
 
 use crate::{
@@ -32,8 +33,8 @@ pub enum AnyExpression {
   Number(NumberExpression),
   #[from]
   Path(PathExpression),
-  #[from(types(TextOperation, TextValue))]
-  Text(TextExpression),
+  #[from(types(TextValue))]
+  Text(TextExpression<Context>),
 }
 
 impl From<&str> for AnyExpression {
@@ -42,26 +43,27 @@ impl From<&str> for AnyExpression {
   }
 }
 
-impl From<GetArgumentOperation<TextValue>> for AnyExpression {
+#[duplicate_item(
+  Operation;
+  [GetArgumentOperation<TextValue>];
+  [TextOperation<Context>];
+)]
+impl<Context> From<Operation> for AnyExpression {
   fn from(operation: GetArgumentOperation<TextValue>) -> Self {
     Self::Text(operation.into())
   }
 }
 
-impl Evaluate for AnyExpression {
+impl<Context> Evaluate<Context> for AnyExpression {
   type Result = AnyValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
-      Self::Action(expression) => expression.evaluate(runtime, arguments).map(Into::into),
-      Self::Boolean(expression) => expression.evaluate(runtime, arguments).map(Into::into),
-      Self::Number(expression) => expression.evaluate(runtime, arguments).map(Into::into),
-      Self::Path(expression) => expression.evaluate(runtime, arguments).map(Into::into),
-      Self::Text(expression) => expression.evaluate(runtime, arguments).map(Into::into),
+      Self::Action(expression) => expression.evaluate(runtime, context).map(Into::into),
+      Self::Boolean(expression) => expression.evaluate(runtime, context).map(Into::into),
+      Self::Number(expression) => expression.evaluate(runtime, context).map(Into::into),
+      Self::Path(expression) => expression.evaluate(runtime, context).map(Into::into),
+      Self::Text(expression) => expression.evaluate(runtime, context).map(Into::into),
     }
   }
 }

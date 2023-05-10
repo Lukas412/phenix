@@ -20,10 +20,10 @@ impl<Expression, Other> EqualsOperation<Expression, Other> {
   }
 }
 
-impl<Expression, Other> Evaluate for EqualsOperation<Expression, Other>
+impl<Expression, Other, Context> Evaluate<Context> for EqualsOperation<Expression, Other>
 where
-  Expression: Evaluate,
-  Other: Evaluate,
+  Expression: Evaluate<Context>,
+  Other: Evaluate<Context>,
   Expression::Result: PartialEq<Other::Result>,
 {
   type Result = BooleanValue;
@@ -31,7 +31,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &DynamicContext,
+    arguments: &Context,
   ) -> EvaluateResult<Self::Result> {
     self
       .expressions

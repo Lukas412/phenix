@@ -17,18 +17,14 @@ impl<Expression> ToPathOperation<Expression> {
   }
 }
 
-impl<Expression> Evaluate for ToPathOperation<Expression>
+impl<Expression, Context> Evaluate<Context> for ToPathOperation<Expression>
 where
-  Expression: Evaluate,
+  Expression: Evaluate<Context>,
   Expression::Result: Into<PathValue>,
 {
   type Result = PathValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, arguments: &Context) -> EvaluateResult<Self::Result> {
     self.expression.evaluate(runtime, arguments).map(Into::into)
   }
 }
