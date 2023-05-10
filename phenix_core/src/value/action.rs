@@ -31,6 +31,17 @@ impl From<Vec<ActionValue>> for ActionExpression {
   }
 }
 
+impl<Into1, Into2, Into3> From<(Into1, Into2, Into3)> for ActionExpression
+where
+  Into1: Into<ActionExpression>,
+  Into2: Into<ActionExpression>,
+  Into3: Into<ActionExpression>,
+{
+  fn from(values: (Into1, Into2, Into3)) -> Self {
+    Self::Operation(values.into())
+  }
+}
+
 #[duplicate_item(
   OperationType;
   [Vec<ActionExpression>];
@@ -96,6 +107,17 @@ where
   }
 }
 
+impl<Into1, Into2, Into3> From<(Into1, Into2, Into3)> for ActionValue
+where
+  Into1: Into<ActionValue>,
+  Into2: Into<ActionValue>,
+  Into3: Into<ActionValue>,
+{
+  fn from(values: (Into1, Into2, Into3)) -> Self {
+    Self::Array(vec![values.0.into(), values.1.into(), values.2.into()])
+  }
+}
+
 impl TryFrom<AnyValue> for ActionValue {
   type Error = EvaluateError;
 
@@ -123,6 +145,17 @@ where
 {
   fn from(values: (Into1, Into2)) -> Self {
     Self::from(vec![values.0.into(), values.1.into()])
+  }
+}
+
+impl<Into1, Into2, Into3> From<(Into1, Into2, Into3)> for ActionOperation
+where
+  Into1: Into<ActionExpression>,
+  Into2: Into<ActionExpression>,
+  Into3: Into<ActionExpression>,
+{
+  fn from(values: (Into1, Into2, Into3)) -> Self {
+    Self::from(vec![values.0.into(), values.1.into(), values.2.into()])
   }
 }
 

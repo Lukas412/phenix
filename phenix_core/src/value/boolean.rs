@@ -1,18 +1,23 @@
 use derive_more::From;
 
 use crate::{
-  evaluate::EvaluateResult,
-  operations::{AndOperation, GetArgumentOperation, OrOperation},
-  And, AnyValue, Evaluate, EvaluateArguments, EvaluateError, ExtractTypeFromAnyError,
-  HasArgumentOperation, Or, Runtime, ToType,
+  evaluate::EvaluateResult, AndOperation, AnyValue, Evaluate, EvaluateArguments, EvaluateError,
+  ExtractTypeFromAnyError, GetArgumentOperation, HasArgumentOperation, OrOperation, Runtime,
+  ToType,
 };
 
 #[derive(Clone, Debug, From)]
 pub enum BooleanExpression {
   #[from]
   Value(BooleanValue),
-  #[from(types(HasArgumentOperation))]
+  #[from(types(HasArgumentOperation, AndOperation, OrOperation))]
   Operation(BooleanOperation),
+}
+
+impl From<GetArgumentOperation<BooleanValue>> for BooleanExpression {
+  fn from(operation: GetArgumentOperation<BooleanValue>) -> Self {
+    Self::Operation(operation.into())
+  }
 }
 
 impl Evaluate for BooleanExpression {
@@ -55,26 +60,10 @@ impl TryFrom<AnyValue> for BooleanValue {
   }
 }
 
-impl And for BooleanValue {
-  type Output = EvaluateResult<BooleanValue>;
-
-  fn and(self, rhs: Self) -> Self::Output {
-    Ok(self && rhs)
-  }
-}
-
-impl Or for BooleanValue {
-  type Output = EvaluateResult<BooleanValue>;
-
-  fn or(self, rhs: Self) -> Self::Output {
-    Ok(self || rhs)
-  }
-}
-
 #[derive(Clone, Debug, From)]
 pub enum BooleanOperation {
-  And(AndOperation<BooleanExpression>),
-  Or(OrOperation<BooleanExpression>),
+  And(AndOperation),
+  Or(OrOperation),
   HasArgument(HasArgumentOperation),
   GetArgument(GetArgumentOperation<BooleanValue>),
 }

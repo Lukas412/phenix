@@ -8,10 +8,10 @@ pub use crate::{
   evaluate::{Evaluate, EvaluateArguments},
   names::{Identifier, Name, Namespace},
   operations::{
-    AddOperation, And, AndOperation, ConditionOperation, ContextExtendOperation,
-    ContextSwitchOperation, EqualsOperation, GetArgumentOperation, HasArgumentOperation, Or,
-    OrOperation, PathJoinOperation, SubOperation, TextBlockOperation, TextJoinOperation,
-    TextLinesOperation, TextWordsOperation, ToBooleanOperation, ToPathOperation,
+    AddOperation, AndOperation, ConditionOperation, ContextExtendOperation, ContextSwitchOperation,
+    EqualsOperation, GetArgumentOperation, HasArgumentOperation, OrOperation, PathJoinOperation,
+    SubOperation, TextBlockOperation, TextJoinOperation, TextLinesOperation, TextWordsOperation,
+    ToBooleanOperation, ToPathOperation,
   },
   runtime::{Runtime, RuntimeBuilder},
   value::{

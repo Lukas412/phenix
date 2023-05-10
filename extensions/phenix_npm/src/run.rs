@@ -1,11 +1,8 @@
+use crate::{NPM_RUN__ARGUMENTS, NPM_RUN__NAME};
 use phenix_core::{
   ActionOperation, CommandOperation, ConditionOperation, ContextSwitchOperation, Creation,
   EvaluateArguments, GetArgumentOperation, HasArgumentOperation, TextWordsOperation,
 };
-
-pub const NPM_RUN: &str = "npm:run";
-pub const NPM_RUN__NAME: &str = "npm:run$name";
-pub const NPM_RUN__ARGUMENTS: &str = "npm:run$arguments";
 
 pub fn new_npm_run_command_with(
   name: impl Into<Creation>,

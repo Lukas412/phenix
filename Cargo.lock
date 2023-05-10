@@ -233,6 +233,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "phenix_git"
+version = "0.1.0"
+dependencies = [
+ "const-str",
+ "phenix_core",
+]
+
+[[package]]
 name = "phenix_html"
 version = "0.1.0"
 dependencies = [
@@ -245,6 +253,7 @@ dependencies = [
 name = "phenix_npm"
 version = "0.1.0"
 dependencies = [
+ "const-str",
  "phenix_core",
 ]
 
@@ -262,6 +271,7 @@ version = "0.1.0"
 dependencies = [
  "const-str",
  "phenix_core",
+ "phenix_git",
  "phenix_html",
  "phenix_npm",
  "phenix_std",

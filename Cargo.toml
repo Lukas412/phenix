@@ -5,6 +5,7 @@ members = [
 	"phenix_test",
 	"extensions/phenix_html",
 	"extensions/phenix_npm",
+	"extensions/phenix_git",
 	"extensions/phenix_std",
 	"extensions/phenix_svelte",
 	"extensions/phenix_xml",

@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 phenix_std = { path="../phenix_std" }
 phenix_core = { path= "../../phenix_core" }
+phenix_git = { path= "../phenix_git" }
 phenix_npm = { path= "../phenix_npm" }
 phenix_html = { path= "../phenix_html" }
 phenix_xml = { path= "../phenix_xml" }
