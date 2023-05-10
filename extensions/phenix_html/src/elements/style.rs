@@ -1,6 +1,6 @@
 use crate::{HTML_ELEMENT_STYLE__ARGUMENTS, HTML_ELEMENT_STYLE__CONTENT};
 use phenix_core::{
-  ContextSwitchOperation, Creation, EvaluateArguments, GetArgumentOperation, TextExpression,
+  ContextSwitchOperation, Creation, DynamicContext, GetArgumentOperation, TextExpression,
   TextOperation,
 };
 use phenix_xml::new_xml_element_with;
@@ -27,7 +27,7 @@ pub fn new_html_element_style() -> TextOperation {
 fn new_html_element_script_context(
   arguments: impl Into<Creation>,
   content: impl Into<Creation>,
-) -> EvaluateArguments {
+) -> DynamicContext {
   [
     (HTML_ELEMENT_STYLE__ARGUMENTS.into(), arguments.into()),
     (HTML_ELEMENT_STYLE__CONTENT.into(), content.into()),

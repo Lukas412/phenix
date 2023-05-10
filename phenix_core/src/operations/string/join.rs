@@ -1,7 +1,7 @@
 use itertools::Itertools;
 
 use crate::evaluate::EvaluateResult;
-use crate::{Evaluate, EvaluateArguments, Runtime, TextValue};
+use crate::{DynamicContext, Evaluate, Runtime, TextValue};
 
 #[derive(Clone, Debug)]
 pub struct TextJoinOperation<Separator, Expression> {
@@ -32,7 +32,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     let separator = self.separator.evaluate(runtime, arguments)?;
     self

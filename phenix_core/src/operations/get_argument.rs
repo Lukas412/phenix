@@ -1,5 +1,5 @@
 use crate::{
-  evaluate::EvaluateResult, AnyValue, ArgumentNotFoundError, Creation, Evaluate, EvaluateArguments,
+  evaluate::EvaluateResult, AnyValue, ArgumentNotFoundError, Creation, DynamicContext, Evaluate,
   EvaluateError, Identifier, Runtime,
 };
 use std::fmt::Debug;
@@ -26,7 +26,7 @@ where
 {
   type Result = V;
 
-  fn evaluate(&self, runtime: &Runtime, arguments: &EvaluateArguments) -> EvaluateResult<V> {
+  fn evaluate(&self, runtime: &Runtime, arguments: &DynamicContext) -> EvaluateResult<V> {
     arguments
       .get(&self.identifier)
       .ok_or_else(|| ArgumentNotFoundError::new(self.identifier.clone()).into())

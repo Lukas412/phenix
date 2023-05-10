@@ -2,7 +2,7 @@ use derive_more::From;
 
 use crate::evaluate::EvaluateResult;
 use crate::{
-  AnyValue, AsBash, Evaluate, EvaluateArguments, EvaluateError, ExtractTypeFromAnyError,
+  AnyValue, AsBash, DynamicContext, Evaluate, EvaluateError, ExtractTypeFromAnyError,
   GetArgumentOperation, Runtime, TextExpression, TextValue, TextWordsOperation, ToType,
 };
 
@@ -89,7 +89,7 @@ impl Evaluate for CommandOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Expression(expression) => expression

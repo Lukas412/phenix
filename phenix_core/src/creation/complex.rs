@@ -1,15 +1,15 @@
 use std::collections::HashMap;
 
-use crate::{Creation, EvaluateArguments, Identifier, Namespace};
+use crate::{Creation, DynamicContext, Identifier, Namespace};
 
 #[derive(Clone, Debug)]
 pub struct ComplexCreation {
   namespace: Namespace,
-  values: EvaluateArguments,
+  values: DynamicContext,
 }
 
 impl ComplexCreation {
-  fn new(namespace: Namespace, values: EvaluateArguments) -> Self {
+  fn new(namespace: Namespace, values: DynamicContext) -> Self {
     Self { namespace, values }
   }
 
@@ -17,7 +17,7 @@ impl ComplexCreation {
     &self.namespace
   }
 
-  pub(crate) fn values(&self) -> &EvaluateArguments {
+  pub(crate) fn values(&self) -> &DynamicContext {
     &self.values
   }
 }

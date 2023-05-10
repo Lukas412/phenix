@@ -5,6 +5,7 @@ pub use self::{
   },
   any::{AnyExpression, AnyValue},
   boolean::{BooleanExpression, BooleanOperation, BooleanValue},
+  context::DynamicContext,
   number::{NumberExpression, NumberOperation, NumberValue},
   path::{PathExpression, PathOperation, PathValue},
   text::{TextExpression, TextOperation, TextValue},
@@ -13,6 +14,7 @@ pub use self::{
 mod action;
 mod any;
 mod boolean;
+mod context;
 mod number;
 mod path;
 mod text;

@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanValue, Evaluate, EvaluateArguments, Identifier, Runtime};
+use crate::{BooleanValue, DynamicContext, Evaluate, Identifier, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct HasArgumentOperation {
@@ -23,7 +23,7 @@ impl Evaluate for HasArgumentOperation {
   fn evaluate(
     &self,
     _runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     Ok(arguments.contains_key(&self.identifier))
   }

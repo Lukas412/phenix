@@ -1,8 +1,8 @@
 use crate::evaluate::EvaluateResult;
-use crate::{Evaluate, EvaluateArguments, Runtime};
+use crate::{DynamicContext, Evaluate, Runtime};
 
 pub struct ContextExtendOperation<Expression> {
-  context: EvaluateArguments,
+  context: DynamicContext,
   expression: Expression,
 }
 
@@ -12,7 +12,7 @@ impl<Expression> ContextExtendOperation<Expression> {
     expression: IntoExpression,
   ) -> Self
   where
-    IntoEvaluateArguments: Into<EvaluateArguments>,
+    IntoEvaluateArguments: Into<DynamicContext>,
     IntoExpression: Into<Expression>,
   {
     Self {
@@ -31,7 +31,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     let mut arguments = arguments.clone();
     arguments.extend(self.context.clone().into_iter());

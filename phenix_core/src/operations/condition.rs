@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanExpression, Evaluate, EvaluateArguments, Runtime};
+use crate::{BooleanExpression, DynamicContext, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct ConditionOperation<Expression> {
@@ -36,7 +36,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     if self.condition.evaluate(runtime, arguments)? {
       self.then.evaluate(runtime, arguments)

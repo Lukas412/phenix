@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{Evaluate, EvaluateArguments, PathExpression, PathValue, Runtime};
+use crate::{DynamicContext, Evaluate, PathExpression, PathValue, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct PathJoinOperation {
@@ -18,7 +18,7 @@ impl Evaluate for PathJoinOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     self
       .expressions

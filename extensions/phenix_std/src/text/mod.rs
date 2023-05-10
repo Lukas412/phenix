@@ -1,6 +1,6 @@
 use crate::STD_TEXT__VALUE;
 use phenix_core::{
-  ContextSwitchOperation, Creation, EvaluateArguments, TextExpression, TextOperation,
+  ContextSwitchOperation, Creation, DynamicContext, TextExpression, TextOperation,
 };
 pub use {empty::new_std_text_empty, quoted::new_std_text_quoted_double_operation};
 
@@ -14,6 +14,6 @@ pub fn new_std_text_with(
   ContextSwitchOperation::new(new_std_text_context(value.into()), expression).into()
 }
 
-fn new_std_text_context(value: impl Into<Creation>) -> EvaluateArguments {
+fn new_std_text_context(value: impl Into<Creation>) -> DynamicContext {
   [(STD_TEXT__VALUE.into(), value.into())].into()
 }

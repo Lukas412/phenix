@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanExpression, BooleanValue, Evaluate, EvaluateArguments, Runtime};
+use crate::{BooleanExpression, BooleanValue, DynamicContext, Evaluate, Runtime};
 use std::fmt::Debug;
 
 #[derive(Clone, Debug)]
@@ -24,7 +24,7 @@ impl Evaluate for OrOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     self
       .expressions

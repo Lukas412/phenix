@@ -5,7 +5,7 @@ pub use crate::{
     ArgumentNotFoundError, EvaluateError, ExpressionNotFoundError, ExtractTypeFromAnyError,
     GetArgumentOperationError, ToType,
   },
-  evaluate::{Evaluate, EvaluateArguments},
+  evaluate::Evaluate,
   names::{Identifier, Name, Namespace},
   operations::{
     AddOperation, AndOperation, ConditionOperation, ContextExtendOperation, ContextSwitchOperation,
@@ -16,9 +16,9 @@ pub use crate::{
   runtime::{Runtime, RuntimeBuilder},
   value::{
     ActionExpression, ActionOperation, ActionValue, AnyExpression, AnyValue, BooleanExpression,
-    BooleanOperation, BooleanValue, CommandOperation, CommandValue, LocationOperation,
-    LocationValue, NumberExpression, NumberOperation, NumberValue, PathExpression, PathOperation,
-    PathValue, TextExpression, TextOperation, TextValue,
+    BooleanOperation, BooleanValue, CommandOperation, CommandValue, DynamicContext,
+    LocationOperation, LocationValue, NumberExpression, NumberOperation, NumberValue,
+    PathExpression, PathOperation, PathValue, TextExpression, TextOperation, TextValue,
   },
 };
 

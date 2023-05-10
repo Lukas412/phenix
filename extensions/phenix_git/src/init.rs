@@ -1,7 +1,7 @@
 use crate::{GIT_INIT__DIRECTORY, GIT_INIT__QUIET};
 use phenix_core::{
   ActionOperation, AndOperation, BooleanExpression, CommandOperation, ConditionOperation,
-  ContextSwitchOperation, Creation, EvaluateArguments, GetArgumentOperation, HasArgumentOperation,
+  ContextSwitchOperation, Creation, DynamicContext, GetArgumentOperation, HasArgumentOperation,
   TextExpression,
 };
 
@@ -39,8 +39,8 @@ pub fn new_git_init() -> CommandOperation {
 fn new_git_init_context(
   directory: Option<impl Into<Creation>>,
   quiet: Option<impl Into<Creation>>,
-) -> EvaluateArguments {
-  let mut context = EvaluateArguments::with_capacity(2);
+) -> DynamicContext {
+  let mut context = DynamicContext::with_capacity(2);
   if let Some(directory) = directory {
     context.insert(GIT_INIT__DIRECTORY.into(), directory.into());
   }

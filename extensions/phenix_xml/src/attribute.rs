@@ -1,6 +1,6 @@
 use crate::{XML_ATTRIBUTE__NAME, XML_ATTRIBUTE__VALUE};
 use phenix_core::{
-  ContextSwitchOperation, Creation, EvaluateArguments, GetArgumentOperation, TextBlockOperation,
+  ContextSwitchOperation, Creation, DynamicContext, GetArgumentOperation, TextBlockOperation,
   TextExpression, TextOperation,
 };
 use phenix_std::{new_std_text_quoted_double_operation, new_std_text_with};
@@ -31,7 +31,7 @@ pub fn new_xml_attribute_operation() -> TextOperation {
 fn new_xml_attribute_context(
   name: impl Into<Creation>,
   value: impl Into<Creation>,
-) -> EvaluateArguments {
+) -> DynamicContext {
   [
     (XML_ATTRIBUTE__NAME.into(), name.into()),
     (XML_ATTRIBUTE__VALUE.into(), value.into()),

@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanValue, Evaluate, EvaluateArguments, Runtime};
+use crate::{BooleanValue, DynamicContext, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct EqualsOperation<Expression, Other = Expression> {
@@ -31,7 +31,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     self
       .expressions

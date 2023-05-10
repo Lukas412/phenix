@@ -4,7 +4,7 @@ use duplicate::duplicate_item;
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, ConditionOperation, ContextSwitchOperation, Evaluate, EvaluateArguments, EvaluateError,
+  AnyValue, ConditionOperation, ContextSwitchOperation, DynamicContext, Evaluate, EvaluateError,
   ExtractTypeFromAnyError, Runtime, TextBlockOperation, TextJoinOperation, TextLinesOperation,
   TextWordsOperation, ToType,
 };
@@ -48,7 +48,7 @@ impl Evaluate for TextExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
@@ -65,7 +65,7 @@ impl Evaluate for TextValue {
   fn evaluate(
     &self,
     _runtime: &Runtime,
-    _arguments: &EvaluateArguments,
+    _arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     Ok(self.clone())
   }
@@ -99,7 +99,7 @@ impl Evaluate for TextOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Join(operation) => operation.evaluate(runtime, arguments),

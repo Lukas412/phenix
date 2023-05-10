@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{Evaluate, EvaluateArguments, Runtime, TextExpression, TextJoinOperation, TextValue};
+use crate::{DynamicContext, Evaluate, Runtime, TextExpression, TextJoinOperation, TextValue};
 
 #[derive(Clone, Debug)]
 pub struct TextWordsOperation {
@@ -68,7 +68,7 @@ impl Evaluate for TextWordsOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     self.operation.evaluate(runtime, arguments)
   }

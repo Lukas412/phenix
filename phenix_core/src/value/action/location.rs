@@ -1,6 +1,6 @@
 use crate::evaluate::EvaluateResult;
 use crate::{
-  ActionExpression, ActionValue, AsBash, Evaluate, EvaluateArguments, PathExpression, PathValue,
+  ActionExpression, ActionValue, AsBash, DynamicContext, Evaluate, PathExpression, PathValue,
   Runtime,
 };
 
@@ -64,7 +64,7 @@ impl Evaluate for LocationOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     Ok(LocationValue::new(
       self.location.evaluate(runtime, arguments)?,

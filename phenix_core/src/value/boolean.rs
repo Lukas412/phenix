@@ -1,7 +1,7 @@
 use derive_more::From;
 
 use crate::{
-  evaluate::EvaluateResult, AndOperation, AnyValue, Evaluate, EvaluateArguments, EvaluateError,
+  evaluate::EvaluateResult, AndOperation, AnyValue, DynamicContext, Evaluate, EvaluateError,
   ExtractTypeFromAnyError, GetArgumentOperation, HasArgumentOperation, OrOperation, Runtime,
   ToType,
 };
@@ -26,7 +26,7 @@ impl Evaluate for BooleanExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(*value),
@@ -43,7 +43,7 @@ impl Evaluate for BooleanValue {
   fn evaluate(
     &self,
     _runtime: &Runtime,
-    _arguments: &EvaluateArguments,
+    _arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     Ok(self.clone())
   }
@@ -74,7 +74,7 @@ impl Evaluate for BooleanOperation {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::And(operation) => operation.evaluate(runtime, arguments),

@@ -3,7 +3,7 @@ use rust_decimal::Decimal;
 
 use crate::{
   evaluate::EvaluateResult, ActionExpression, ActionOperation, ActionValue, BooleanExpression,
-  BooleanValue, CommandValue, Evaluate, EvaluateArguments, GetArgumentOperation, NumberExpression,
+  BooleanValue, CommandValue, DynamicContext, Evaluate, GetArgumentOperation, NumberExpression,
   NumberOperation, NumberValue, PathExpression, PathValue, Runtime, TextExpression, TextOperation,
   TextValue,
 };
@@ -54,7 +54,7 @@ impl Evaluate for AnyExpression {
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     match self {
       Self::Action(expression) => expression.evaluate(runtime, arguments).map(Into::into),

@@ -1,6 +1,6 @@
 use crate::NPM_INSTALL__PACKAGES;
 use phenix_core::{
-  ActionOperation, CommandOperation, ContextSwitchOperation, Creation, EvaluateArguments,
+  ActionOperation, CommandOperation, ContextSwitchOperation, Creation, DynamicContext,
   GetArgumentOperation, TextExpression,
 };
 
@@ -19,6 +19,6 @@ pub fn new_npm_install_packages() -> CommandOperation {
   ))
 }
 
-fn new_npm_install_packages_context(packages: impl Into<Creation>) -> EvaluateArguments {
+fn new_npm_install_packages_context(packages: impl Into<Creation>) -> DynamicContext {
   [(NPM_INSTALL__PACKAGES.into(), packages.into())].into()
 }

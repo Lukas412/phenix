@@ -1,9 +1,9 @@
 use crate::evaluate::EvaluateResult;
-use crate::{Evaluate, EvaluateArguments, Runtime};
+use crate::{DynamicContext, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct ContextSwitchOperation<Expression> {
-  context: EvaluateArguments,
+  context: DynamicContext,
   expression: Box<Expression>,
 }
 
@@ -13,7 +13,7 @@ impl<Expression> ContextSwitchOperation<Expression> {
     expression: IntoExpression,
   ) -> Self
   where
-    IntoEvaluateArguments: Into<EvaluateArguments>,
+    IntoEvaluateArguments: Into<DynamicContext>,
     IntoExpression: Into<Expression>,
   {
     Self {
@@ -32,7 +32,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    _arguments: &EvaluateArguments,
+    _arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     self.expression.evaluate(runtime, &self.context)
   }

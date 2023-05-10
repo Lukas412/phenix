@@ -1,16 +1,10 @@
-use crate::{EvaluateError, Runtime};
-pub use arguments::EvaluateArguments;
-
-mod arguments;
+use crate::{DynamicContext, EvaluateError, Runtime};
 
 pub trait Evaluate {
   type Result;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &EvaluateArguments,
-  ) -> EvaluateResult<Self::Result>;
+  fn evaluate(&self, runtime: &Runtime, arguments: &DynamicContext)
+    -> EvaluateResult<Self::Result>;
 }
 
 pub type EvaluateResult<V> = Result<V, EvaluateError>;
@@ -25,7 +19,7 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &EvaluateArguments,
+    arguments: &DynamicContext,
   ) -> EvaluateResult<Self::Result> {
     let (expression, other_expression) = self;
     let result = expression.evaluate(runtime, arguments)?;

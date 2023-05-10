@@ -1,5 +1,5 @@
 use phenix_core::{
-  ContextSwitchOperation, Creation, EvaluateArguments, GetArgumentOperation, TextBlockOperation,
+  ContextSwitchOperation, Creation, DynamicContext, GetArgumentOperation, TextBlockOperation,
   TextExpression, TextOperation,
 };
 pub use {
@@ -42,7 +42,7 @@ fn new_xml_element_context(
   name: impl Into<Creation>,
   arguments: impl Into<Creation>,
   inner: impl Into<Creation>,
-) -> impl Into<EvaluateArguments> {
+) -> impl Into<DynamicContext> {
   [
     (XML_ELEMENT__NAME.into(), name.into()),
     (XML_ELEMENT__ATTRIBUTES.into(), arguments.into()),
