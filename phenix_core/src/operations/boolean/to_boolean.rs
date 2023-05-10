@@ -1,4 +1,4 @@
-use crate::{BooleanValue, DynamicContext, Evaluate, Runtime};
+use crate::{BooleanValue, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct ToBooleanOperation<Expression> {
@@ -15,9 +15,9 @@ impl<Expression> ToBooleanOperation<Expression> {
   }
 }
 
-impl<Expression> Evaluate for ToBooleanOperation<Expression>
+impl<Expression, Context> Evaluate<Context> for ToBooleanOperation<Expression>
 where
-  Expression: Evaluate,
+  Expression: Evaluate<Context>,
   Expression::Result: Into<BooleanValue>,
 {
   type Result = BooleanValue;
@@ -25,8 +25,8 @@ where
   fn evaluate(
     &self,
     runtime: &Runtime,
-    arguments: &DynamicContext,
+    context: &Context,
   ) -> crate::evaluate::EvaluateResult<Self::Result> {
-    self.expression.evaluate(runtime, arguments).map(Into::into)
+    self.expression.evaluate(runtime, context).map(Into::into)
   }
 }

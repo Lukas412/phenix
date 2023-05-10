@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanExpression, BooleanValue, DynamicContext, Evaluate, Runtime};
+use crate::{BooleanExpression, BooleanValue, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct AndOperation {
@@ -19,17 +19,13 @@ impl AndOperation {
   }
 }
 
-impl Evaluate for AndOperation {
+impl<Context> Evaluate<Context> for AndOperation {
   type Result = BooleanValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     self
       .expressions
-      .evaluate(runtime, arguments)
+      .evaluate(runtime, context)
       .map(|(result, other)| result && other)
   }
 }

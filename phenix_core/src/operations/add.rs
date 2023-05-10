@@ -1,6 +1,6 @@
 use std::{fmt::Debug, ops::Add};
 
-use crate::{evaluate::EvaluateResult, DynamicContext, Evaluate, Runtime};
+use crate::{evaluate::EvaluateResult, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct AddOperation<Expression, OtherExpression = Expression> {
@@ -22,16 +22,18 @@ impl<Expression, OtherExpression> AddOperation<Expression, OtherExpression> {
   }
 }
 
-impl<Expression, Other, Value> Evaluate for AddOperation<Expression, Other>
+impl<Expression, Other, Value, Context> Evaluate<Context> for AddOperation<Expression, Other>
 where
-  Expression: Evaluate,
-  Other: Evaluate,
+  Expression: Evaluate<Context>,
+  Other: Evaluate<Context>,
   Expression::Result: Add<Other::Result, Output = EvaluateResult<Value>>,
 {
   type Result = Value;
 
-  fn evaluate(&self, runtime: &Runtime, arguments: &DynamicContext) -> EvaluateResult<Value> {
-    let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
-    result + other_result
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Value> {
+    self
+      .expressions
+      .evaluate(runtime, context)
+      .map(|(result, other)| result + other)
   }
 }

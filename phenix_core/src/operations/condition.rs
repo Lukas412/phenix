@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanExpression, DynamicContext, Evaluate, Runtime};
+use crate::{BooleanExpression, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct ConditionOperation<Expression> {
@@ -27,21 +27,17 @@ impl<Expression> ConditionOperation<Expression> {
   }
 }
 
-impl<Expression, Value> Evaluate for ConditionOperation<Expression>
+impl<Expression, Value, Context> Evaluate<Context> for ConditionOperation<Expression>
 where
-  Expression: Evaluate<Result = Value>,
+  Expression: Evaluate<Context, Result = Value>,
 {
   type Result = Value;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
-    if self.condition.evaluate(runtime, arguments)? {
-      self.then.evaluate(runtime, arguments)
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
+    if self.condition.evaluate(runtime, context)? {
+      self.then.evaluate(runtime, context)
     } else {
-      self.other.evaluate(runtime, arguments)
+      self.other.evaluate(runtime, context)
     }
   }
 }

@@ -22,19 +22,19 @@ impl<Expression> ContextExtendOperation<Expression> {
   }
 }
 
-impl<Expression> Evaluate for ContextExtendOperation<Expression>
+impl<Expression, Context> Evaluate<Context> for ContextExtendOperation<Expression>
 where
-  Expression: Evaluate,
+  Expression: Evaluate<DynamicContext>,
+  Context: Into<DynamicContext>,
 {
   type Result = Expression::Result;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
-    let mut arguments = arguments.clone();
-    arguments.extend(self.context.clone().into_iter());
-    self.expression.evaluate(runtime, &arguments)
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
+    let mut context = context.clone().into();
+    context.reserve(self.context.len());
+    for (identifier, creation) in self.context.iter() {
+      context.insert(identifier.into(), creation.into())
+    }
+    self.expression.evaluate(runtime, &context)
   }
 }

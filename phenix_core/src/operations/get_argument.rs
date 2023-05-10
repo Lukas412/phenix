@@ -1,5 +1,5 @@
 use crate::{
-  evaluate::EvaluateResult, AnyValue, ArgumentNotFoundError, Creation, DynamicContext, Evaluate,
+  evaluate::EvaluateResult, AnyValue, ArgumentNotFoundError, DynamicContext, Evaluate,
   EvaluateError, Identifier, Runtime,
 };
 use std::fmt::Debug;
@@ -20,13 +20,13 @@ impl<T> GetArgumentOperation<T> {
   }
 }
 
-impl<V> Evaluate for GetArgumentOperation<V>
+impl<Value, Context> Evaluate<Context> for GetArgumentOperation<Value>
 where
-  V: TryFrom<AnyValue, Error = EvaluateError>,
+  Value: TryFrom<AnyValue, Error = EvaluateError>,
 {
-  type Result = V;
+  type Result = Value;
 
-  fn evaluate(&self, runtime: &Runtime, arguments: &DynamicContext) -> EvaluateResult<V> {
+  fn evaluate(&self, runtime: &Runtime, arguments: &DynamicContext) -> EvaluateResult<Value> {
     arguments
       .get(&self.identifier)
       .ok_or_else(|| ArgumentNotFoundError::new(self.identifier.clone()).into())
