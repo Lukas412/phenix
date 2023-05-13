@@ -1,6 +1,6 @@
 use crate::{
-  evaluate::EvaluateResult, AnyValue, ArgumentNotFoundError, DynamicContext, Evaluate,
-  EvaluateError, Identifier, Runtime,
+  evaluate::EvaluateResult, AnyValue, ArgumentNotFoundError, ContextExt, Evaluate, EvaluateError,
+  Identifier, Runtime,
 };
 use std::fmt::Debug;
 use std::marker::PhantomData;
@@ -23,11 +23,12 @@ impl<T> GetArgumentOperation<T> {
 impl<Value, Context> Evaluate<Context> for GetArgumentOperation<Value>
 where
   Value: TryFrom<AnyValue, Error = EvaluateError>,
+  Context: ContextExt,
 {
   type Result = Value;
 
-  fn evaluate(&self, runtime: &Runtime, arguments: &DynamicContext) -> EvaluateResult<Value> {
-    arguments
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Value> {
+    context
       .get(&self.identifier)
       .ok_or_else(|| ArgumentNotFoundError::new(self.identifier.clone()).into())
       .and_then(|creation| runtime.evaluate(creation))?

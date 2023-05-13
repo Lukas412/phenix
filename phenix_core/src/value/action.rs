@@ -10,8 +10,8 @@ pub use {
 use crate::evaluate::EvaluateResult;
 use crate::operations::GetArgumentOperation;
 use crate::{
-  AnyValue, AsBash, ContextSwitchOperation, DynamicContext, Evaluate, EvaluateError,
-  ExtractTypeFromAnyError, PathExpression, PathValue, Runtime, TextValue, ToType,
+  AnyValue, AsBash, ContextExt, ContextSwitchOperation, Evaluate, EvaluateError,
+  ExtractTypeFromAnyError, PathValue, Runtime, TextValue, ToType,
 };
 
 mod command;
@@ -21,13 +21,26 @@ mod location;
 pub enum ActionExpression<Context> {
   #[from(types(CommandValue))]
   Value(ActionValue),
-  #[from(types(CommandOperation, LocationOperation))]
+  #[from]
   Operation(ActionOperation<Context>),
 }
 
 impl<Context> From<Vec<ActionValue>> for ActionExpression<Context> {
   fn from(values: Vec<ActionValue>) -> Self {
     Self::Value(values.into())
+  }
+}
+
+#[duplicate_item(
+OperationType;
+[Vec<ActionExpression<Context>>];
+[CommandOperation<Context>];
+[LocationOperation<Context>];
+[ContextSwitchOperation<ActionExpression<Context>, Context>];
+)]
+impl<Context> From<OperationType> for ActionExpression<Context> {
+  fn from(expressions: OperationType) -> Self {
+    Self::Operation(expressions.into())
   }
 }
 
@@ -42,28 +55,16 @@ where
   }
 }
 
-#[duplicate_item(
-  OperationType;
-  [Vec<ActionExpression<Context>>];
-  [ContextSwitchOperation<ActionExpression<Context>, Context>];
-)]
-impl<Context> From<OperationType> for ActionExpression<Context> {
-  fn from(expressions: OperationType) -> Self {
-    Self::Operation(expressions.into())
-  }
-}
-
-impl<Context> Evaluate<Context> for ActionExpression<Context> {
+impl<Context> Evaluate<Context> for ActionExpression<Context>
+where
+  Context: ContextExt,
+{
   type Result = ActionValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
-      Self::Operation(operation) => operation.evaluate(runtime, arguments),
+      Self::Operation(operation) => operation.evaluate(runtime, context),
     }
   }
 }
@@ -81,7 +82,7 @@ pub enum ActionValue {
     content: TextValue,
   },
   EnsureDirectory {
-    file: PathExpression,
+    file: PathValue,
   },
 }
 
@@ -132,8 +133,8 @@ impl TryFrom<AnyValue> for ActionValue {
 #[derive(Clone, Debug, From)]
 pub enum ActionOperation<Context> {
   Array(Vec<ActionExpression<Context>>),
-  Command(CommandOperation),
-  Location(LocationOperation),
+  Command(CommandOperation<Context>),
+  Location(LocationOperation<Context>),
   GetArgument(GetArgumentOperation<ActionValue>),
   ContextSwitch(ContextSwitchOperation<ActionExpression<Context>, Context>),
 }
@@ -159,24 +160,23 @@ where
   }
 }
 
-impl<Context> Evaluate<Context> for ActionOperation<Context> {
+impl<Context> Evaluate<Context> for ActionOperation<Context>
+where
+  Context: ContextExt,
+{
   type Result = ActionValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
       Self::Array(expressions) => expressions
         .iter()
-        .map(|expression| expression.evaluate(runtime, arguments))
+        .map(|expression| expression.evaluate(runtime, context))
         .collect::<EvaluateResult<Vec<_>>>()
         .map(Into::into),
-      Self::Command(operation) => operation.evaluate(runtime, arguments).map(Into::into),
-      Self::Location(operation) => operation.evaluate(runtime, arguments).map(Into::into),
-      Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
-      Self::ContextSwitch(operation) => operation.evaluate(runtime, arguments),
+      Self::Command(operation) => operation.evaluate(runtime, context).map(Into::into),
+      Self::Location(operation) => operation.evaluate(runtime, context).map(Into::into),
+      Self::GetArgument(operation) => operation.evaluate(runtime, context),
+      Self::ContextSwitch(operation) => operation.evaluate(runtime, context),
     }
   }
 }

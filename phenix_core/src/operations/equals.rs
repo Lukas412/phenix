@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanValue, DynamicContext, Evaluate, Runtime};
+use crate::{BooleanValue, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct EqualsOperation<Expression, Other = Expression> {

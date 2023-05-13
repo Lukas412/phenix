@@ -5,40 +5,39 @@ use duplicate::duplicate_item;
 
 use crate::evaluate::EvaluateResult;
 use crate::{
-  AnyValue, DynamicContext, Evaluate, EvaluateError, ExtractTypeFromAnyError, GetArgumentOperation,
+  AnyValue, ContextExt, Evaluate, EvaluateError, ExtractTypeFromAnyError, GetArgumentOperation,
   PathJoinOperation, Runtime, TextExpression, ToPathOperation, ToType,
 };
 
 #[derive(Clone, Debug, From)]
-pub enum PathExpression {
+pub enum PathExpression<Context> {
   #[from]
   Value(PathValue),
-  #[from(types(PathJoinOperation))]
-  Operation(PathOperation),
+  #[from(types(PathJoinOperation<Context>))]
+  Operation(PathOperation<Context>),
 }
 
 #[duplicate_item(
   OperationType;
-  [ToPathOperation<TextExpression>];
+  [ToPathOperation<TextExpression<Context>>];
   [GetArgumentOperation<PathValue>];
 )]
-impl From<OperationType> for PathExpression {
+impl<Context> From<OperationType> for PathExpression<Context> {
   fn from(operation: OperationType) -> Self {
     Self::Operation(operation.into())
   }
 }
 
-impl Evaluate for PathExpression {
+impl<Context> Evaluate<Context> for PathExpression<Context>
+where
+  Context: ContextExt,
+{
   type Result = PathValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
-      Self::Operation(operation) => operation.evaluate(runtime, arguments),
+      Self::Operation(operation) => operation.evaluate(runtime, context),
     }
   }
 }
@@ -57,24 +56,23 @@ impl TryFrom<AnyValue> for PathValue {
 }
 
 #[derive(Clone, Debug, From)]
-pub enum PathOperation {
-  StringToPath(ToPathOperation<TextExpression>),
-  Join(PathJoinOperation),
+pub enum PathOperation<Context> {
+  StringToPath(ToPathOperation<TextExpression<Context>>),
+  Join(PathJoinOperation<Context>),
   GetArgument(GetArgumentOperation<PathValue>),
 }
 
-impl Evaluate for PathOperation {
+impl<Context> Evaluate<Context> for PathOperation<Context>
+where
+  Context: ContextExt,
+{
   type Result = PathValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
-      Self::StringToPath(operation) => operation.evaluate(runtime, arguments),
-      Self::Join(operation) => operation.evaluate(runtime, arguments),
-      Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
+      Self::StringToPath(operation) => operation.evaluate(runtime, context),
+      Self::Join(operation) => operation.evaluate(runtime, context),
+      Self::GetArgument(operation) => operation.evaluate(runtime, context),
     }
   }
 }

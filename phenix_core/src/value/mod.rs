@@ -5,7 +5,7 @@ pub use self::{
   },
   any::{AnyExpression, AnyValue},
   boolean::{BooleanExpression, BooleanOperation, BooleanValue},
-  context::DynamicContext,
+  context::{ContextExt, DynamicContext},
   number::{NumberExpression, NumberOperation, NumberValue},
   path::{PathExpression, PathOperation, PathValue},
   text::{TextExpression, TextOperation, TextValue},

@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanExpression, BooleanValue, Evaluate, Runtime};
+use crate::{BooleanExpression, BooleanValue, ContextExt, Evaluate, Runtime};
 use std::fmt::Debug;
 
 #[derive(Clone, Debug)]
@@ -18,7 +18,10 @@ impl OrOperation {
   }
 }
 
-impl<Context> Evaluate<Context> for OrOperation {
+impl<Context> Evaluate<Context> for OrOperation
+where
+  Context: ContextExt,
+{
   type Result = BooleanValue;
 
   fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {

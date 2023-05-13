@@ -16,7 +16,7 @@ pub use crate::{
   runtime::{Runtime, RuntimeBuilder},
   value::{
     ActionExpression, ActionOperation, ActionValue, AnyExpression, AnyValue, BooleanExpression,
-    BooleanOperation, BooleanValue, CommandOperation, CommandValue, DynamicContext,
+    BooleanOperation, BooleanValue, CommandOperation, CommandValue, ContextExt, DynamicContext,
     LocationOperation, LocationValue, NumberExpression, NumberOperation, NumberValue,
     PathExpression, PathOperation, PathValue, TextExpression, TextOperation, TextValue,
   },

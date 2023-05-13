@@ -1,29 +1,28 @@
 use crate::evaluate::EvaluateResult;
-use crate::{DynamicContext, Evaluate, PathExpression, PathValue, Runtime};
+use crate::{ContextExt, Evaluate, PathExpression, PathValue, Runtime};
 
 #[derive(Clone, Debug)]
-pub struct PathJoinOperation {
-  expressions: Vec<PathExpression>,
+pub struct PathJoinOperation<Context> {
+  expressions: Vec<PathExpression<Context>>,
 }
 
-impl PathJoinOperation {
-  pub fn new(expressions: Vec<PathExpression>) -> Self {
+impl<Context> PathJoinOperation<Context> {
+  pub fn new(expressions: Vec<PathExpression<Context>>) -> Self {
     Self { expressions }
   }
 }
 
-impl<Context> Evaluate<Context> for PathJoinOperation {
+impl<Context> Evaluate<Context> for PathJoinOperation<Context>
+where
+  Context: ContextExt,
+{
   type Result = PathValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     self
       .expressions
       .iter()
-      .map(|expression| expression.evaluate(runtime, arguments))
+      .map(|expression| expression.evaluate(runtime, context))
       .collect()
   }
 }

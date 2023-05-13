@@ -2,7 +2,7 @@ use derive_more::From;
 
 use crate::evaluate::EvaluateResult;
 use crate::{
-  AnyValue, AsBash, DynamicContext, Evaluate, EvaluateError, ExtractTypeFromAnyError,
+  AnyValue, AsBash, ContextExt, Evaluate, EvaluateError, ExtractTypeFromAnyError,
   GetArgumentOperation, Runtime, TextExpression, TextValue, TextWordsOperation, ToType,
 };
 
@@ -84,7 +84,10 @@ where
   }
 }
 
-impl<Context> Evaluate<Context> for CommandOperation<Context> {
+impl<Context> Evaluate<Context> for CommandOperation<Context>
+where
+  Context: ContextExt,
+{
   type Result = CommandValue;
 
   fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {

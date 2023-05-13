@@ -7,17 +7,17 @@ pub use self::complex::{ComplexCreation, ComplexCreationBuilder};
 mod complex;
 
 #[derive(Clone, Debug, From)]
-pub enum Creation {
+pub enum Creation<Context> {
   #[from(forward)]
-  Expression(AnyExpression),
+  Expression(AnyExpression<Context>),
   #[from(types(ComplexCreationBuilder))]
   Complex(ComplexCreation),
 }
 
-impl Creation {
+impl<Context> Creation<Context> {
   pub fn new<IntoAnyExpression>(any_expression: IntoAnyExpression) -> Self
   where
-    IntoAnyExpression: Into<AnyExpression>,
+    IntoAnyExpression: Into<AnyExpression<Context>>,
   {
     Self::Expression(any_expression.into())
   }

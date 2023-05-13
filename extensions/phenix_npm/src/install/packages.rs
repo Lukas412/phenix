@@ -4,7 +4,9 @@ use phenix_core::{
   GetArgumentOperation, TextExpression,
 };
 
-pub fn new_npm_install_packages_with(packages: impl Into<TextExpression>) -> ActionOperation {
+pub fn new_npm_install_packages_with<Context>(
+  packages: impl Into<TextExpression<Context>>,
+) -> ActionOperation<Context> {
   ContextSwitchOperation::new(
     new_npm_install_packages_context(packages.into()),
     new_npm_install_packages(),
@@ -12,13 +14,15 @@ pub fn new_npm_install_packages_with(packages: impl Into<TextExpression>) -> Act
   .into()
 }
 
-pub fn new_npm_install_packages() -> CommandOperation {
+pub fn new_npm_install_packages<Context>() -> CommandOperation<Context> {
   CommandOperation::from((
     "npm install",
     GetArgumentOperation::new(NPM_INSTALL__PACKAGES),
   ))
 }
 
-fn new_npm_install_packages_context(packages: impl Into<Creation>) -> DynamicContext {
+fn new_npm_install_packages_context<Context>(
+  packages: impl Into<Creation<Context>>,
+) -> DynamicContext {
   [(NPM_INSTALL__PACKAGES.into(), packages.into())].into()
 }

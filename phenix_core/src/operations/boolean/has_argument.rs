@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanValue, Evaluate, Identifier, Runtime};
+use crate::{BooleanValue, ContextExt, Evaluate, Identifier, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct HasArgumentOperation {
@@ -17,10 +17,13 @@ impl HasArgumentOperation {
   }
 }
 
-impl<Context> Evaluate<Context> for HasArgumentOperation {
+impl<Context> Evaluate<Context> for HasArgumentOperation
+where
+  Context: ContextExt,
+{
   type Result = BooleanValue;
 
   fn evaluate(&self, _runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
-    Ok(context.contains_key(&self.identifier))
+    Ok(context.has(&self.identifier))
   }
 }

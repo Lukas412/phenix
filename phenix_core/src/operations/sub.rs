@@ -2,7 +2,7 @@ use std::fmt::Debug;
 use std::ops::Sub;
 
 use crate::evaluate::EvaluateResult;
-use crate::{DynamicContext, Evaluate, Runtime};
+use crate::{Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct SubOperation<Expression, OtherExpression = Expression> {
@@ -29,12 +29,15 @@ impl<Expression, OtherExpression, Value, Context> Evaluate<Context>
 where
   Expression: Evaluate<Context>,
   OtherExpression: Evaluate<Context>,
-  Expression::Result: Sub<OtherExpression::Result, Output = EvaluateResult<Value>>,
+
+  Expression::Result: Sub<OtherExpression::Result, Output = Value>,
 {
   type Result = Value;
 
-  fn evaluate(&self, runtime: &Runtime, arguments: &DynamicContext) -> EvaluateResult<Value> {
-    let (result, other_result) = self.expressions.evaluate(runtime, arguments)?;
-    result - other_result
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Value> {
+    self
+      .expressions
+      .evaluate(runtime, context)
+      .map(|(result, other)| result - other)
   }
 }

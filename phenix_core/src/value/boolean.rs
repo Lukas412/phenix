@@ -1,7 +1,7 @@
 use derive_more::From;
 
 use crate::{
-  evaluate::EvaluateResult, AndOperation, AnyValue, DynamicContext, Evaluate, EvaluateError,
+  evaluate::EvaluateResult, AndOperation, AnyValue, ContextExt, Evaluate, EvaluateError,
   ExtractTypeFromAnyError, GetArgumentOperation, HasArgumentOperation, OrOperation, Runtime,
   ToType,
 };
@@ -20,31 +20,26 @@ impl From<GetArgumentOperation<BooleanValue>> for BooleanExpression {
   }
 }
 
-impl Evaluate for BooleanExpression {
+impl<Context> Evaluate<Context> for BooleanExpression
+where
+  Context: ContextExt,
+{
   type Result = BooleanValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(*value),
-      Self::Operation(operation) => operation.evaluate(runtime, arguments),
+      Self::Operation(operation) => operation.evaluate(runtime, context),
     }
   }
 }
 
 pub type BooleanValue = bool;
 
-impl Evaluate for BooleanValue {
+impl<Context> Evaluate<Context> for BooleanValue {
   type Result = BooleanValue;
 
-  fn evaluate(
-    &self,
-    _runtime: &Runtime,
-    _arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, _runtime: &Runtime, _context: &Context) -> EvaluateResult<Self::Result> {
     Ok(self.clone())
   }
 }
@@ -68,19 +63,18 @@ pub enum BooleanOperation {
   GetArgument(GetArgumentOperation<BooleanValue>),
 }
 
-impl Evaluate for BooleanOperation {
+impl<Context> Evaluate<Context> for BooleanOperation
+where
+  Context: ContextExt,
+{
   type Result = BooleanValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
-      Self::And(operation) => operation.evaluate(runtime, arguments),
-      Self::Or(operation) => operation.evaluate(runtime, arguments),
-      Self::HasArgument(operation) => operation.evaluate(runtime, arguments),
-      Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
+      Self::And(operation) => operation.evaluate(runtime, context),
+      Self::Or(operation) => operation.evaluate(runtime, context),
+      Self::HasArgument(operation) => operation.evaluate(runtime, context),
+      Self::GetArgument(operation) => operation.evaluate(runtime, context),
     }
   }
 }

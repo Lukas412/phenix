@@ -4,18 +4,18 @@ use phenix_core::{
   DynamicContext, GetArgumentOperation, HasArgumentOperation, TextWordsOperation,
 };
 
-pub fn new_npm_run_command_with(
-  name: impl Into<Creation>,
-  arguments: Option<impl Into<Creation>>,
-) -> ActionOperation {
+pub fn new_npm_run_command_with<Context>(
+  name: impl Into<Creation<Context>>,
+  arguments: Option<impl Into<Creation<Context>>>,
+) -> ActionOperation<Context> {
   ContextSwitchOperation::new(
-    new_npm_run_context(name, arguments),
+    new_npm_run_context::<Context>(name, arguments),
     new_npm_run_command_operation(),
   )
   .into()
 }
 
-pub fn new_npm_run_command_operation() -> CommandOperation {
+pub fn new_npm_run_command_operation<Context>() -> CommandOperation<Context> {
   (
     "npm run",
     GetArgumentOperation::new(NPM_RUN__NAME),
@@ -28,9 +28,9 @@ pub fn new_npm_run_command_operation() -> CommandOperation {
     .into()
 }
 
-fn new_npm_run_context(
-  name: impl Into<Creation>,
-  arguments: Option<impl Into<Creation>>,
+fn new_npm_run_context<Context>(
+  name: impl Into<Creation<Context>>,
+  arguments: Option<impl Into<Creation<Context>>>,
 ) -> DynamicContext {
   match arguments {
     Some(arguments) => [

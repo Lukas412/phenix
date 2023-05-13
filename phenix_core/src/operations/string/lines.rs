@@ -1,30 +1,26 @@
 use crate::evaluate::EvaluateResult;
-use crate::{DynamicContext, Evaluate, Runtime, TextJoinOperation, TextValue};
+use crate::{ContextExt, Evaluate, Runtime, TextExpression, TextJoinOperation, TextValue};
 
 #[derive(Clone, Debug)]
-pub struct TextLinesOperation<Expression> {
-  operation: TextJoinOperation<TextValue, Expression>,
+pub struct TextLinesOperation<Context> {
+  operation: TextJoinOperation<TextValue, TextExpression<Context>>,
 }
 
-impl<Expression> TextLinesOperation<Expression> {
-  pub fn new(expressions: Vec<Expression>) -> Self {
+impl<Context> TextLinesOperation<Context> {
+  pub fn new(expressions: Vec<TextExpression<Context>>) -> Self {
     Self {
       operation: TextJoinOperation::new("\n", expressions),
     }
   }
 }
 
-impl<Expression, Context> Evaluate<Context> for TextLinesOperation<Expression>
+impl<Context> Evaluate<Context> for TextLinesOperation<Context>
 where
-  Expression: Evaluate<Context, Result = TextValue>,
+  Context: ContextExt,
 {
   type Result = TextValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
-    self.operation.evaluate(runtime, arguments)
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
+    self.operation.evaluate(runtime, context)
   }
 }

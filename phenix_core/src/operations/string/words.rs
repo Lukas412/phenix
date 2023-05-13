@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{DynamicContext, Evaluate, Runtime, TextExpression, TextJoinOperation, TextValue};
+use crate::{ContextExt, Evaluate, Runtime, TextExpression, TextJoinOperation, TextValue};
 
 #[derive(Clone, Debug)]
 pub struct TextWordsOperation<Context> {
@@ -35,7 +35,8 @@ where
   }
 }
 
-impl<Into1, Into2, Into3, Into4, Context> From<(Into1, Into2, Into3, Into4)> for TextWordsOperation<Context>
+impl<Into1, Into2, Into3, Into4, Context> From<(Into1, Into2, Into3, Into4)>
+  for TextWordsOperation<Context>
 where
   Into1: Into<TextExpression<Context>>,
   Into2: Into<TextExpression<Context>>,
@@ -62,14 +63,13 @@ where
   }
 }
 
-impl<Context> Evaluate<Context> for TextWordsOperation<Context> {
+impl<Context> Evaluate<Context> for TextWordsOperation<Context>
+where
+  Context: ContextExt,
+{
   type Result = TextValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
-    self.operation.evaluate(runtime, arguments)
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
+    self.operation.evaluate(runtime, context)
   }
 }

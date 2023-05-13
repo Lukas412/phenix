@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{BooleanExpression, Evaluate, Runtime};
+use crate::{BooleanExpression, ContextExt, Evaluate, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct ConditionOperation<Expression> {
@@ -30,6 +30,7 @@ impl<Expression> ConditionOperation<Expression> {
 impl<Expression, Value, Context> Evaluate<Context> for ConditionOperation<Expression>
 where
   Expression: Evaluate<Context, Result = Value>,
+  Context: ContextExt,
 {
   type Result = Value;
 

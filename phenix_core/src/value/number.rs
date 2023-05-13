@@ -8,7 +8,7 @@ use crate::evaluate::EvaluateResult;
 use crate::operations::{
   AddOperation, EqualsOperation, GetArgumentOperation, SubOperation, ToBooleanOperation,
 };
-use crate::{AnyValue, DynamicContext, Evaluate, EvaluateError, Runtime, ToType};
+use crate::{AnyValue, ContextExt, Evaluate, EvaluateError, Runtime, ToType};
 
 #[derive(Clone, Debug, From)]
 pub enum NumberExpression {
@@ -30,17 +30,16 @@ impl From<GetArgumentOperation<NumberValue>> for NumberExpression {
   }
 }
 
-impl Evaluate for NumberExpression {
+impl<Context> Evaluate<Context> for NumberExpression
+where
+  Context: ContextExt,
+{
   type Result = NumberValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
       Self::Value(value) => Ok(value.clone()),
-      Self::Operation(operation) => operation.evaluate(runtime, arguments),
+      Self::Operation(operation) => operation.evaluate(runtime, context),
     }
   }
 }
@@ -50,20 +49,18 @@ impl Evaluate for NumberExpression {
 pub struct NumberValue(Decimal);
 
 impl Add for NumberValue {
-  type Output = EvaluateResult<Self>;
+  type Output = Self;
 
   fn add(self, rhs: Self) -> Self::Output {
-    let result = self.0 + rhs.0;
-    Ok(result.into())
+    Self(self.0 + rhs.0)
   }
 }
 
 impl Sub for NumberValue {
-  type Output = EvaluateResult<Self>;
+  type Output = Self;
 
   fn sub(self, rhs: Self) -> Self::Output {
-    let result = self.0 - rhs.0;
-    Ok(result.into())
+    Self(self.0 - rhs.0)
   }
 }
 
@@ -92,20 +89,19 @@ pub enum NumberOperation {
   GetArgument(GetArgumentOperation<NumberValue>),
 }
 
-impl Evaluate for NumberOperation {
+impl<Context> Evaluate<Context> for NumberOperation
+where
+  Context: ContextExt,
+{
   type Result = NumberValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     match self {
-      Self::Add(operation) => operation.evaluate(runtime, arguments),
-      Self::Sub(operation) => operation.evaluate(runtime, arguments),
+      Self::Add(operation) => operation.evaluate(runtime, context),
+      Self::Sub(operation) => operation.evaluate(runtime, context),
       Self::Equals(_) => todo!(),
       Self::ToBoolean(_) => todo!(),
-      Self::GetArgument(operation) => operation.evaluate(runtime, arguments),
+      Self::GetArgument(operation) => operation.evaluate(runtime, context),
     }
   }
 }

@@ -25,7 +25,7 @@ impl ComplexCreation {
 #[derive(Clone, Debug)]
 pub struct ComplexCreationBuilder {
   namespace: Namespace,
-  values: HashMap<Identifier, Creation>,
+  values: HashMap<Identifier, Creation<DynamicContext>>,
 }
 
 impl ComplexCreationBuilder {
@@ -46,7 +46,7 @@ impl ComplexCreationBuilder {
   ) -> Self
   where
     IntoIdentifier: Into<Identifier>,
-    IntoCreation: Into<Creation>,
+    IntoCreation: Into<Creation<DynamicContext>>,
   {
     self.values.insert(identifier.into(), creation.into());
     self
@@ -55,6 +55,6 @@ impl ComplexCreationBuilder {
 
 impl From<ComplexCreationBuilder> for ComplexCreation {
   fn from(value: ComplexCreationBuilder) -> Self {
-    Self::new(value.namespace, value.values)
+    Self::new(value.namespace, value.values.into())
   }
 }

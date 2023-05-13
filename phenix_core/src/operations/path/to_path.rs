@@ -1,5 +1,5 @@
 use crate::evaluate::EvaluateResult;
-use crate::{DynamicContext, Evaluate, PathValue, Runtime};
+use crate::{Evaluate, PathValue, Runtime};
 
 #[derive(Clone, Debug)]
 pub struct ToPathOperation<Expression> {

@@ -26,7 +26,7 @@ impl<Expression, Other, Value, Context> Evaluate<Context> for AddOperation<Expre
 where
   Expression: Evaluate<Context>,
   Other: Evaluate<Context>,
-  Expression::Result: Add<Other::Result, Output = EvaluateResult<Value>>,
+  Expression::Result: Add<Other::Result, Output = Value>,
 {
   type Result = Value;
 

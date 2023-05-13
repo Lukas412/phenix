@@ -25,16 +25,13 @@ impl<Expression> ContextExtendOperation<Expression> {
 impl<Expression, Context> Evaluate<Context> for ContextExtendOperation<Expression>
 where
   Expression: Evaluate<DynamicContext>,
-  Context: Into<DynamicContext>,
+  Context: Clone + Into<DynamicContext>,
 {
   type Result = Expression::Result;
 
   fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     let mut context = context.clone().into();
-    context.reserve(self.context.len());
-    for (identifier, creation) in self.context.iter() {
-      context.insert(identifier.into(), creation.into())
-    }
+    context.extend(&self.context);
     self.expression.evaluate(runtime, &context)
   }
 }

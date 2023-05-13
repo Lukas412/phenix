@@ -3,16 +3,15 @@ use duplicate::duplicate_item;
 use rust_decimal::Decimal;
 
 use crate::{
-  evaluate::EvaluateResult, ActionExpression, ActionOperation, ActionValue, BooleanExpression,
-  BooleanValue, CommandValue, DynamicContext, Evaluate, GetArgumentOperation, NumberExpression,
-  NumberOperation, NumberValue, PathExpression, PathValue, Runtime, TextExpression, TextOperation,
-  TextValue,
+  evaluate::EvaluateResult, ActionExpression, ActionValue, BooleanExpression, BooleanValue,
+  CommandValue, ContextExt, Evaluate, GetArgumentOperation, NumberExpression, NumberOperation,
+  NumberValue, PathExpression, PathValue, Runtime, TextExpression, TextOperation, TextValue,
 };
 
 #[derive(Clone, Debug, From)]
-pub enum AnyExpression {
-  #[from(types(ActionOperation, ActionValue))]
-  Action(ActionExpression),
+pub enum AnyExpression<Context> {
+  #[from(types(ActionValue))]
+  Action(ActionExpression<Context>),
   #[from]
   Boolean(BooleanExpression),
   #[from(types(
@@ -32,12 +31,12 @@ pub enum AnyExpression {
   ))]
   Number(NumberExpression),
   #[from]
-  Path(PathExpression),
+  Path(PathExpression<Context>),
   #[from(types(TextValue))]
   Text(TextExpression<Context>),
 }
 
-impl From<&str> for AnyExpression {
+impl<Context> From<&str> for AnyExpression<Context> {
   fn from(value: &str) -> Self {
     Self::Text(value.into())
   }
@@ -48,13 +47,16 @@ impl From<&str> for AnyExpression {
   [GetArgumentOperation<TextValue>];
   [TextOperation<Context>];
 )]
-impl<Context> From<Operation> for AnyExpression {
-  fn from(operation: GetArgumentOperation<TextValue>) -> Self {
+impl<Context> From<Operation> for AnyExpression<Context> {
+  fn from(operation: Operation) -> Self {
     Self::Text(operation.into())
   }
 }
 
-impl<Context> Evaluate<Context> for AnyExpression {
+impl<Context> Evaluate<Context> for AnyExpression<Context>
+where
+  Context: ContextExt,
+{
   type Result = AnyValue;
 
   fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {

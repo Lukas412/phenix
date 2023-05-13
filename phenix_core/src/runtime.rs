@@ -2,20 +2,28 @@ use std::collections::HashMap;
 
 use crate::evaluate::EvaluateResult;
 use crate::{
-  ActionExpression, AnyExpression, AnyValue, BooleanExpression, Creation, DynamicContext, Evaluate,
-  ExpressionNotFoundError, Namespace, NumberExpression, PathExpression, TextExpression,
+  ActionExpression, AnyExpression, AnyValue, BooleanExpression, ContextExt, Creation,
+  DynamicContext, Evaluate, ExpressionNotFoundError, Namespace, NumberExpression, PathExpression,
+  TextExpression,
 };
 
 #[derive(Debug, Default)]
 pub struct Runtime {
-  values: HashMap<Namespace, AnyExpression>,
+  values: HashMap<Namespace, AnyExpression<DynamicContext>>,
 }
 
 impl Runtime {
-  pub fn evaluate<'b>(&'b self, creation: &'b Creation) -> EvaluateResult<AnyValue> {
+  pub fn evaluate<'b, Context>(
+    &'b self,
+    creation: &'b Creation<Context>,
+  ) -> EvaluateResult<AnyValue>
+  where
+    Context: Default,
+    Context: ContextExt,
+  {
     match creation {
       Creation::Expression(expression) => {
-        let arguments = DynamicContext::default();
+        let arguments = Context::default();
         expression.evaluate(self, &arguments)
       }
       Creation::Complex(complex) => self
@@ -27,21 +35,21 @@ impl Runtime {
   fn get_expression(
     &self,
     namespace: &Namespace,
-  ) -> Result<&AnyExpression, ExpressionNotFoundError> {
+  ) -> Result<&AnyExpression<DynamicContext>, ExpressionNotFoundError> {
     self
       .values
       .get(namespace)
       .ok_or_else(|| ExpressionNotFoundError::new(namespace.to_owned()))
   }
 
-  fn new(values: HashMap<Namespace, AnyExpression>) -> Self {
+  fn new(values: HashMap<Namespace, AnyExpression<DynamicContext>>) -> Self {
     Self { values }
   }
 }
 
 #[derive(Default)]
 pub struct RuntimeBuilder {
-  values: HashMap<Namespace, AnyExpression>,
+  values: HashMap<Namespace, AnyExpression<DynamicContext>>,
 }
 
 impl RuntimeBuilder {
@@ -52,7 +60,7 @@ impl RuntimeBuilder {
   pub fn with_action<N, E>(self, namespace: N, action: E) -> Self
   where
     N: Into<Namespace>,
-    E: Into<ActionExpression>,
+    E: Into<ActionExpression<DynamicContext>>,
   {
     self.with_expression(namespace, action.into())
   }
@@ -76,7 +84,7 @@ impl RuntimeBuilder {
   pub fn with_path<N, E>(self, namespace: N, path: E) -> Self
   where
     N: Into<Namespace>,
-    E: Into<PathExpression>,
+    E: Into<PathExpression<DynamicContext>>,
   {
     self.with_expression(namespace, path.into())
   }
@@ -84,7 +92,7 @@ impl RuntimeBuilder {
   pub fn with_text<N, E>(self, namespace: N, string: E) -> Self
   where
     N: Into<Namespace>,
-    E: Into<TextExpression>,
+    E: Into<TextExpression<DynamicContext>>,
   {
     self.with_expression(namespace, string.into())
   }
@@ -92,7 +100,7 @@ impl RuntimeBuilder {
   pub fn with_expression<N, E>(mut self, namespace: N, value: E) -> Self
   where
     N: Into<Namespace>,
-    E: Into<AnyExpression>,
+    E: Into<AnyExpression<DynamicContext>>,
   {
     self.values.insert(namespace.into(), value.into());
     self

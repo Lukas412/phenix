@@ -1,7 +1,6 @@
 use crate::evaluate::EvaluateResult;
 use crate::{
-  ActionExpression, ActionValue, AsBash, DynamicContext, Evaluate, PathExpression, PathValue,
-  Runtime,
+  ActionExpression, ActionValue, AsBash, ContextExt, Evaluate, PathExpression, PathValue, Runtime,
 };
 
 #[derive(Clone, Debug)]
@@ -38,7 +37,7 @@ impl AsBash for LocationValue {
 
 #[derive(Clone, Debug)]
 pub struct LocationOperation<Context> {
-  location: PathExpression,
+  location: PathExpression<Context>,
   action: Box<ActionExpression<Context>>,
 }
 
@@ -48,7 +47,7 @@ impl<Context> LocationOperation<Context> {
     action: IntoActionExpression,
   ) -> Self
   where
-    IntoPathExpression: Into<PathExpression>,
+    IntoPathExpression: Into<PathExpression<Context>>,
     IntoActionExpression: Into<ActionExpression<Context>>,
   {
     Self {
@@ -58,17 +57,16 @@ impl<Context> LocationOperation<Context> {
   }
 }
 
-impl<Context> Evaluate<Context> for LocationOperation<Context> {
+impl<Context> Evaluate<Context> for LocationOperation<Context>
+where
+  Context: ContextExt,
+{
   type Result = LocationValue;
 
-  fn evaluate(
-    &self,
-    runtime: &Runtime,
-    arguments: &DynamicContext,
-  ) -> EvaluateResult<Self::Result> {
+  fn evaluate(&self, runtime: &Runtime, context: &Context) -> EvaluateResult<Self::Result> {
     Ok(LocationValue::new(
-      self.location.evaluate(runtime, arguments)?,
-      self.action.evaluate(runtime, arguments)?,
+      self.location.evaluate(runtime, context)?,
+      self.action.evaluate(runtime, context)?,
     ))
   }
 }

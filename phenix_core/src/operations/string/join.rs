@@ -1,7 +1,7 @@
 use itertools::Itertools;
 
 use crate::evaluate::EvaluateResult;
-use crate::{DynamicContext, Evaluate, Runtime, TextValue};
+use crate::{Evaluate, Runtime, TextValue};
 
 #[derive(Clone, Debug)]
 pub struct TextJoinOperation<Separator, Expression> {

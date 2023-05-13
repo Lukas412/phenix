@@ -5,10 +5,10 @@ use phenix_core::{
   TextExpression,
 };
 
-pub fn new_git_init_with(
-  directory: Option<impl Into<TextExpression>>,
+pub fn new_git_init_with<Context>(
+  directory: Option<impl Into<TextExpression<Context>>>,
   quiet: Option<impl Into<BooleanExpression>>,
-) -> ActionOperation {
+) -> ActionOperation<Context> {
   ContextSwitchOperation::new(
     new_git_init_context(directory.map(Into::into), quiet.map(Into::into)),
     new_git_init(),
@@ -16,7 +16,7 @@ pub fn new_git_init_with(
   .into()
 }
 
-pub fn new_git_init() -> CommandOperation {
+pub fn new_git_init<Context>() -> CommandOperation<Context> {
   (
     "git init",
     ConditionOperation::new(
@@ -36,9 +36,9 @@ pub fn new_git_init() -> CommandOperation {
     .into()
 }
 
-fn new_git_init_context(
-  directory: Option<impl Into<Creation>>,
-  quiet: Option<impl Into<Creation>>,
+fn new_git_init_context<Context>(
+  directory: Option<impl Into<Creation<Context>>>,
+  quiet: Option<impl Into<Creation<Context>>>,
 ) -> DynamicContext {
   let mut context = DynamicContext::with_capacity(2);
   if let Some(directory) = directory {
