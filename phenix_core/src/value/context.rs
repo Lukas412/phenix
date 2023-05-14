@@ -3,9 +3,7 @@ use std::collections::HashMap;
 
 pub trait ContextExt
 where
-  Self: Default + Sized,
-  Self: Into<DynamicContext>,
-  Self: TryFrom<DynamicContext>,
+  Self: Sized,
 {
   fn has(&self, identifier: &Identifier) -> bool;
 

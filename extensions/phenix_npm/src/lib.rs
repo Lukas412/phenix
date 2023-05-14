@@ -4,7 +4,7 @@ pub use {
   phenix_identifiers::{
     NPM, NPM_INSTALL, NPM_INSTALL__PACKAGES, NPM_RUN, NPM_RUN__ARGUMENTS, NPM_RUN__NAME,
   },
-  run::{new_npm_run_command_operation, new_npm_run_command_with},
+  run::{new_npm_run_command_operation, new_npm_run_with},
 };
 
 mod ext;

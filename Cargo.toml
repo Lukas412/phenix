@@ -9,4 +9,5 @@ members = [
 	"extensions/phenix_std",
 	"extensions/phenix_svelte",
 	"extensions/phenix_xml",
+	"general/nom_more"
 ]

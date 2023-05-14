@@ -1,10 +1,13 @@
 use crate::{NPM_RUN__ARGUMENTS, NPM_RUN__NAME};
+pub use context::NpmRunContext;
 use phenix_core::{
   ActionOperation, CommandOperation, ConditionOperation, ContextSwitchOperation, Creation,
   DynamicContext, GetArgumentOperation, HasArgumentOperation, TextWordsOperation,
 };
 
-pub fn new_npm_run_command_with<Context>(
+mod context;
+
+pub fn new_npm_run_with<Context>(
   name: impl Into<Creation<Context>>,
   arguments: Option<impl Into<Creation<Context>>>,
 ) -> ActionOperation<Context> {

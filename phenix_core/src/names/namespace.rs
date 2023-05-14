@@ -1,34 +1,12 @@
-use std::fmt::{Display};
+use derive_more::Display;
 
-use super::Name;
-
-#[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
-pub struct Namespace {
-  parts: Vec<Name>,
-}
+#[derive(Clone, Debug, Default, PartialEq, Eq, Hash, Display)]
+pub struct Namespace(String);
 
 impl Namespace {
-  const SEPARATOR: &str = ":";
+  pub fn new(value: &str) -> IResult<&str, Self> {}
 }
 
-impl Display for Namespace {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    write!(f, "{}", self.parts.join(Self::SEPARATOR))
-  }
-}
-
-impl From<&str> for Namespace {
-  fn from(string: &str) -> Self {
-    string
-      .split(Self::SEPARATOR)
-      .map(Name::from)
-      .collect::<Vec<_>>()
-      .into()
-  }
-}
-
-impl From<Vec<Name>> for Namespace {
-  fn from(parts: Vec<Name>) -> Self {
-    Self { parts }
-  }
+fn is_valid_namespace(value: &str) -> bool {
+  
 }
